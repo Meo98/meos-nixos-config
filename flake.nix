@@ -108,6 +108,9 @@
       intel         = mkNixosConfig { profile = "intel"; };
       vm            = mkNixosConfig { profile = "vm"; };
 
+      # Home-PC: Nvidia Laptop
+      meo           = mkNixosConfig { profile = "nvidia-laptop"; };
+
       # Arbeitslaptop: Intel i7-1165G7 + Intel Iris Xe (kein dedizierter GPU)
       meo-work      = mkNixosConfig { host = "meo-work"; profile = "intel"; nixosTarget = "meo-work"; };
     };
