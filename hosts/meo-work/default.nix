@@ -37,6 +37,9 @@
     SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="df11", MODE="0666", TAG+="uaccess"
     # Keychron Link Dongle
     SUBSYSTEM=="usb", ATTRS{idVendor}=="3434", MODE="0666", TAG+="uaccess"
+    # Raspberry Pi Pico / Pico W / Pico 2W (MicroPython + BOOTSEL)
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="2e8a", MODE="0666", TAG+="uaccess"
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="2e8a", MODE="0666", TAG+="uaccess"
   '';
 
   # --- MONITOR LAYOUT NACH SUSPEND WIEDERHERSTELLEN ---

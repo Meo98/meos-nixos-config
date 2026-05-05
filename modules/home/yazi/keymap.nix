@@ -452,6 +452,11 @@
         desc = "Goto ~/Downloads";
       }
       {
+        on = ["g" "m"];
+        run = "cd /run/media/meo";
+        desc = "Goto mounted devices";
+      }
+      {
         on = ["g" "<Space>"];
         run = "cd --interactive";
         desc = "Jump interactively";

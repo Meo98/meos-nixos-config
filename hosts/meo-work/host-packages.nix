@@ -61,12 +61,13 @@
     qmk_hid
     hid-listen    
 
-    # --- Keyball Layer Pop-up Tool ---
+    # --- Keyball Layer Pop-up Tool + MicroPython Tools ---
     (python3.withPackages (ps: with ps; [
       pynput                    # Globales Keyboard-Listening für F13-F16 Layer-Hotkeys
       pillow                    # Bildverarbeitung für Layer-Screenshots
       tkinter                   # GUI für Pop-up-Fenster
       evdev                     # Direkter Zugriff auf Input-Devices (für Wayland)
+      mpremote                  # MicroPython Remote Tool für Raspberry Pi Pico
     ]))
 
     # --- Custom Desktop Items (Web-Apps) ---
