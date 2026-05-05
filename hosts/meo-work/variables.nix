@@ -23,7 +23,7 @@
     # Dell U2422H - oben rechts (per EDID)
     monitor = desc:Dell Inc. DELL U2422H 9FGXF83,1920x1080@60,1920x0,1
     # LG Laptop - darunter, unter rechtem Monitor, zentriert (per EDID)
-    monitor = desc:LG Display 0x06B8,1920x1080@60,2280x1080,1.6
+    monitor = desc:LG Display 0x06B8,1920x1080@60,2280x1080,1.4
   '';
 
   # Bar/Shell
