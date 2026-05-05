@@ -46,11 +46,14 @@ in {
     
     xwayland = {
       enable = true;
-      force_zero_scaling = true;
     };
 
     settings = {
       "$mod" = "SUPER";
+
+      xwayland = {
+        force_zero_scaling = true;
+      };
 
       exec-once = [
         "systemctl --user start gnome-keyring-daemon"
