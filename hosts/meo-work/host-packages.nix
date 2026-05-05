@@ -45,6 +45,7 @@
     antigravity               # Ein spezieller Port/Fork für VS Codium/VS Code optimiert
     dos2unix                  # Werkzeug zum Umwandeln von Windows-Zeilenumbrüchen in Linux-Format
     claude-code
+    ferdium
 
     # --- Grafik & Gaming ---
     vulkan-tools              # Diagnose-Tools für die Vulkan-Grafik-Schnittstelle (z.B. vulkaninfo)

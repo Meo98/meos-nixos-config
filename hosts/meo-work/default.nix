@@ -105,14 +105,6 @@
     ensureDefaultPrinter = "werkstatt";
   };
 
-  # --- FINGERABDRUCKSENSOR (Goodix 27c6:55a4 — TOD-Treiber erforderlich) ---
-  services.fprintd.tod.enable = true;
-  services.fprintd.tod.driver = pkgs.libfprint-2-tod1-goodix;
-  security.pam.services.login.fprintAuth = true;
-  security.pam.services.sddm.fprintAuth = true;
-  security.pam.services.hyprlock.fprintAuth = true;
-  security.pam.services.sudo.fprintAuth = true;
-
   # --- BENUTZER & GRUPPEN ---
   users.users."meo".extraGroups = [ "dialout" "input" "uinput" ];
 
