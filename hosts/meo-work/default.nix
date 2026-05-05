@@ -105,6 +105,13 @@
     ensureDefaultPrinter = "werkstatt";
   };
 
+  # --- FINGERABDRUCKSENSOR (Goodix 27c6:55a4) ---
+  services.fprintd.enable = true;
+  security.pam.services.login.fprintAuth = true;
+  security.pam.services.sddm.fprintAuth = true;
+  security.pam.services.hyprlock.fprintAuth = true;
+  security.pam.services.sudo.fprintAuth = true;
+
   # --- BENUTZER & GRUPPEN ---
   users.users."meo".extraGroups = [ "dialout" "input" "uinput" ];
 

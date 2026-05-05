@@ -64,16 +64,20 @@ in {
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # Seed the configuration
+  # Seed the configuration — update automatically when the noctalia package version changes
   home.activation.seedNoctaliaShellCode = lib.hm.dag.entryAfter ["writeBoundary"] ''
     set -eu
     DEST="$HOME/.config/quickshell/noctalia-shell"
     SRC="${configDir}"
+    VERSION_MARKER="$DEST/.noctalia-nix-version"
+    CURRENT_VERSION="${noctaliaPkg}"
 
-    if [ ! -d "$DEST" ]; then
+    if [ ! -d "$DEST" ] || [ ! -f "$VERSION_MARKER" ] || [ "$(cat "$VERSION_MARKER" 2>/dev/null)" != "$CURRENT_VERSION" ]; then
+      $DRY_RUN_CMD rm -rf "$DEST"
       $DRY_RUN_CMD mkdir -p "$HOME/.config/quickshell"
       $DRY_RUN_CMD cp -R "$SRC" "$DEST"
       $DRY_RUN_CMD chmod -R u+rwX "$DEST"
+      $DRY_RUN_CMD sh -c "echo '$CURRENT_VERSION' > '$VERSION_MARKER'"
     fi
   '';
 }
