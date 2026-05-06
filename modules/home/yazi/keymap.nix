@@ -558,6 +558,11 @@
         run = "plugin smart-enter";
         desc = "Enter the child directory, or open the file";
       }
+      {
+        on = ["c" "z"];
+        run = ''shell --block 'n=$(basename "%0"); zip -r "${n%.*}.zip" %s' '';
+        desc = "Zip selected file(s)";
+      }
     ];
   };
   tasks = {
