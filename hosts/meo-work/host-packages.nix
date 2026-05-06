@@ -20,6 +20,8 @@
     # Screenshots / Clipboard (grim/slurp/swappy/wl-clipboard/hyprshot bereits in hyprland.nix)
     jq
     libnotify
+    zip
+    unzip
     # --- Multimedia & Kommunikation ---
     audacity                  # Open-Source Audio-Editor für Aufnahme und Bearbeitung
     discord                   # Chat- und Voice-Plattform für Communities/Gaming
