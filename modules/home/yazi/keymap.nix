@@ -560,7 +560,7 @@
       }
       {
         on = ["c" "z"];
-        run = ''shell --block 'n=$(basename "%0"); zip -r "${n%.*}.zip" %s' '';
+        run = ''shell --block 'zip -r "$(basename "%0").zip" %s' '';
         desc = "Zip selected file(s)";
       }
     ];
