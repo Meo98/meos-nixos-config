@@ -60,6 +60,7 @@ in {
       ./yazi
       ./zoxide.nix
       ./zsh
+      ./trading-bot.nix
     ]
     ++ (
       if helixEnable
