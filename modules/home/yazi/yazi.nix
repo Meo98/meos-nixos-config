@@ -28,6 +28,14 @@
       ueberzug_offset = [0 0 0 0];
     };
     opener = {
+      markdown = [
+        {
+          run = ''glow -p "$1"'';
+          block = true;
+          desc = "Preview with glow";
+          for = "unix";
+        }
+      ];
       edit = [
         {
           run = ''${"EDITOR:-vi"} "$@"'';
@@ -136,6 +144,10 @@
         {
           name = "*/";
           use = ["edit" "open" "reveal"];
+        }
+        {
+          name = "*.{md,markdown}";
+          use = ["markdown" "edit" "reveal"];
         }
         {
           mime = "text/*";
