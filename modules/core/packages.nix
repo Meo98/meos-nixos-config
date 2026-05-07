@@ -101,5 +101,6 @@ in {
       wget # Tool For Fetching Files With Links
       ytmdl # Tool For Downloading Audio From YouTube
       python3 # Python 3 programming language
+      bitwarden-cli # CLI for Bitwarden – used by setup-secrets.sh
     ];
 }
