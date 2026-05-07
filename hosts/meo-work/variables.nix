@@ -1,6 +1,7 @@
 {
   # Git Configuration
   gitUsername = "Meo98";
+  displayName = "Meo";
   gitEmail = "chenevard.romeo@gmail.com";
 
   # Display Manager

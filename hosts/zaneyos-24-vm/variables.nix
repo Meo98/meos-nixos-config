@@ -1,6 +1,7 @@
 {
   # Git Configuration ( For Pulling Software Repos )
   gitUsername = "dwilliams";
+  displayName = "dwilliams";
   gitEmail = "don.e.williams@gmail.com";
 
   # Set Displau Manager
