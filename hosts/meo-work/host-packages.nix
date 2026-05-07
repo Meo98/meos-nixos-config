@@ -22,6 +22,7 @@
     libnotify
     zip
     unzip
+    glow
     # --- Multimedia & Kommunikation ---
     audacity                  # Open-Source Audio-Editor für Aufnahme und Bearbeitung
     discord                   # Chat- und Voice-Plattform für Communities/Gaming

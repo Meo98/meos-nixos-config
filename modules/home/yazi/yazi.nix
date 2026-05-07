@@ -319,6 +319,12 @@
           run = "file";
         }
       ];
+      prepend_previewers = [
+        {
+          name = "*.{md,markdown}";
+          run = "glow";
+        }
+      ];
       prepend_fetchers = [
         {
           id = "git";

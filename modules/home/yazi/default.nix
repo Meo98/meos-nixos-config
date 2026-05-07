@@ -17,6 +17,7 @@ in {
       full-border = pkgs.yaziPlugins.full-border;
       git = pkgs.yaziPlugins.git;
       smart-enter = pkgs.yaziPlugins.smart-enter;
+      glow = pkgs.yaziPlugins.glow;
     };
 
     initLua = ''
