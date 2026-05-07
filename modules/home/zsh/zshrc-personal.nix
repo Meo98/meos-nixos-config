@@ -14,6 +14,8 @@
 
       #alias c="clear"
 
+      # Load local secrets (not tracked by git)
+      [[ -f ~/.zshrc-secrets ]] && source ~/.zshrc-secrets
 
   '';
 }
