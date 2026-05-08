@@ -26,6 +26,7 @@ in {
           case "$line" in
             monitoradded*)
               sleep 2
+              hyprctl dispatch dpms on
               hyprctl reload
               ;;
           esac

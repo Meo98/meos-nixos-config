@@ -11,11 +11,11 @@
         };
         listener = [
           {
-            timeout = 900;
+            timeout = 300;
             on-timeout = "noctalia-shell ipc call sessionMenu lock";
           }
           {
-            timeout = 1200;
+            timeout = 600;
             on-timeout = "hyprctl dispatch dpms off";
             on-resume = "hyprctl dispatch dpms on";
           }

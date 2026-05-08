@@ -47,6 +47,13 @@
     SUBSYSTEM=="usb", ATTRS{idVendor}=="3434", MODE="0666", TAG+="uaccess"
   '';
 
+  # --- LOGIND: Lid-Close ignorieren, Suspend nur über hypridle ---
+  services.logind = {
+    lidSwitch = "ignore";
+    lidSwitchDocked = "ignore";
+    lidSwitchExternalPower = "ignore";
+  };
+
   # --- BENUTZER & GRUPPEN ---
   users.users."meo".extraGroups = [ "dialout" "input" "uinput" ];
 
