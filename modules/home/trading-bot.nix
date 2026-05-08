@@ -1,4 +1,4 @@
-{...}: let
+{pkgs, ...}: let
   botDir = "/home/meo/quant-trading-bot";
   binary = "${botDir}/rust/target/release/matrix_quant_core";
 in {
@@ -11,11 +11,13 @@ in {
     Service = {
       Type = "simple";
       WorkingDirectory = "${botDir}/rust";
-      ExecStartPre = "/bin/sh -c 'until curl -sf https://api.kraken.com/0/public/Time > /dev/null 2>&1; do sleep 10; done'";
       ExecStart = "${binary}";
       Restart = "on-failure";
       RestartSec = "30s";
-      Environment = "RUST_LOG=info";
+      Environment = [
+        "RUST_LOG=info"
+        "PATH=${pkgs.coreutils}/bin:${pkgs.curl}/bin"
+      ];
       StandardOutput = "append:/tmp/matrix_quant.log";
       StandardError = "append:/tmp/matrix_quant.log";
     };
