@@ -48,8 +48,7 @@
   amdgpuID = "PCI:0:0:0";
   nvidiaID = "PCI:0:0:0";
 
-  # Affinity Suite (deaktiviert, da kein affinity.nix importiert)
-  enableAffinity = false;
+  enableAffinity = true;
 
   # NFS
   enableNFS = true;
