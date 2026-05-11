@@ -65,7 +65,7 @@ in {
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # Seed the configuration — update automatically when the noctalia package version changes
+  # Seed the configuration when the noctalia package version changes.
   home.activation.seedNoctaliaShellCode = lib.hm.dag.entryAfter ["writeBoundary"] ''
     set -eu
     DEST="$HOME/.config/quickshell/noctalia-shell"
@@ -80,5 +80,13 @@ in {
       $DRY_RUN_CMD chmod -R u+rwX "$DEST"
       $DRY_RUN_CMD sh -c "echo '$CURRENT_VERSION' > '$VERSION_MARKER'"
     fi
+  '';
+
+  # After every rebuild, reload systemd and restart noctalia so the running
+  # quickshell binary always matches the IPC client. quickshell can update
+  # independently of the noctalia package (separate flake input), so a
+  # version-marker check alone is not enough.
+  home.activation.restartNoctaliaService = lib.hm.dag.entryAfter ["seedNoctaliaShellCode"] ''
+    $DRY_RUN_CMD sh -c "systemctl --user daemon-reload && systemctl --user restart noctalia-shell || true"
   '';
 }
