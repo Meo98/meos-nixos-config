@@ -61,7 +61,6 @@ in {
       ffmpeg # Terminal Video / Audio Editing
       file-roller # Archive Manager
       gimp # Great Photo Editor
-      inkscape # Vector Graphics Editor
       gpu-screen-recorder # needed for nnoctalia-shell
       power-profiles-daemon # needed for noctalia-shell power cycle
       mesa-demos # needed for inxi diag util
