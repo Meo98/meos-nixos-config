@@ -30,7 +30,7 @@ in {
     LC_NUMERIC = "en_US.UTF-8";
     LC_PAPER = "en_US.UTF-8";
     LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
+    LC_TIME = "de_CH.UTF-8";
   };
   environment.variables = {
     NIXOS_OZONE_WL = "1";
