@@ -13,6 +13,7 @@
       scrolloff = 5;
       mouse_events = ["click" "scroll"];
       title_format = "Yazi: {cwd}";
+      date_format = "%d.%m.%Y %H:%M";
     };
     preview = {
       wrap = "no";
