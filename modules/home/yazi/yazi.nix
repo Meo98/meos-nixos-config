@@ -7,13 +7,12 @@
       sort_reverse = false;
       sort_dir_first = true;
       sort_translit = false;
-      linemode = "mtime";
+      linemode = "mtime-ch";
       show_hidden = false;
       show_symlink = true;
       scrolloff = 5;
       mouse_events = ["click" "scroll"];
       title_format = "Yazi: {cwd}";
-      date_format = "%d/%m/%y %H:%M";
     };
     preview = {
       wrap = "no";

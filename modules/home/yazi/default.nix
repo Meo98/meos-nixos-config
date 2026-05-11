@@ -18,6 +18,15 @@ in {
       git = pkgs.yaziPlugins.git;
       smart-enter = pkgs.yaziPlugins.smart-enter;
       glow = pkgs.yaziPlugins.glow;
+      "mtime-ch" = pkgs.writeTextDir "main.lua" ''
+        return {
+          entry = function(self, job)
+            local time = math.floor(job.file.cha.modified or 0)
+            if time == 0 then return ui.Line("") end
+            return ui.Line(os.date(" %d/%m/%y %H:%M", time))
+          end
+        }
+      '';
     };
 
     initLua = ''
