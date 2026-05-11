@@ -71,6 +71,11 @@ in {
         "col.inactive_border" = "rgb(${config.lib.stylix.colors.base01})";
       };
 
+      cursor = {
+        inactive_timeout = 3;
+        hide_on_key_press = true;
+      };
+
       input = {
         kb_layout = hyprKbLayout;
         kb_options = "grp:alt_caps_toggle";
