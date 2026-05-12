@@ -25,6 +25,18 @@ lib.mkIf enabled {
     vulkan-tools
   ];
 
+  # vkd3d freeze fix auf Intel iGPU (Shader-Kompilierungs-Hang)
+  environment.sessionVariables.VKD3D_CONFIG = "no_upload_hvv";
+
+  # Affinity 3.x (Canva) versucht beim Start Dynamic Config von Canva-Servern zu laden.
+  # Unter Wine hängt der DNS-Lookup bis zum Timeout (~30s) und friert die App ein.
+  # Mit 127.0.0.1 scheitert die Verbindung sofort statt zu warten.
+  networking.extraHosts = ''
+    127.0.0.1 affinity-client-config-public.canva.com
+    127.0.0.1 canva.com
+    127.0.0.1 api.canva.com
+  '';
+
   # ✅ Affinity nur im User-Profil (Home Manager)
   home-manager.users.${username}.home.packages =
     lib.optionals enabled [
