@@ -29,7 +29,38 @@ in {
     dconf.enable = true;
     seahorse.enable = true;
     fuse.userAllowOther = true;
-    nix-ld.enable = true; # Ermöglicht generic Linux-Binaries (z.B. AppImage-interne ELFs)
+    nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+        alsa-lib
+        dbus
+        expat
+        fontconfig
+        freetype
+        glib
+        gst_all_1.gstreamer
+        gst_all_1.gst-plugins-base
+        libgphoto2
+        libpcap
+        libpulseaudio
+        libunwind
+        libusb1
+        mesa
+        ffmpeg_6
+        ocl-icd
+        pcsclite
+        sane-backends
+        stdenv.cc.cc
+        systemd
+        vulkan-loader
+        xorg.libX11
+        xorg.libXext
+        xorg.libXrandr
+        xorg.libXrender
+        xorg.libXi
+        zlib
+      ];
+    };
     mtr.enable = true;
     hyprlock.enable = true;
     gnupg.agent = {
