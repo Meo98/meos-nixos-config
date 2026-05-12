@@ -53,6 +53,8 @@ in {
         stdenv.cc.cc
         systemd
         vulkan-loader
+        gnutls
+        nettle
         xorg.libX11
         xorg.libXext
         xorg.libXrandr
