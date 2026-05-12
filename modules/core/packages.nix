@@ -29,6 +29,7 @@ in {
     dconf.enable = true;
     seahorse.enable = true;
     fuse.userAllowOther = true;
+    nix-ld.enable = true; # Ermöglicht generic Linux-Binaries (z.B. AppImage-interne ELFs)
     mtr.enable = true;
     hyprlock.enable = true;
     gnupg.agent = {
