@@ -376,6 +376,22 @@ _: {
       }
 
       windowrule {
+        name = Affinity-float
+        match:xwayland = 1
+        match:class = ^([Aa]ffinity)
+        float = on
+      }
+
+      windowrule {
+        name = Affinity-child-nofocus
+        match:xwayland = 1
+        match:class = ^([Aa]ffinity)
+        match:title = ^$
+        no_focus = on
+        float = on
+      }
+
+      windowrule {
         name = qs-extended-viewers
         match:title = ^(Hyprland Keybinds|Niri Keybinds|BSPWM Keybinds|i3 Keybinds|Sway Keybinds|DWM Keybinds|Emacs Leader Keybinds|Kitty Configuration|WezTerm Configuration|Ghostty Configuration|Yazi Configuration|Cheatsheets Viewer|Documentation Viewer)$
         float = on
