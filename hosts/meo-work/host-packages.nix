@@ -39,6 +39,7 @@
     bitwarden-desktop         # Passwort-Manager zur sicheren Verwaltung deiner Zugangsdaten
     onlyoffice-desktopeditors # Office-Suite mit sehr hoher Kompatibilität zu MS Office-Formaten
     insync                    # Synchronisations-Client für Google Drive und OneDrive
+    masterpdfeditor           # PDF-Editor mit Annotationen, Formularen und Seitenbearbeitung (PDF-XChange-Alternative)
     kicad                     # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
 
     # --- Entwicklung & System-Tools ---
