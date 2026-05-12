@@ -25,8 +25,15 @@ lib.mkIf enabled {
     vulkan-tools
   ];
 
-  # vkd3d freeze fix auf Intel iGPU (Shader-Kompilierungs-Hang)
-  environment.sessionVariables.VKD3D_CONFIG = "no_upload_hvv";
+  environment.sessionVariables = {
+    # vkd3d freeze fix auf Intel iGPU (Shader-Kompilierungs-Hang)
+    VKD3D_CONFIG = "no_upload_hvv";
+
+    # Ersetzt Wine's Busy-Wait durch Kernel-Futexes → verhindert 100% CPU Deadlock
+    # (zen-Kernel 6.19 unterstützt beides vollständig)
+    WINEFSYNC = "1";
+    WINESYNC = "1";
+  };
 
   # Affinity 3.x (Canva) versucht beim Start Dynamic Config von Canva-Servern zu laden.
   # Unter Wine hängt der DNS-Lookup bis zum Timeout (~30s) und friert die App ein.
