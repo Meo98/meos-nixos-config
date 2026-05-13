@@ -1,4 +1,4 @@
-{profile, pkgs, ...}: {
+{profile, ...}: {
   # Services to start
   services = {
     upower.enable = true; # noctalia shell battery
@@ -42,44 +42,9 @@
           "resample.quality" = 10;
         };
       };
-      # --- RNNoise: virtuelles Mikrofon mit Hintergrundgeräusch-Filter ---
-      # Erscheint in Apps als "Noise Canceling Source" — manuell auswählen für Calls.
-      extraConfig.pipewire."99-input-denoising" = {
-        "context.modules" = [
-          {
-            name = "libpipewire-module-filter-chain";
-            args = {
-              "node.description" = "Noise Canceling Source";
-              "media.name" = "Noise Canceling Source";
-              "filter.graph" = {
-                nodes = [
-                  {
-                    type = "ladspa";
-                    name = "rnnoise";
-                    plugin = "${pkgs.rnnoise-plugin}/lib/ladspa/librnnoise_ladspa";
-                    label = "noise_suppressor_mono";
-                    control = {
-                      "VAD Threshold (%)" = 50.0;
-                      "VAD Grace Period (ms)" = 200;
-                      "Retroactive VAD Grace (ms)" = 0;
-                    };
-                  }
-                ];
-              };
-              "capture.props" = {
-                "node.name" = "capture.rnnoise_source";
-                "node.passive" = true;
-                "audio.rate" = 48000;
-              };
-              "playback.props" = {
-                "node.name" = "rnnoise_source";
-                "media.class" = "Audio/Source";
-                "audio.rate" = 48000;
-              };
-            };
-          }
-        ];
-      };
+      # RNNoise filter-chain hier entfernt — PipeWire 1.6.3 hat Probleme mit dem
+      # absoluten Plugin-Pfad. Stattdessen: EasyEffects-GUI verwenden, dort gibt's
+      # "Speech Enhancement (RNNoise)" als klickbaren Effekt.
       extraConfig.pipewire-pulse."92-low-latency" = {
         context.modules = [
           {

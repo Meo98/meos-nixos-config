@@ -118,8 +118,7 @@ in {
       onefetch # provides zsaneyos build info on current system
       pandoc # format MD to HTML for cheatsheet parser
       pavucontrol # For Editing Audio Levels & Devices
-      rnnoise-plugin # RNNoise LADSPA plugin für PipeWire mic-filter
-      easyeffects # System-weiter EQ + Audio-Effekte
+      easyeffects # System-weiter EQ + Audio-Effekte (inkl. RNNoise Speech Enhancement)
       pciutils # Collection Of Tools For Inspecting PCI Devices
       picard # For Changing Music Metadata & Getting Cover Art
       pkg-config # Wrapper Script For Allowing Packages To Get Info On Others
