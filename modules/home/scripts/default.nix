@@ -40,6 +40,8 @@
     (import ./hyprland-dock.nix {inherit pkgs;})
     (import ./setup-secrets.nix {inherit pkgs;})
     (import ./travel-mode.nix {inherit pkgs;})
+    (import ./bt-audio-switch.nix {inherit pkgs;})
+    (import ./bt-audio-monitor.nix {inherit pkgs;})
     (import ./zcli.nix {
       inherit pkgs profile;
       backupFiles = [

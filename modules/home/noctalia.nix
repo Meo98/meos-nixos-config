@@ -7,6 +7,7 @@
   system = pkgs.stdenv.hostPlatform.system;
   noctaliaPkg = inputs.noctalia.packages.${system}.default;
   configDir = "${noctaliaPkg}/share/noctalia-shell";
+  bt-audio-monitor = import ./scripts/bt-audio-monitor.nix {inherit pkgs;};
 in {
   # Install the Noctalia package
   home.packages = [
@@ -49,6 +50,23 @@ in {
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # Bluetooth audio auto-switch: lauscht auf BT-Connect-Events und routet
+  # Audio automatisch auf das verbindende Gerät um (wie macOS/Windows).
+  systemd.user.services.bt-audio-monitor = {
+    Unit = {
+      Description = "Bluetooth audio auto-switch monitor";
+      After = [ "graphical-session.target" "pipewire.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${bt-audio-monitor}/bin/bt-audio-monitor";
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # Systemd user service — startet noctalia automatisch und nach jedem rebuild neu
   systemd.user.services.noctalia-shell = {
     Unit = {
@@ -82,11 +100,29 @@ in {
     fi
   '';
 
+  # Patch Noctalia's AudioService.qml so that clicking a device in the audio
+  # panel ALSO updates WirePlumber's system-wide default sink (via wpctl),
+  # not just Quickshell's internal preference. Without this, other apps
+  # (Tidal, browsers, …) ignore Noctalia's selection. Idempotent — uses a
+  # marker comment to detect prior patches and skip re-patching.
+  home.activation.patchNoctaliaAudioService = lib.hm.dag.entryAfter ["seedNoctaliaShellCode"] ''
+    set -eu
+    QML="$HOME/.config/quickshell/noctalia-shell/Services/Media/AudioService.qml"
+    MARKER="// PATCH: zaneyos wpctl set-default"
+
+    if [ -f "$QML" ] && ! ${pkgs.gnugrep}/bin/grep -qF "$MARKER" "$QML"; then
+      $DRY_RUN_CMD ${pkgs.gnused}/bin/sed -i \
+        -e '/Pipewire\.preferredDefaultAudioSink = newSink;/a\    if (newSink) Quickshell.execDetached(["wpctl", "set-default", String(newSink.id)]); '"$MARKER" \
+        -e '/Pipewire\.preferredDefaultAudioSource = newSource;/a\    if (newSource) Quickshell.execDetached(["wpctl", "set-default", String(newSource.id)]); '"$MARKER" \
+        "$QML"
+    fi
+  '';
+
   # After every rebuild, reload systemd and restart noctalia so the running
   # quickshell binary always matches the IPC client. quickshell can update
   # independently of the noctalia package (separate flake input), so a
   # version-marker check alone is not enough.
-  home.activation.restartNoctaliaService = lib.hm.dag.entryAfter ["seedNoctaliaShellCode"] ''
+  home.activation.restartNoctaliaService = lib.hm.dag.entryAfter ["patchNoctaliaAudioService"] ''
     $DRY_RUN_CMD sh -c "systemctl --user daemon-reload && systemctl --user restart noctalia-shell || true"
   '';
 }
