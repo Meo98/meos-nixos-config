@@ -39,7 +39,16 @@
   };
 
   # --- AUDIO FIX (Gegen das Klicken/Knallen) ---
-  boot.kernelParams = [ "snd_hda_intel.power_save=0" "snd_hda_intel.power_save_controller=N" "i915.enable_dpcd_backlight=3" ];
+  boot.kernelParams = [
+    "snd_hda_intel.power_save=0"
+    "snd_hda_intel.power_save_controller=N"
+    # OLED-Brightness Fix für ASUS Zephyrus G16 GU605 (Intel Meteor Lake + NVIDIA)
+    # Intel DPCD-Backlight aktivieren (=1 für VESA Standard, =3 wäre für HDR)
+    "i915.enable_dpcd_backlight=1"
+    # NVIDIA Backlight-Handler deaktivieren (blockiert sonst den Intel DPCD-Pfad)
+    "nvidia.NVreg_EnableBacklightHandler=0"
+    "nvidia.NVreg_RegistryDwords=EnableBrightnessControl=0"
+  ];
   
   services.pipewire = {
     enable = true;
