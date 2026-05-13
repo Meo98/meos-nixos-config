@@ -18,17 +18,14 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1778226184,
-        "narHash": "sha256-PV2SjSCv9BLLjNQMDTed51Z6PDfgveGK9bvUNhyJ2a4=",
-        "owner": "mrshmllow",
-        "repo": "affinity-nix",
-        "rev": "f76f97513153a753718aa1423e84b4cb8ea4c185",
-        "type": "github"
+        "lastModified": 1778677335,
+        "narHash": "sha256-Ohi3Ws/koSzfq+rOQtrB9UMl3ga5nES3lV5FRIZC3Rg=",
+        "path": "/home/meo/affinity-nix-fork",
+        "type": "path"
       },
       "original": {
-        "owner": "mrshmllow",
-        "repo": "affinity-nix",
-        "type": "github"
+        "path": "/home/meo/affinity-nix-fork",
+        "type": "path"
       }
     },
     "alejandra": {
@@ -833,17 +830,17 @@
     "plugin-loader-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1775508798,
-        "narHash": "sha256-cD2G3M83wCEXVMMl9YoHMLxPIvbXeESgQTkXiM+lzns=",
+        "lastModified": 1776972538,
+        "narHash": "sha256-2EvrOYQCB2Z2YXhcPnjR67KoOCvwTVW3TfLcmU3//ak=",
         "owner": "noahc3",
         "repo": "AffinityPluginLoader",
-        "rev": "bd93bbf9f84735d8ba6538596620bbe8d8b90efd",
+        "rev": "1d7956d5b791bd6a213e8b28c1e25e1f4bcc6166",
         "type": "github"
       },
       "original": {
         "owner": "noahc3",
-        "ref": "v0.3.0",
         "repo": "AffinityPluginLoader",
+        "rev": "1d7956d5b791bd6a213e8b28c1e25e1f4bcc6166",
         "type": "github"
       }
     },

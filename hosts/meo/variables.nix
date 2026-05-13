@@ -85,7 +85,7 @@
   enableNFS = true;
 
   # Enable Printing Support
-  printEnable = false;
+  printEnable = true;
 
   # Enable Thunar GUI File Manager
   # Yazi is default File Manager

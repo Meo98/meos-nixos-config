@@ -51,5 +51,11 @@ in {
     KERNEL=="i2c-[0-9]*", GROUP="i2c", MODE="0660"
   '';
   console.keyMap = "${consoleKeyMap}";
+
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+  };
+
   system.stateVersion = "23.11"; # Do not change!
 }

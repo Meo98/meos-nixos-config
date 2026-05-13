@@ -27,10 +27,10 @@
     wl-clipboard
     hyprshot
     jq
-    libnotify
+    # libnotify — in core/packages.nix
     # --- Multimedia & Kommunikation ---
     audacity                  # Open-Source Audio-Editor für Aufnahme und Bearbeitung
-    discord                   # Chat- und Voice-Plattform für Communities/Gaming
+    discord                   # Chat- und Voice-Plattform für Communities/Gaming (hier statt core)
     vlc                       # Universeller Medienplayer, spielt fast jedes Videoformat ab
     tidal-hifi                # Desktop-Client für den High-Fidelity Musik-Streamingdienst Tidal
     morgen                    # All-in-one Calendars, Tasks and Scheduler
@@ -57,7 +57,7 @@
 
     # --- Grafik & Gaming ---
     vulkan-tools              # Diagnose-Tools für die Vulkan-Grafik-Schnittstelle (z.B. vulkaninfo)
-    mesa-demos                # Enthält Tools wie glxinfo, um die GPU-Beschleunigung zu prüfen
+    # mesa-demos — in core/packages.nix (systemweit verfügbar)
     gamescope                 # Micro-Compositor von Valve für stabileres Gaming und Upscaling
     kdePackages.qtmultimedia  # Multimedia-Bibliotheken für QT-Anwendungen (wichtig für einige Player/UIs)
 

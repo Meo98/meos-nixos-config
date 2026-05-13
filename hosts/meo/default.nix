@@ -35,16 +35,15 @@
 
   # --- WEITERE SERVICES ---
   services.gnome.gnome-keyring.enable = true;
-  programs.seahorse.enable = true; 
-  security.pam.services.login.enableGnomeKeyring = true; 
+  security.pam.services.login.enableGnomeKeyring = true;
 
   services.udev.extraRules = ''
     # Keychron Geräte (Vendor ID 3434)
-    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3434", MODE="0666", TAG+="uaccess"
+    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3434", TAG+="uaccess"
     # STM32 Bootloader
-    SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="df11", MODE="0666", TAG+="uaccess"
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="df11", TAG+="uaccess"
     # Keychron Link Dongle
-    SUBSYSTEM=="usb", ATTRS{idVendor}=="3434", MODE="0666", TAG+="uaccess"
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="3434", TAG+="uaccess"
   '';
 
   # --- LOGIND: Lid-Close ignorieren, Suspend nur über hypridle ---

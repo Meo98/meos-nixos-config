@@ -10,8 +10,8 @@
       enable = true; # Enable SSH
       settings = {
         PermitRootLogin = "no"; # Prevent root from SSH login
-        PasswordAuthentication = true; #Users can SSH using kb and password
-        KbdInteractiveAuthentication = true;
+        PasswordAuthentication = false; # Key-only — add pubkey to ~/.ssh/authorized_keys first!
+        KbdInteractiveAuthentication = false;
       };
       ports = [22];
     };

@@ -1,0 +1,26 @@
+# Secrets & credentials
+secrets.nix
+secrets/
+*.secret
+*.secrets
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+*.age
+
+# Nix build artifacts
+result
+result-*
+.direnv/
+
+# Editor temp files
+*.swp
+*.swo
+*~
+.#*
+\#*\#

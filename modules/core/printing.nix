@@ -5,10 +5,10 @@ in {
     printing = {
       enable = printEnable;
       drivers = [
-        # pkgs.hplipWithPlugin
         pkgs.cups-filters
-        pkgs.foomatic-db-ppds
+        pkgs.foomatic-db-ppds-withNonfreeDb
         pkgs.foomatic-db-engine
+        pkgs.gutenprint # Konica Minolta Unterstützung
       ];
     };
     avahi = {

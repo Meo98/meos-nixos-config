@@ -87,7 +87,7 @@ in {
       cliphist # Clipboard manager using rofi menu
       cmatrix # Matrix Movie Effect In Terminal
       cowsay # Great Fun Terminal Program
-      discord # Stable client
+      # discord — in host-packages.nix
       docker-compose # Allows Controlling Docker From A Single File
       duf # Utility For Viewing Disk Usage In Terminal
       dysk # Disk space util nice formattting
@@ -95,9 +95,9 @@ in {
       ffmpeg # Terminal Video / Audio Editing
       file-roller # Archive Manager
       gimp # Great Photo Editor
-      gpu-screen-recorder # needed for nnoctalia-shell
-      power-profiles-daemon # needed for noctalia-shell power cycle
+      # gpu-screen-recorder — in noctaliaPkgs (conditional oben)
       mesa-demos # needed for inxi diag util
+      power-profiles-daemon # needed for noctalia-shell power cycle
       tuigreet # The Login Manager (Sometimes Referred To As Display Manager)
       htop # Simple Terminal Based System Monitor
       eog # For Image Viewing
@@ -134,7 +134,7 @@ in {
       waypaper # Change wallpaper
       wget # Tool For Fetching Files With Links
       ytmdl # Tool For Downloading Audio From YouTube
-      python3 # Python 3 programming language
+      # python3 — python3.withPackages(...) in host-packages.nix verwenden
       bitwarden-cli # CLI for Bitwarden – used by setup-secrets.sh
     ];
 }
