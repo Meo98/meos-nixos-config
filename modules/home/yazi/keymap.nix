@@ -549,6 +549,11 @@
     ];
     prepend_keymap = [
       {
+        on = "<C-p>";
+        run = "shell '$HOME/.local/bin/yazi-print %s'";
+        desc = "Print selected file(s)";
+      }
+      {
         on = ["g" "i"];
         run = "plugin lazygit";
         desc = "run lazygit";
