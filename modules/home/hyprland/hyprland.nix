@@ -91,14 +91,11 @@ in {
         };
       };
 
-      gestures = {
-        workspace_swipe = true;
-        workspace_swipe_fingers = 3;
-        workspace_swipe_distance = 300;
-        workspace_swipe_cancel_ratio = 0.5;
-        workspace_swipe_min_speed_to_force = 30;
-        workspace_swipe_direction_lock = true;
-      };
+      # Hyprland 0.54+ Gesture API: gesture = fingers, direction, action
+      gesture = [
+        "3, horizontal, workspace"   # 3-Finger links/rechts = Workspace wechseln
+        "3, vertical, killactive"    # 3-Finger hoch/runter = Fenster schliessen
+      ];
 
       decoration = {
         rounding = 10;
