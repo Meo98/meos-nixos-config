@@ -56,7 +56,7 @@
                   {
                     type = "ladspa";
                     name = "rnnoise";
-                    plugin = "${pkgs.noise-suppression-for-voice}/lib/ladspa/librnnoise_ladspa.so";
+                    plugin = "${pkgs.rnnoise-plugin}/lib/ladspa/librnnoise_ladspa.so";
                     label = "noise_suppressor_mono";
                     control = {
                       "VAD Threshold (%)" = 50.0;

@@ -118,7 +118,7 @@ in {
       onefetch # provides zsaneyos build info on current system
       pandoc # format MD to HTML for cheatsheet parser
       pavucontrol # For Editing Audio Levels & Devices
-      noise-suppression-for-voice # RNNoise LADSPA plugin für PipeWire mic-filter
+      rnnoise-plugin # RNNoise LADSPA plugin für PipeWire mic-filter
       easyeffects # System-weiter EQ + Audio-Effekte
       pciutils # Collection Of Tools For Inspecting PCI Devices
       picard # For Changing Music Metadata & Getting Cover Art
