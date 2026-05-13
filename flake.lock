@@ -18,8 +18,8 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1778677335,
-        "narHash": "sha256-Ohi3Ws/koSzfq+rOQtrB9UMl3ga5nES3lV5FRIZC3Rg=",
+        "lastModified": 1778685371,
+        "narHash": "sha256-be/DNHJk7ttJCdPLAIiRnl7omI/d7WIbSzahrbuZaU0=",
         "path": "/home/meo/affinity-nix-fork",
         "type": "path"
       },
