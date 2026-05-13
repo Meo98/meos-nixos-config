@@ -91,11 +91,8 @@ in {
         };
       };
 
-      # Hyprland 0.54+ Gesture API: gesture = fingers, direction, action
-      gesture = [
-        "3, horizontal, workspace"   # 3-Finger links/rechts = Workspace wechseln
-        "3, vertical, killactive"    # 3-Finger hoch/runter = Fenster schliessen
-      ];
+      # Hyprland 0.54+: nur "workspace" als Aktion verfügbar
+      gesture = [ "3, horizontal, workspace" ];
 
       decoration = {
         rounding = 10;
