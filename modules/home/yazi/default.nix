@@ -18,32 +18,26 @@ in {
       git = pkgs.yaziPlugins.git;
       smart-enter = pkgs.yaziPlugins.smart-enter;
       glow = pkgs.yaziPlugins.glow;
-      "mtime-ch" = pkgs.writeTextDir "main.lua" ''
-        return {
-          entry = function(self, job)
-            local time = math.floor(job.file.cha.mtime or 0)
-            if time == 0 then return ui.Line("") end
-            return ui.Line(os.date(" %d.%m.%Y %H:%M", time))
-          end
-        }
-      '';
-      "btime-ch" = pkgs.writeTextDir "main.lua" ''
-        return {
-          entry = function(self, job)
-            local time = math.floor(job.file.cha.btime or 0)
-            if time == 0 then return ui.Line("") end
-            return ui.Line(os.date(" %d.%m.%Y %H:%M", time))
-          end
-        }
-      '';
     };
 
     initLua = ''
       require("full-border"):setup()
-         require("git"):setup()
-         require("smart-enter"):setup {
-           open_multi = true,
-         }
+      require("git"):setup()
+      require("smart-enter"):setup {
+        open_multi = true,
+      }
+
+      function Linemode:mtime_ch()
+        local time = math.floor(self._file.cha.mtime or 0)
+        if time == 0 then return "" end
+        return os.date(" %d.%m.%Y %H:%M", time)
+      end
+
+      function Linemode:btime_ch()
+        local time = math.floor(self._file.cha.btime or 0)
+        if time == 0 then return "" end
+        return os.date(" %d.%m.%Y %H:%M", time)
+      end
     '';
   };
 }
