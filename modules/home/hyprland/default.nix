@@ -13,5 +13,5 @@ in {
     ./windowrules.nix
     ./vol-smart.nix
     ./bright-smart.nix
-  ] ++ (if host == "meo" then [ ./affinity-gamescope.nix ] else []);
+  ];
 }
