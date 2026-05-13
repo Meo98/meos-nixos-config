@@ -39,6 +39,7 @@
     (import ./launch-nwg-menu.nix {inherit pkgs;})
     (import ./hyprland-dock.nix {inherit pkgs;})
     (import ./setup-secrets.nix {inherit pkgs;})
+    (import ./travel-mode.nix {inherit pkgs;})
     (import ./zcli.nix {
       inherit pkgs profile;
       backupFiles = [
