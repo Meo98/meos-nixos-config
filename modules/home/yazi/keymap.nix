@@ -308,13 +308,13 @@
       }
       {
         on = ["m" "b"];
-        run = "linemode btime";
-        desc = "Linemode: btime";
+        run = "linemode btime-ch";
+        desc = "Linemode: btime (CH-Format)";
       }
       {
         on = ["m" "m"];
-        run = "linemode mtime";
-        desc = "Linemode: mtime";
+        run = "linemode mtime-ch";
+        desc = "Linemode: mtime (CH-Format)";
       }
       {
         on = ["m" "o"];
@@ -373,22 +373,22 @@
       }
       {
         on = ["," "m"];
-        run = ["sort mtime --reverse=no" "linemode mtime"];
+        run = ["sort mtime --reverse=no" "linemode mtime-ch"];
         desc = "Sort by modified time";
       }
       {
         on = ["," "M"];
-        run = ["sort mtime --reverse" "linemode mtime"];
+        run = ["sort mtime --reverse" "linemode mtime-ch"];
         desc = "Sort by modified time (reverse)";
       }
       {
         on = ["," "b"];
-        run = ["sort btime --reverse=no" "linemode btime"];
+        run = ["sort btime --reverse=no" "linemode btime-ch"];
         desc = "Sort by birth time";
       }
       {
         on = ["," "B"];
-        run = ["sort btime --reverse" "linemode btime"];
+        run = ["sort btime --reverse" "linemode btime-ch"];
         desc = "Sort by birth time (reverse)";
       }
       {
