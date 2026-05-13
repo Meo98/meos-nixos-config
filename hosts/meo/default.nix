@@ -10,7 +10,27 @@
 
   # --- AUTOMOUNTING ---
   services.udisks2.enable = true;
-  environment.systemPackages = [ pkgs.udiskie ];
+  environment.systemPackages = [
+    pkgs.udiskie
+    (pkgs.writeShellScriptBin "travel-power" ''
+      case "''${1:-}" in
+        on)
+          echo quiet > /sys/firmware/acpi/platform_profile 2>/dev/null || true
+          for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq; do
+            echo 800000 > "$cpu" 2>/dev/null || true
+          done
+          echo auto > /sys/bus/pci/devices/0000:01:00.0/power/control 2>/dev/null || true
+          ;;
+        off)
+          echo balanced > /sys/firmware/acpi/platform_profile 2>/dev/null || true
+          for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq; do
+            echo 4800000 > "$cpu" 2>/dev/null || true
+          done
+          ;;
+        *) echo "Usage: travel-power {on|off}" >&2; exit 2 ;;
+      esac
+    '')
+  ];
   systemd.user.services.udiskie = {
     description = "Udiskie Automount Service";
     wantedBy = [ "graphical-session.target" ];
@@ -54,27 +74,6 @@
   };
 
   # --- TRAVEL-MODE: root-helper für CPU/GPU Power-Knobs ---
-  environment.systemPackages = let
-    travel-power = pkgs.writeShellScriptBin "travel-power" ''
-      case "''${1:-}" in
-        on)
-          echo quiet > /sys/firmware/acpi/platform_profile 2>/dev/null || true
-          for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq; do
-            echo 800000 > "$cpu" 2>/dev/null || true
-          done
-          echo auto > /sys/bus/pci/devices/0000:01:00.0/power/control 2>/dev/null || true
-          ;;
-        off)
-          echo balanced > /sys/firmware/acpi/platform_profile 2>/dev/null || true
-          for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq; do
-            echo 4800000 > "$cpu" 2>/dev/null || true
-          done
-          ;;
-        *) echo "Usage: travel-power {on|off}" >&2; exit 2 ;;
-      esac
-    '';
-  in [ travel-power ];
-
   security.sudo.extraRules = [{
     users = [ "meo" ];
     commands = [
