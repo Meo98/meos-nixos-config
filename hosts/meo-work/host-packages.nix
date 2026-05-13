@@ -88,9 +88,5 @@
     # inputs.affinity-nix.packages.${pkgs.system}.designer
     # inputs.affinity-nix.packages.${pkgs.system}.photo
     # inputs.affinity-nix.packages.${pkgs.system}.publisher
-    
-    # --- Windows VM Container ---
-    winboat
-    freerdp
   ];
 }

@@ -3,6 +3,7 @@
     ./hardware.nix
     ./host-packages.nix
     ./kanata.nix
+    ../meo/affinity.nix
   ];
 
   programs.kdeconnect.enable = true;
