@@ -21,7 +21,7 @@ in {
       "mtime-ch" = pkgs.writeTextDir "main.lua" ''
         return {
           entry = function(self, job)
-            local time = math.floor(job.file.cha.modified or 0)
+            local time = math.floor(job.file.cha.mtime or 0)
             if time == 0 then return ui.Line("") end
             return ui.Line(os.date(" %d.%m.%Y %H:%M", time))
           end
@@ -30,7 +30,7 @@ in {
       "btime-ch" = pkgs.writeTextDir "main.lua" ''
         return {
           entry = function(self, job)
-            local time = math.floor(job.file.cha.created or 0)
+            local time = math.floor(job.file.cha.btime or 0)
             if time == 0 then return ui.Line("") end
             return ui.Line(os.date(" %d.%m.%Y %H:%M", time))
           end
