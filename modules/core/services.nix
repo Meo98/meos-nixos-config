@@ -54,6 +54,49 @@
           }
         ];
       };
+      # --- BLUETOOTH AUTO-SWITCH ---
+      # Bluetooth-Geräte bekommen höchste Priorität, damit sie beim Verbinden
+      # automatisch zum Default-Audio werden (wie macOS/Windows).
+      wireplumber.extraConfig."51-bluez-autoswitch" = {
+        "monitor.bluez.properties" = {
+          "bluez5.enable-sbc-xq" = true;
+          "bluez5.enable-msbc" = true;
+          "bluez5.enable-hw-volume" = true;
+          "bluez5.roles" = [
+            "a2dp_sink"
+            "a2dp_source"
+            "bap_sink"
+            "bap_source"
+            "hfp_hf"
+            "hfp_ag"
+          ];
+        };
+        "monitor.bluez.rules" = [
+          {
+            matches = [
+              { "device.name" = "~bluez_card.*"; }
+            ];
+            actions = {
+              update-props = {
+                "priority.driver" = 2000;
+                "priority.session" = 2000;
+              };
+            };
+          }
+          {
+            matches = [
+              { "node.name" = "~bluez_output.*"; }
+              { "node.name" = "~bluez_input.*"; }
+            ];
+            actions = {
+              update-props = {
+                "priority.driver" = 2000;
+                "priority.session" = 2000;
+              };
+            };
+          }
+        ];
+      };
     };
   };
 }
