@@ -73,19 +73,29 @@ let
         ddcutil --bus "$bus" --sleep-multiplier "$sleep_mul" --noverify setvcp 10 "$delta" -q
       }
 
+      laptop_set() {
+        local delta="$1"
+        for dev in intel_backlight nvidia_0; do
+          if [ -d "/sys/class/backlight/$dev" ]; then
+            brightnessctl -d "$dev" set "$delta" && return 0
+          fi
+        done
+        return 1
+      }
+
       case "$cmd" in
         up)
           if is_connected && bus="$(get_bus)"; then
-            ext_set "$bus" "+$ddc_step" || brightnessctl -d intel_backlight set "+$int_step" || true
+            ext_set "$bus" "+$ddc_step" || laptop_set "+$int_step" || true
           else
-            brightnessctl -d intel_backlight set "+$int_step" || true
+            laptop_set "+$int_step" || true
           fi
           ;;
         down)
           if is_connected && bus="$(get_bus)"; then
-            ext_set "$bus" "-$ddc_step" || brightnessctl -d intel_backlight set "$int_step-" || true
+            ext_set "$bus" "-$ddc_step" || laptop_set "$int_step-" || true
           else
-            brightnessctl -d intel_backlight set "$int_step-" || true
+            laptop_set "$int_step-" || true
           fi
           ;;
         *)

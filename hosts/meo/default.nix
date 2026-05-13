@@ -19,7 +19,7 @@
   };
 
   # --- AUDIO FIX (Gegen das Klicken/Knallen) ---
-  boot.kernelParams = [ "snd_hda_intel.power_save=0" "snd_hda_intel.power_save_controller=N" ];
+  boot.kernelParams = [ "snd_hda_intel.power_save=0" "snd_hda_intel.power_save_controller=N" "i915.enable_dpcd_backlight=3" ];
   
   services.pipewire = {
     enable = true;
