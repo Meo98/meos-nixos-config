@@ -75,6 +75,9 @@
             "hfp_hf"
             "hfp_ag"
           ];
+          # AAC zuerst → AirPods spielen Audio in voller Qualität statt SBC-Fallback
+          # oder HSP/Telefonqualität. Reihenfolge = Priorität (links = bevorzugt).
+          "bluez5.codecs" = [ "aac" "sbc_xq" "sbc" "ldac" "aptx" "aptx_hd" ];
         };
         "monitor.bluez.rules" = [
           {

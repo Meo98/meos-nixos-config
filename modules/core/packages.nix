@@ -118,6 +118,10 @@ in {
       onefetch # provides zsaneyos build info on current system
       pandoc # format MD to HTML for cheatsheet parser
       pavucontrol # For Editing Audio Levels & Devices
+      pwvucontrol # Native PipeWire-Mixer — zeigt aktiven Codec, Latenz, Quantum
+      helvum # PipeWire-Graph-Editor — visuelles Debugging der BT-Routing-Chain
+      wiremix # TUI-Audio-Mixer fürs Terminal (für headless / SSH)
+      overskride # Modernes GTK4-Bluetooth-GUI (Wayland-nativ, schöner als blueman)
       easyeffects # System-weiter EQ + Audio-Effekte (inkl. RNNoise Speech Enhancement)
       pciutils # Collection Of Tools For Inspecting PCI Devices
       picard # For Changing Music Metadata & Getting Cover Art
