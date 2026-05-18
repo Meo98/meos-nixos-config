@@ -78,7 +78,7 @@
   amdgpuID = "PCI:5:0:0";
   nvidiaID = "PCI:1:0:0";
 
-  enableAffinity = false;
+  enableAffinity = true;
 
 
   # Enable NFS

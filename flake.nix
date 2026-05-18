@@ -52,7 +52,7 @@
     };
 
     affinity-nix = {
-      url = "path:/home/meo/affinity-nix-fork";
+      url = "github:mrshmllow/affinity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

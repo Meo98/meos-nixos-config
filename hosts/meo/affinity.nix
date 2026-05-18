@@ -10,18 +10,24 @@ let
 in
 lib.mkIf enabled {
 
+  # Wine braucht 32-bit Graphics-Stack für einige Affinity-Calls
   hardware.graphics.enable = lib.mkDefault true;
   hardware.graphics.enable32Bit = lib.mkDefault true;
 
-  # Affinity 3.x versucht beim Start Canva-Server zu erreichen.
-  # Ohne diesen Fix hängt der DNS-Lookup ~30s beim Startup.
+  # Affinity v3 (Canva-owned) versucht beim Start canva.com zu erreichen.
+  # Ohne diesen Block hängt der DNS-Lookup ~30s beim Startup.
   networking.extraHosts = ''
     127.0.0.1 affinity-client-config-public.canva.com
     127.0.0.1 canva.com
     127.0.0.1 api.canva.com
   '';
 
-  home-manager.users.${username}.home.packages = lib.optionals enabled [
+  # Available packages from mrshmllow/affinity-nix overlay:
+  #   pkgs.affinity-v3        — v3 unified app (current, recommended)
+  #   pkgs.affinity-photo     — v2 Photo
+  #   pkgs.affinity-designer  — v2 Designer
+  #   pkgs.affinity-publisher — v2 Publisher
+  home-manager.users.${username}.home.packages = [
     pkgs.affinity-v3
   ];
 }
