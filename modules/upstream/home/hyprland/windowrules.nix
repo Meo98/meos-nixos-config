@@ -386,12 +386,17 @@ _: {
         float = on
       }
 
+      # MODIFIED 2026-05-18: removed `no_focus = on`. Combined with Hyprland's
+      # focus_follows_mouse (default on), it caused tooltips to flicker:
+      # cursor hovers function → tooltip appears → Hyprland wants to focus it
+      # → no_focus blocks → Affinity hides tooltip → cursor still hovers →
+      # tooltip re-appears → infinite loop until user clicks.
+      # Tooltips/popups can grab focus normally now (they release on cursor leave).
       windowrule {
-        name = Affinity-child-nofocus
+        name = Affinity-child-float
         match:xwayland = 1
         match:class = ^[Aa]ffinity.*
         match:title = ^$
-        no_focus = on
         float = on
       }
 
