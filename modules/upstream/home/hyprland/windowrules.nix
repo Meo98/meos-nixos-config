@@ -375,17 +375,21 @@ _: {
         size = 65% 60%
       }
 
+      # MODIFIED 2026-05-18: regex needed `.*` suffix after Hyprland 0.54.3 made
+      # class matching strict full-match (was partial). Without it, ^([Aa]ffinity)
+      # no longer matched `affinity.exe` and popups tiled/filled the workspace
+      # instead of floating at native size.
       windowrule {
         name = Affinity-float
         match:xwayland = 1
-        match:class = ^([Aa]ffinity)
+        match:class = ^[Aa]ffinity.*
         float = on
       }
 
       windowrule {
         name = Affinity-child-nofocus
         match:xwayland = 1
-        match:class = ^([Aa]ffinity)
+        match:class = ^[Aa]ffinity.*
         match:title = ^$
         no_focus = on
         float = on
