@@ -62,7 +62,7 @@ jobs:
 
       - name: Open issue if HIGH severity found
         if: steps.scan.outputs.high != '0' && steps.scan.outputs.high != ''
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           HIGH_COUNT: ${{ steps.scan.outputs.high }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
