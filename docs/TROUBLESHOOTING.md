@@ -129,6 +129,29 @@ grep -A1 "binary =" modules/meo/trading-bot.nix
 # Update if needed, then `fr`
 ```
 
+### 5b. Affinity v3 — can't sign in to Canva account
+
+**Cause:** Known upstream limitation in `seapear/AffinityOnLinux` (the base for `mrshmllow/affinity-nix`). Canva's OAuth login flow doesn't work in the Wine sandbox. Tracked in [seapear#83](https://github.com/seapear/AffinityOnLinux/issues/83), roadmap status: `[❌] Get Canva login fixed`.
+
+**Not a fix, but verify it's THIS issue (not DNS):**
+```bash
+# /etc/hosts should ONLY contain affinity-client-config-public.canva.com.
+# If canva.com or api.canva.com are blocked too, that's the DNS bug — see commit cfbc167.
+grep canva /etc/hosts | wc -l   # should be 1
+getent hosts canva.com           # should return real IPs
+```
+
+**Workarounds (pick one):**
+
+| # | Workaround | Notes |
+|---|---|---|
+| A | Install Affinity **v2** packages instead: `pkgs.affinity-photo`, `pkgs.affinity-designer`, `pkgs.affinity-publisher` | Pre-Canva era — uses Serif license-key auth, works in Wine. Requires v2 license. |
+| B | Wait for upstream fix | seapear maintainers are working on it. Subscribe to issue #83 for notification. |
+| C | Affinity in Windows VM | Works but heavy (GPU passthrough, license complexity). |
+| D | Use Canva Web Editor for now | Limited features but available immediately, no login issues. |
+
+To add v2 packages: edit `hosts/meo/affinity.nix` `home.packages` to include `pkgs.affinity-photo` etc.
+
 ### 6. Affinity won't start / hangs ~30s
 
 **Likely causes:**
