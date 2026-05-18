@@ -86,7 +86,7 @@ nixos-config/                        # ~/nixos-config (renamed from ~/zaneyos)
 
 After fresh `nixos-install`:
 ```bash
-git clone https://github.com/Meo98/nixos-config.git ~/nixos-config
+git clone https://github.com/Meo98/meos-nixos-config.git ~/nixos-config
 cd ~/nixos-config
 sudo nixos-rebuild switch --flake .#<meo|meo-work>
 ```
