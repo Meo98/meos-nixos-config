@@ -112,7 +112,9 @@ in {
         disable_hyprland_logo = true;
         disable_splash_rendering = true;
         enable_swallow = false;
-        vfr = true;
+        # MODIFIED 2026-05-18: misc:vfr was removed in Hyprland 0.54.x (no
+        # backward compat). misc:vrr (Variable Refresh Rate) below is the
+        # remaining refresh-related option and still valid.
         vrr = 2;
       };
     };
