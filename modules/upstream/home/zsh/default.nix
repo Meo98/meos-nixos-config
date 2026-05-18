@@ -51,19 +51,20 @@
         source $HOME/.zshrc-personal
       fi
 
-      # Auto-Sync: zaneyos config mit GitHub synchronisieren
+      # MODIFIED: paths changed from ~/zaneyos to ~/nixos-config (2026-05-18 Clean Fork)
+      # Auto-Sync: nixos-config mit GitHub synchronisieren
       _zsync() {
-        echo "→ Syncing zaneyos with GitHub..."
+        echo "→ Syncing nixos-config with GitHub..."
         # Nur tracked files updaten + neue .nix/.lua/.md/.toml/.png/.jpg
-        git -C ~/zaneyos add -u
-        git -C ~/zaneyos ls-files --others --exclude-standard -- \
+        git -C ~/nixos-config add -u
+        git -C ~/nixos-config ls-files --others --exclude-standard -- \
           '*.nix' '*.lua' '*.md' '*.toml' '*.png' '*.jpg' '*.jpeg' \
-          | xargs -r git -C ~/zaneyos add --
-        if ! git -C ~/zaneyos diff --cached --quiet; then
-          git -C ~/zaneyos commit -m "chore: auto-sync from $(hostname) $(date '+%Y-%m-%d %H:%M')"
+          | xargs -r git -C ~/nixos-config add --
+        if ! git -C ~/nixos-config diff --cached --quiet; then
+          git -C ~/nixos-config commit -m "chore: auto-sync from $(hostname) $(date '+%Y-%m-%d %H:%M')"
         fi
-        git -C ~/zaneyos pull --rebase || { echo "✗ Git pull failed - resolve conflicts first"; return 1; }
-        git -C ~/zaneyos push || { echo "✗ Git push failed"; return 1; }
+        git -C ~/nixos-config pull --rebase || { echo "✗ Git pull failed - resolve conflicts first"; return 1; }
+        git -C ~/nixos-config push || { echo "✗ Git push failed"; return 1; }
         echo "✓ Sync done"
       }
     '';
