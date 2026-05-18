@@ -14,12 +14,15 @@ lib.mkIf enabled {
   hardware.graphics.enable = lib.mkDefault true;
   hardware.graphics.enable32Bit = lib.mkDefault true;
 
-  # Affinity v3 (Canva-owned) versucht beim Start canva.com zu erreichen.
-  # Ohne diesen Block hängt der DNS-Lookup ~30s beim Startup.
+  # Affinity v3 (Canva-owned) versucht beim Start einen Config-Check gegen
+  # affinity-client-config-public.canva.com — wenn der nicht resolved, hängt
+  # der Startup ~30s am DNS-Lookup. Block NUR diesen Endpoint.
+  #
+  # WICHTIG: Wir blocken NICHT canva.com oder api.canva.com — die werden für
+  # den OAuth-Login (Canva-Account) gebraucht. Mit zu breitem Block kann man
+  # sich in Affinity nicht einloggen.
   networking.extraHosts = ''
     127.0.0.1 affinity-client-config-public.canva.com
-    127.0.0.1 canva.com
-    127.0.0.1 api.canva.com
   '';
 
   # Available packages from mrshmllow/affinity-nix overlay:
