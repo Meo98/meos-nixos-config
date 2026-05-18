@@ -1,8 +1,12 @@
-{ pkgs, inputs, username, lib, ... }:
+{ pkgs, inputs, username, lib, host, ... }:
 
 let
-  vars = import ./variables.nix;
-  enabled = (vars.enableAffinity or false);
+  # Resolve variables.nix relative to the actual host being built. The `host`
+  # specialArg is set in flake.nix per host (e.g. "meo" or "meo-work"), so
+  # importing affinity.nix from a different host directory still picks up the
+  # right variables.nix.
+  hostVars = import (../. + "/${host}/variables.nix");
+  enabled = (hostVars.enableAffinity or false);
 in
 lib.mkIf enabled {
 
