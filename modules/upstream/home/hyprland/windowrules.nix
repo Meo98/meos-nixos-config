@@ -386,19 +386,15 @@ _: {
         float = on
       }
 
-      # MODIFIED 2026-05-18: removed `no_focus = on`. Combined with Hyprland's
-      # focus_follows_mouse (default on), it caused tooltips to flicker:
-      # cursor hovers function → tooltip appears → Hyprland wants to focus it
-      # → no_focus blocks → Affinity hides tooltip → cursor still hovers →
-      # tooltip re-appears → infinite loop until user clicks.
-      # Tooltips/popups can grab focus normally now (they release on cursor leave).
-      windowrule {
-        name = Affinity-child-float
-        match:xwayland = 1
-        match:class = ^[Aa]ffinity.*
-        match:title = ^$
-        float = on
-      }
+      # MODIFIED 2026-05-18: Affinity-child rule entfernt (war redundant nach
+      # regex-fix der Affinity-float rule — die matched bereits alle affinity.exe
+      # windows inkl. children). Plus die Regel verursachte zwei Bugs:
+      # 1. Submenu-Positioning: Hyprland centered floating popups ohne explizite
+      #    Position-Hint, statt dass Wine's X11-Position respektiert wird.
+      # 2. Tooltip-flicker: focus_follows_mouse + spawning xwayland-popup =
+      #    race condition zwischen Hyprland und Affinity's tooltip handler.
+      # Without this rule, child windows still inherit from Affinity-float aber
+      # Hyprland kann xwayland-native handling für override-redirect popups nutzen.
 
       windowrule {
         name = qs-extended-viewers
