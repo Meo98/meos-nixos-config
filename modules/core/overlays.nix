@@ -7,6 +7,6 @@
       awww = inputs.awww.packages.${prev.system}.default;
     })
     # affinity-nix: makes pkgs.affinity-v3 available (recommended approach)
-    # inputs.affinity-nix.overlays.default
+    inputs.affinity-nix.overlays.default
   ];
 }
