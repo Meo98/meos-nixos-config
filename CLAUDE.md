@@ -93,6 +93,9 @@ Edit `hosts/<host>/default.nix` or `hosts/<host>/variables.nix`. Don't put per-h
 
 ## When stuck
 
+**START HERE:** [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) — covers all known failure modes from the 2026-05-18 session (NH_FLAKE stale, fr alias mismatch, path-rename traps, Stylix IFD on CI, etc.) plus recovery procedures.
+
+Quick diagnostics:
 - Build errors usually point to a relative path that's wrong (check `../` count) or a stale reference to a moved file.
-- `nix flake check .` shows evaluation errors clearly.
+- `nix flake check .` works locally (cached palette) but FAILS on fresh CI due to Stylix IFD — that's why `check.yml` workflow was removed; use `build.yml` for CI validation.
 - For history of any module: `git log --follow modules/upstream/<path>` — git mv preserved history through the migration.
