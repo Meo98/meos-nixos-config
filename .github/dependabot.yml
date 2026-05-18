@@ -1,0 +1,17 @@
+version: 2
+
+updates:
+  # Keep GitHub Actions versions fresh (DeterminateSystems/*, actions/checkout, etc.)
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:00"
+    labels:
+      - automated
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: "chore"
+      include: scope

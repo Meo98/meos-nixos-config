@@ -1,0 +1,53 @@
+name: Build NixOS hosts
+
+# Builds both hosts on every PR and on push to main.
+# This is the safety net that catches "I broke something" BEFORE you run `fr`.
+# Uses Garnix + nix-community + magic-nix-cache for fast incremental builds.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Cancel in-progress builds when a PR gets new commits
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.host }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false   # if meo breaks, still try meo-work — diagnostic value
+      matrix:
+        host: [meo, meo-work]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            substituters = https://cache.nixos.org https://nix-community.cachix.org https://cache.garnix.io https://hyprland.cachix.org
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=
+      - name: Enable magic-nix-cache (Actions cache for Nix store paths)
+        uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Build host configuration
+        env:
+          HOST: ${{ matrix.host }}
+        run: |
+          nix build ".#nixosConfigurations.${HOST}.config.system.build.toplevel" \
+            --print-build-logs --show-trace
+      - name: Show closure size
+        env:
+          HOST: ${{ matrix.host }}
+        run: |
+          path=$(readlink result)
+          size=$(nix path-info -S "$path" | awk '{print $2}')
+          human=$(numfmt --to=iec --suffix=B "$size")
+          echo "::notice title=Closure size ${HOST}::${human} (${path})"

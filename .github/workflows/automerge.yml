@@ -1,0 +1,39 @@
+name: Auto-merge automated PRs
+
+# Enables GitHub's auto-merge for PRs labeled with "automerge".
+# The actual merge only happens once all required status checks pass
+# (i.e., build.yml is green for both hosts).
+#
+# DEFAULT BEHAVIOR: this workflow only fires if a PR has the `automerge` label.
+# It does NOT auto-label anything. To use:
+#
+#   1. Enable branch protection on `main` in GitHub Settings → require
+#      `Build meo` and `Build meo-work` status checks before merge.
+#   2. Add label `automerge` to a PR (or update `flake-update.yml` to add it
+#      automatically by extending its `pr-labels:` block).
+#   3. GitHub will merge it automatically once checks pass.
+#
+# SAFETY: this is OFF for the trading bot's sake. Auto-merging nixpkgs bumps
+# means the bot may need to restart on next `fr`. If that's acceptable, enable.
+# Otherwise: keep manual review.
+
+on:
+  pull_request:
+    types: [opened, labeled, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    if: contains(github.event.pull_request.labels.*.name, 'automerge')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Enable auto-merge (squash)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr merge --squash --auto "$PR_NUMBER"

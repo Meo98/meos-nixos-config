@@ -1,0 +1,64 @@
+name: Update flake inputs
+
+# Weekly automated PR with `nix flake update` results.
+# This is how Hyprland, nixpkgs, stylix and all other inputs get refreshed.
+# You merge if PR is green (build.yml passes on both hosts) — you ignore otherwise.
+#
+# Frequency: Mondays 04:00 UTC (you wake up to a fresh PR).
+# Manual trigger: Actions tab → "Update flake inputs" → "Run workflow".
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"   # Monday 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: nix flake update
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            substituters = https://cache.nixos.org https://nix-community.cachix.org https://cache.garnix.io
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=
+      - name: Update flake.lock and open PR
+        uses: DeterminateSystems/update-flake-lock@main
+        with:
+          pr-title: "chore: weekly flake update"
+          pr-labels: |
+            automated
+            dependencies
+          pr-body: |
+            ## Automatic flake input update
+
+            Triggered by weekly schedule (Monday 04:00 UTC).
+
+            ### What to check before merging:
+            1. **`build.yml`** has run and is green on both hosts (meo + meo-work).
+               If red → don't merge, investigate or close.
+            2. **`flake.lock` diff** below shows the actual version bumps —
+               particularly interesting: `nixpkgs`, `affinity-nix`, `stylix`, `noctalia`.
+            3. **Hyprland** comes via nixpkgs — its version bump is implicit in the nixpkgs bump.
+
+            ### How to inspect what changed:
+            ```bash
+            gh pr checkout <this-pr-number>
+            nix flake metadata           # shows new revisions
+            nvd diff /run/current-system result   # AFTER local build, see package diffs
+            ```
+
+            ### If something breaks after merging:
+            ```bash
+            git revert <merge-commit-sha>
+            fr
+            ```
+
+            ---
+            *Automated via `.github/workflows/flake-update.yml`*

@@ -1,0 +1,93 @@
+name: Vulnix CVE scan
+
+# Weekly vulnerability scan of meo's NixOS closure using vulnix.
+# Reports as artifact + opens issue if HIGH severity CVEs found.
+#
+# Only scans `meo` (the laptop running the trading bot — higher exposure).
+# Run manually for meo-work if needed.
+#
+# Frequency: Tuesday 08:00 UTC (different day from flake-update to spread CI load).
+
+on:
+  schedule:
+    - cron: "0 8 * * 2"   # Tuesday 08:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  scan:
+    name: vulnix scan (meo)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            substituters = https://cache.nixos.org https://nix-community.cachix.org https://cache.garnix.io
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=
+
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Build meo system
+        run: nix build .#nixosConfigurations.meo.config.system.build.toplevel --print-build-logs
+
+      - name: Run vulnix
+        id: scan
+        continue-on-error: true
+        run: |
+          # vulnix exits non-zero if issues found — we want artifact regardless
+          nix run nixpkgs#vulnix -- --json ./result > vulnix-report.json 2> vulnix-report.txt || true
+          # Count HIGH severity items
+          if [ -s vulnix-report.json ]; then
+            HIGH=$(jq '[.[] | select(.affected_by[]?.cvssv3_score >= 7.0)] | length' vulnix-report.json 2>/dev/null || echo 0)
+          else
+            HIGH=0
+          fi
+          echo "high=$HIGH" >> "$GITHUB_OUTPUT"
+          echo "Found $HIGH HIGH-severity vulnerabilities"
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulnix-report-${{ github.run_id }}
+          path: |
+            vulnix-report.json
+            vulnix-report.txt
+          retention-days: 90
+
+      - name: Open issue if HIGH severity found
+        if: steps.scan.outputs.high != '0' && steps.scan.outputs.high != ''
+        uses: actions/github-script@v7
+        env:
+          HIGH_COUNT: ${{ steps.scan.outputs.high }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const today = new Date().toISOString().slice(0, 10);
+            const body = [
+              `## ${process.env.HIGH_COUNT} HIGH-severity CVE(s) detected in meo's closure`,
+              '',
+              'See artifact `vulnix-report.json` (full machine-readable) or `vulnix-report.txt` (human-readable):',
+              process.env.RUN_URL,
+              '',
+              '### Triage',
+              '1. Download the artifact, open `vulnix-report.txt`',
+              '2. For each CVE: check if your config is actually affected (e.g., CVE in a package you don\'t use → ignore)',
+              '3. Mitigation: usually `flake-update.yml` next Monday pulls a fixed nixpkgs revision',
+              '4. Urgent? `nix flake update nixpkgs` locally and rebuild',
+              '',
+              '---',
+              '*Automated via `.github/workflows/vulnix.yml`*',
+            ].join('\n');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Security: ${process.env.HIGH_COUNT} HIGH CVE(s) in meo (${today})`,
+              body,
+              labels: ['security', 'automated'],
+            });

@@ -1,0 +1,85 @@
+name: Track upstream zaneyos
+
+# Weekly digest issue: what did upstream zaneyos commit since our last sync?
+# Helps us decide what to port into modules/upstream/ — see docs/SYNC_UPSTREAM.md.
+#
+# Frequency: Mondays 06:00 UTC (after flake-update so you do both at once).
+# Manual trigger: workflow_dispatch.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Monday 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  digest:
+    name: Generate digest
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need full history to compute "since last main sync"
+
+      - name: Fetch upstream zaneyos
+        run: |
+          git remote add zaneyos https://gitlab.com/zaney/zaneyos.git
+          git fetch zaneyos main --depth=500
+
+      - name: Compute digest
+        id: digest
+        run: |
+          # Commits upstream has that we don't, scoped to modules/ (skip docs/installer noise)
+          NEW=$(git log --oneline main..zaneyos/main -- modules/ profiles/ | head -50)
+          COUNT=$(echo "$NEW" | grep -c '^' || true)
+          if [ -z "$NEW" ] || [ "$COUNT" -eq 0 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Nothing new from upstream in modules/. Skipping issue."
+            exit 0
+          fi
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          {
+            echo 'log<<DIGESTEND'
+            echo "$NEW"
+            echo 'DIGESTEND'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create or update tracking issue
+        if: steps.digest.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        env:
+          LOG: ${{ steps.digest.outputs.log }}
+          COUNT: ${{ steps.digest.outputs.count }}
+        with:
+          script: |
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `Upstream zaneyos digest (${today})`;
+            const body = [
+              `## ${process.env.COUNT} upstream commit(s) since our last main sync`,
+              '',
+              '```',
+              process.env.LOG,
+              '```',
+              '',
+              '### Workflow',
+              '1. Open this issue → skim commit subjects',
+              '2. For each interesting commit: `git show zaneyos/<sha> -- modules/` to see the actual changes',
+              '3. Port what you want manually (paths need +1 `../`) — see `docs/SYNC_UPSTREAM.md`',
+              '4. For each ported change: mark with `# MODIFIED:` comment per CLAUDE.md',
+              '5. Close this issue when done (or leave open if partial)',
+              '',
+              '---',
+              '*Automated via `.github/workflows/track-zaneyos.yml`*',
+            ].join('\n');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['upstream-sync', 'automated'],
+            });

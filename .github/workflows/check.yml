@@ -1,0 +1,34 @@
+name: Flake check
+
+# Fast eval-only check (no builds). Catches syntax errors, broken module
+# references, missing attributes — the class of bugs that cost us multiple
+# rebuilds during the Clean Fork migration.
+#
+# Runs on every push and PR, takes ~10-30s.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: nix flake check (eval)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            substituters = https://cache.nixos.org https://nix-community.cachix.org https://cache.garnix.io
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=
+      - name: Evaluate flake
+        run: nix flake check --no-build --show-trace

@@ -1,0 +1,50 @@
+name: Lint
+
+# Static analysis on PRs and main pushes:
+# - alejandra: code formatting check (your declared formatter in flake.nix)
+# - statix: anti-pattern detection (e.g., "use inherit", "simplify attrset")
+# - deadnix: dead code detection (unused let-bindings, unused function args)
+#
+# Reports as PR check status. Non-blocking (informational only — adjust to
+# `actions/exit 1` if you want to enforce.)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: lint-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  alejandra:
+    name: alejandra (format)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - run: nix fmt -- --check . || echo "::warning::alejandra found formatting issues (run 'nix fmt' locally to fix)"
+
+  statix:
+    name: statix (anti-patterns)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - run: nix run nixpkgs#statix -- check . || echo "::warning::statix found anti-patterns (informational)"
+
+  deadnix:
+    name: deadnix (dead code)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - run: nix run nixpkgs#deadnix -- . || echo "::warning::deadnix found unused code (informational)"
