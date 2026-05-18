@@ -1,10 +1,13 @@
-{ config, pkgs, inputs, lib, ... }: {
+{ config, pkgs, inputs, lib, username, ... }: {
   imports = [
     ./hardware.nix
     ./host-packages.nix
     ./kanata.nix
     ../meo/affinity.nix
   ];
+
+  # Add our custom home-manager modules on top of modules/upstream/home/.
+  home-manager.users.${username}.imports = [ ../../modules/meo ];
 
   programs.kdeconnect.enable = true;
 

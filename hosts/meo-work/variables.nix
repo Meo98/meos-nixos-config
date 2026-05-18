@@ -62,9 +62,9 @@
   # Wallpaper & Theming
   stylixImage = ../../wallpapers/Anime-Purple-eyes.png;
 
-  waybarChoice = ../../modules/home/waybar/waybar-ddubs.nix;
+  waybarChoice = ../../modules/upstream/home/waybar/waybar-ddubs.nix;
 
-  animChoice = ../../modules/home/hyprland/animations-def.nix;
+  animChoice = ../../modules/upstream/home/hyprland/animations-def.nix;
 
   # Default Applications (Vivaldi für alles Web-bezogene)
   mimeDefaultApps = {

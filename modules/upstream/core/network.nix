@@ -1,0 +1,29 @@
+{
+  pkgs,
+  host,
+  options,
+  ...
+}: let
+  inherit (import ../../../hosts/${host}/variables.nix) hostId;
+in {
+  networking = {
+    hostName = "${host}";
+    hostId = hostId;
+    networkmanager.enable = true;
+    timeServers = options.networking.timeServers.default ++ ["pool.ntp.org"];
+    firewall = {
+      enable = true;
+      allowedTCPPorts = [
+        22     # SSH
+        59010  # KDE Connect
+        59011  # KDE Connect
+      ];
+      allowedUDPPorts = [
+        59010
+        59011
+      ];
+    };
+  };
+
+  environment.systemPackages = with pkgs; [networkmanagerapplet];
+}

@@ -1,7 +1,7 @@
 { pkgs, inputs, ... }:
   {
   nixpkgs.overlays = [
-    (import ../../modules/core/bambu.nix)
+    (import ../../modules/meo/bambu.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
   ];

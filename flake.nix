@@ -1,5 +1,5 @@
 {
-  description = "ZaneyOS Unstable";
+  description = "MeoNix — Meo's NixOS configuration (meo + meo-work hosts). Based on zaneyos modules vendored in modules/upstream/.";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -92,27 +92,19 @@
 
         modules = [
           ./hosts/${host}
-          ./modules/core/overlays.nix
-          ./profiles/${profile}
+          ./modules/upstream/core/overlays.nix
+          ./modules/upstream/profiles/${profile}
           nix-flatpak.nixosModules.nix-flatpak
         ];
       };
   in
   {
     nixosConfigurations = {
-      amd           = mkNixosConfig { profile = "amd"; };
-      nvidia        = mkNixosConfig { profile = "nvidia"; };
-      nvidia-laptop = mkNixosConfig { profile = "nvidia-laptop"; };
-      amd-hybrid    = mkNixosConfig { profile = "amd-hybrid"; };
-      amd-nvidia-hybrid = mkNixosConfig { profile = "amd-nvidia-hybrid"; };
-      intel         = mkNixosConfig { profile = "intel"; };
-      vm            = mkNixosConfig { profile = "vm"; };
-
-      # Home-PC: Nvidia Laptop
-      meo           = mkNixosConfig { profile = "nvidia-laptop"; };
+      # Home-PC: Nvidia Laptop (ASUS Zephyrus G16 GU605 — Intel Meteor Lake + NVIDIA)
+      meo      = mkNixosConfig { profile = "nvidia-laptop"; nixosTarget = "meo"; };
 
       # Arbeitslaptop: Intel i7-1165G7 + Intel Iris Xe (kein dedizierter GPU)
-      meo-work      = mkNixosConfig { host = "meo-work"; profile = "intel"; nixosTarget = "meo-work"; };
+      meo-work = mkNixosConfig { host = "meo-work"; profile = "intel"; nixosTarget = "meo-work"; };
     };
 
     devShells.${system}.default = pkgs.mkShell {
