@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: DeterminateSystems/nix-installer-action@main
       - run: nix fmt -- --check . || echo "::warning::alejandra found formatting issues (run 'nix fmt' locally to fix)"
 
@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: DeterminateSystems/nix-installer-action@main
       - run: nix run nixpkgs#statix -- check . || echo "::warning::statix found anti-patterns (informational)"
 
@@ -45,6 +45,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: DeterminateSystems/nix-installer-action@main
       - run: nix run nixpkgs#deadnix -- . || echo "::warning::deadnix found unused code (informational)"

@@ -28,7 +28,7 @@ jobs:
       matrix:
         host: [meo, meo-work]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
         with:
