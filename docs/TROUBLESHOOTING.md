@@ -189,12 +189,37 @@ git stash pop               # may have conflicts, resolve, commit
 
 **Cause:** Repo settings don't allow Actions to create PRs/issues.
 
-**Fix (in GitHub UI):**
+**Fix (preferred — one-shot via API):**
+```bash
+gh api -X PUT repos/Meo98/meos-nixos-config/actions/permissions/workflow \
+  -f default_workflow_permissions=write \
+  -F can_approve_pull_request_reviews=true
+# Verify:
+gh api repos/Meo98/meos-nixos-config/actions/permissions/workflow
+```
+
+**Fix (alternative — in GitHub UI):**
 - Settings → Actions → General → "Workflow permissions"
 - Select "Read and write permissions"
 - Check "Allow GitHub Actions to create and approve pull requests"
 
 Then re-run the failing workflow.
+
+### 9b. `flake-update.yml` fails with "Failed to fetch git repository 'https://codeberg.org/...'" or HTTP 503
+
+**Cause:** Codeberg.org is temporarily down. They have outages occasionally. Until codeberg is back, no `nix flake update` will succeed because awww input is hosted there.
+
+**Verify:**
+```bash
+curl -sI https://codeberg.org/ | head -1   # if not "HTTP/2 200" → codeberg outage
+```
+
+**Fix:** Just wait (usually hours, rarely days). Re-trigger:
+```bash
+gh workflow run "Update flake inputs" --repo Meo98/meos-nixos-config
+```
+
+**Permanent fix (only if codeberg-outages get frequent):** Replace the awww input with a github mirror in `flake.nix` — but currently awww has no official github mirror, you'd have to fork.
 
 ### 10. `flake-update.yml` PR doesn't appear on Monday morning
 
