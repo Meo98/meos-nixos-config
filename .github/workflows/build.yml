@@ -7,7 +7,13 @@ name: Build NixOS hosts
 on:
   pull_request:
   push:
-    branches: [main]
+    branches:
+      - main
+      # Auto-flake-update creates PRs but GitHub blocks workflows on
+      # GITHUB_TOKEN-created PRs (security). So also trigger on push to
+      # the branch name update-flake-lock uses, so CI runs anyway.
+      - update_flake_lock_action
+      - "update_flake_lock_action/**"
   workflow_dispatch:
 
 # Cancel in-progress builds when a PR gets new commits

@@ -10,7 +10,12 @@ name: Lint
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      # Same trick as build.yml: trigger on flake-update branch since
+      # PR events from GITHUB_TOKEN are blocked. See build.yml comment.
+      - update_flake_lock_action
+      - "update_flake_lock_action/**"
   pull_request:
   workflow_dispatch:
 
