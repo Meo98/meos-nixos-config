@@ -51,10 +51,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # affinity-nix = {
-    #   url = "path:/home/meo/affinity-nix-fork";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    affinity-nix = {
+      url = "path:/home/meo/affinity-nix-fork";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     alejandra = {
       url = "github:kamadorueda/alejandra";
