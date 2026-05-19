@@ -550,8 +550,12 @@
     prepend_keymap = [
       {
         on = "<C-p>";
-        run = "shell '$HOME/.local/bin/yazi-print %s'";
-        desc = "Print selected file(s)";
+        # MODIFIED: was $HOME/.local/bin/yazi-print (lp direct print, no dialog).
+        # Now uses Nix-installed yazi-print (modules/meo/scripts/yazi-print.nix)
+        # which opens the native GTK print dialog (yad --print) so paper size
+        # (A4/A3/...), orientation and copies can be chosen interactively.
+        run = "shell 'yazi-print %s'";
+        desc = "Open print dialog for selected file(s)";
       }
       {
         on = ["g" "i"];

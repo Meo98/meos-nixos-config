@@ -7,5 +7,6 @@
     (import ./scripts/bt-audio-switch.nix  { inherit pkgs; })
     (import ./scripts/setup-secrets.nix    { inherit pkgs; })
     (import ./scripts/travel-mode.nix      { inherit pkgs; })
+    (import ./scripts/yazi-print.nix       { inherit pkgs; })
   ];
 }
