@@ -25,11 +25,11 @@ lib.mkIf enabled {
     127.0.0.1 affinity-client-config-public.canva.com
   '';
 
-  # Available packages from mrshmllow/affinity-nix overlay:
-  #   pkgs.affinity-v3        — v3 unified app (current, recommended)
-  #   pkgs.affinity-photo     — v2 Photo
-  #   pkgs.affinity-designer  — v2 Designer
-  #   pkgs.affinity-publisher — v2 Publisher
+  # Available packages from Meo98/affinity-nix-fork overlay (siehe flake.nix):
+  #   pkgs.affinity-v3        — v3 unified app (current, recommended; gepatcht für iGPU)
+  #   pkgs.affinity-photo     — v2 Photo (upstream, ungetestet mit fork-patches)
+  #   pkgs.affinity-designer  — v2 Designer (upstream, ungetestet)
+  #   pkgs.affinity-publisher — v2 Publisher (upstream, ungetestet)
   home-manager.users.${username}.home.packages = [
     pkgs.affinity-v3
   ];

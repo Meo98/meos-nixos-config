@@ -57,7 +57,7 @@ The user runs a live Rust trading bot (Matrix Quant) on the **meo** host. It's a
 
 ### Affinity v3 setup
 
-Lives in `hosts/meo/affinity.nix`. Imported by BOTH hosts (meo-work imports `../meo/affinity.nix`). Controlled by `enableAffinity = true|false` in respective `variables.nix`. Uses `pkgs.affinity-v3` from `inputs.affinity-nix` (github:mrshmllow/affinity-nix). Requires Garnix cache (already configured in `modules/upstream/core/cachix.nix`) — without it, wine compiles locally (hours).
+Lives in `hosts/meo/affinity.nix`. Imported by BOTH hosts (meo-work imports `../meo/affinity.nix`). Controlled by `enableAffinity = true|false` in respective `variables.nix`. Uses `pkgs.affinity-v3` from `inputs.affinity-nix` — pinned to **`github:Meo98/affinity-nix-fork`** (Fork von mrshmllow/affinity-nix mit iGPU-Fixes: DXVK 2.4.1, d2d1 bezier safety patches, CanvaSignInPatch entfernt). Requires Garnix cache (already configured in `modules/upstream/core/cachix.nix`) — Fork-Derivations sind NICHT in Garnix gecached, müssen einmalig lokal kompiliert werden (wine, base-prefix-4 ≈ 20-30 Min beim ersten Build pro Host).
 
 ## Common tasks
 

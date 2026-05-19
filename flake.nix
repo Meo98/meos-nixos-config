@@ -51,8 +51,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Fork of mrshmllow/affinity-nix mit fixes für Intel Iris Xe (meo-work):
+    # - CanvaSignInPatch entfernt (fixt 0xC06D007E Startup-Crash)
+    # - d2d1.dll native lib aus v0.3.0 mit Bezier recursion/split-budget patches
+    #   (fixt Double-Click-Hang auf SVG-importierten Symbolen)
+    # - DXVK 2.4.1 zusammen mit vkd3d-proton (fixt WARP-Software-Renderer-
+    #   Fallback der CPU sättigt)
     affinity-nix = {
-      url = "github:mrshmllow/affinity-nix";
+      url = "github:Meo98/affinity-nix-fork";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
