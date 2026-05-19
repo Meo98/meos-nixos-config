@@ -6,5 +6,6 @@
     ./trading-bot.nix
     ./hyprland.nix
     ./scripts.nix
+    ./pdf-tools.nix
   ];
 }

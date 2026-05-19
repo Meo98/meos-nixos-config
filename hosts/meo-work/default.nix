@@ -102,10 +102,23 @@
       {
         name = "werkstatt";
         location = "Werkstatt";
-        deviceUri = "socket://192.168.125.210:9100";
+        # MODIFIED: socket://...:9100 (Raw JetDirect) -> ipp://...
+        # IPP liefert Job-Status, Paper-Out-Detection, Cancel-Support — Raw nicht.
+        # Falls die IP mal wechselt: kann auf mDNS umgestellt werden
+        # (ipp://KONICA-MINOLTA-bizhub-C451.local).
+        deviceUri = "ipp://192.168.125.210/ipp/print";
         model = "foomatic-db-ppds/KONICA_MINOLTA-bizhub_C451-Postscript-KONICA_MINOLTA.ppd.gz";
+        # MODIFIED: erweiterte Defaults für Office-Use. Alle Werte sind im
+        # GTK-Print-Dialog (yazi Ctrl+P) per-Job überschreibbar.
+        # Alternativen für Duplex: "None" (Simplex), "DuplexNoTumble" (Long-Edge
+        # für Briefe), "DuplexTumble" (Short-Edge für Querformat-Pläne).
         ppdOptions = {
           PageSize = "A4";
+          Duplex = "None";          # Simplex default — Pläne werden meist einseitig in Ordner abgeheftet
+          ColorModel = "Color";     # Farbdruck als default; im Dialog auf Gray umstellbar
+          InputSlot = "Tray1";      # Standardpapier-Schacht
+          # Weitere Konica-bizhub-C451 PPD-Optionen falls nötig:
+          # Collate = "True"; OutputBin = "Default"; Binding = "LeftBinding";
         };
       }
     ];
@@ -116,13 +129,17 @@
   users.users."meo".extraGroups = [ "dialout" "input" "uinput" ];
 
   # --- STANDARD ANWENDUNGEN ---
+  # MODIFIED: PDF-Default von onlyoffice auf zathura. Zathura startet in <100ms,
+  # hat eingebauten Print-Dialog (Ctrl+P), vim-Keybindings (j/k zum scrollen),
+  # und ist ~10x leichter. onlyoffice ist für Editing gemacht, nicht zum
+  # schnellen Anschauen.
   xdg.mime.defaultApplications = {
     "text/html" = "vivaldi-stable.desktop";
     "x-scheme-handler/http" = "vivaldi-stable.desktop";
     "x-scheme-handler/https" = "vivaldi-stable.desktop";
     "x-scheme-handler/about" = "vivaldi-stable.desktop";
     "x-scheme-handler/unknown" = "vivaldi-stable.desktop";
-    "application/pdf" = "onlyoffice-desktopeditors.desktop";
-    "application/x-pdf" = "onlyoffice-desktopeditors.desktop";
+    "application/pdf" = "org.pwmt.zathura.desktop";
+    "application/x-pdf" = "org.pwmt.zathura.desktop";
   };
 }
