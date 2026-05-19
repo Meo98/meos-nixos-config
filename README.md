@@ -9,6 +9,34 @@ Personal NixOS configuration for two machines:
 
 Based on the excellent [ZaneyOS](https://gitlab.com/zaney/zaneyos) configuration — vendored in `modules/upstream/` as a snapshot, and augmented with custom modules in `modules/meo/`. See [`docs/MIGRATION.md`](docs/MIGRATION.md) for why this approach and [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for how it's wired up.
 
+## Installation auf einem neuen / frisch installierten Host
+
+Voraussetzung: NixOS minimal-installation läuft schon, Flakes sind aktiviert (`nix.settings.experimental-features = [ "nix-command" "flakes" ];` in der bestehenden `/etc/nixos/configuration.nix`).
+
+```bash
+# 1. Repo nach ~/nixos-config klonen (Pfad ist HARDCODED in modules/upstream/core/nh.nix — nicht umbenennen)
+git clone https://github.com/Meo98/meos-nixos-config.git ~/nixos-config
+
+# 2. Bei NEUEM Host: hosts/<HOSTNAME>/ anlegen oder bestehendes meo/meo-work nutzen.
+#    Hostname checken: hostnamectl status | grep "Static hostname"
+
+# 3. Initial-Switch — WICHTIG: expliziten Flake-Pfad mitgeben.
+#    Ohne den Pfad nutzt nh seinen NH_FLAKE default (von der alten/installierten Config),
+#    was den Switch ins Leere laufen lässt. Klassische Henne-Ei-Falle.
+sudo nh os switch --hostname <HOSTNAME> ~/nixos-config
+# oder gleichwertig:  NH_FLAKE=$HOME/nixos-config nh os switch --hostname <HOSTNAME>
+
+# 4. Komplett ausloggen aus dem grafischen Session und neu einloggen.
+#    Grund: NH_FLAKE wird in /etc/profile.d/hm-session-vars.sh am LOGIN gesetzt,
+#    nicht beim Shell-Start. `exec zsh` reicht nicht. Reboot tut's auch.
+
+# 5. Verify:
+echo $NH_FLAKE     # → /home/<user>/nixos-config
+fr                 # smoke test, sollte in <10s clean durchlaufen
+```
+
+Falls Schritt 3 fehlschlägt mit `getting status of '/home/.../zaneyos'`: siehe [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) Sektion 3.
+
 ## Quickstart
 
 ```bash
