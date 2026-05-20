@@ -13,9 +13,7 @@
     # direkt importiert und passgenaue Cases ermöglicht.
     freecad
 
-    # Vektor-Editor für 2D-Laser (Plexiglas-Abdeckung). Importiert SVG/PDF/DXF,
-    # exportiert DXF für Laser-Cutter. Auch zum Verfeinern von KiCad-DXF-Exports.
-    inkscape
+    # (Inkscape entfernt — bei Bedarf für 2D-Laser/SVG->DXF wieder hinzufügen.)
 
     # PrusaSlicer: STL -> G-Code für den 3D-Drucker (Slicing). Falls dein
     # Drucker einen anderen Slicer braucht (Bambu/Cura), sag Bescheid.
