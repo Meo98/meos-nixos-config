@@ -7,5 +7,6 @@
     ./hyprland.nix
     ./scripts.nix
     ./pdf-tools.nix
+    ./cad-tools.nix
   ];
 }
