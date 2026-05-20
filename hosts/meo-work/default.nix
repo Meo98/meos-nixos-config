@@ -102,32 +102,28 @@
       {
         name = "werkstatt";
         location = "Werkstatt";
-        # MODIFIED: socket://...:9100 (Raw JetDirect) -> ipp://...
-        # WICHTIG: Der Drucker an dieser IP ist ein "Develop ineo+ 450i"
-        # (= Konica Minolta bizhub 450i, ~2020). Sein IPP-Endpunkt ist /ipp
-        # (NICHT /ipp/print wie IPP-Everywhere — das gibt client-error-not-found).
-        # Verifiziert via: ipptool -tv ipp://192.168.125.210/ipp get-printer-attributes.test
-        # IPP liefert Job-Status, Toner-Levels, Paper-Out-Detection.
-        # Fallback falls IPP-Druck nicht klappt: socket://192.168.125.210:9100
+        # MODIFIED: Der Drucker an dieser IP ist ein "Develop ineo+ 450i"
+        # (= Konica Minolta bizhub 450i, ~2020), NICHT der bizhub C451 für den
+        # die alte foomatic-PPD war. Die C451-PPD erzeugte PostScript, das der
+        # 450i nicht versteht -> leere Blätter.
+        #
+        # Lösung: driverless IPP Everywhere ("everywhere"). CUPS fragt den
+        # Drucker live nach seinen Fähigkeiten (er meldet: bevorzugt PDF,
+        # unterstützt URF-Raster/sRGB24) und schickt das passende Format —
+        # kein Modell-Mismatch mehr.
+        #
+        # IPP-Endpunkt ist /ipp (NICHT /ipp/print — das gibt not-found).
+        # Verifiziert: ipptool -tv ipp://192.168.125.210/ipp get-printer-attributes.test
+        # Fallback falls driverless zickt: socket://192.168.125.210:9100 (Raw).
         deviceUri = "ipp://192.168.125.210/ipp";
-        model = "foomatic-db-ppds/KONICA_MINOLTA-bizhub_C451-Postscript-KONICA_MINOLTA.ppd.gz";
-        # MODIFIED: erweiterte Defaults für Office-Use. Alle Werte sind im
-        # GTK-Print-Dialog (yazi Ctrl+P) per-Job überschreibbar.
-        # Alternativen für Duplex: "None" (Simplex), "DuplexNoTumble" (Long-Edge
-        # für Briefe), "DuplexTumble" (Short-Edge für Querformat-Pläne).
+        model = "everywhere";
+        # MODIFIED: IPP-Attribut-Namen (nicht PPD-Keywords!). Bei driverless heißen
+        # die Optionen media/sides/print-color-mode statt PageSize/Duplex/ColorModel.
+        # Alle im GTK-Print-Dialog (yazi Ctrl+P) per-Job überschreibbar.
         ppdOptions = {
-          PageSize = "A4";
-          Duplex = "None";          # Simplex default — Pläne werden meist einseitig in Ordner abgeheftet
-          ColorModel = "Color";     # Farbdruck als default; im Dialog auf Gray umstellbar
-          # InputSlot bewusst NICHT gesetzt → Bizhub Firmware-Setting "Auto Paper
-          # Select" wählt das passende Fach basierend auf PageSize. Voraussetzung:
-          # Am Bedienfeld muss Tray-Bestückung korrekt konfiguriert sein
-          # (z.B. Tray1=A4, Tray2=A3) und "Papier-Wahl = AUTO" aktiviert sein.
-          # Vorteil: Papier-Sorte in den Trays umstellbar ohne NixOS-Rebuild.
-          # Falls Bedienfeld nicht auf Auto: Drucker nutzt seinen FW-Default-Tray.
-
-          # Weitere Konica-bizhub-C451 PPD-Optionen falls nötig:
-          # Collate = "True"; OutputBin = "Default"; Binding = "LeftBinding";
+          media = "iso_a4_210x297mm";        # A4 default
+          sides = "one-sided";               # Simplex; "two-sided-long-edge" für Duplex
+          "print-color-mode" = "color";      # "monochrome" für S/W (Bindestrich-Key muss gequotet sein)
         };
       }
     ];
