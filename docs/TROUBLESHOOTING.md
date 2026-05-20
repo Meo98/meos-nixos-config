@@ -289,6 +289,56 @@ grep -n "bt-audio-monitor" modules/upstream/home/noctalia.nix
 
 ---
 
+### 13. Drucker druckt leere Blätter (oder rohen `%PDF`-Text) — Werkstatt-Drucker
+
+**WICHTIGSTE Erkenntnis zuerst:** Wenn der Werkstatt-Drucker "leer" druckt, ist
+mit **höchster Wahrscheinlichkeit das PDF zu groß fürs Papier** — NICHT der
+Drucker/CUPS/Transport kaputt. Die Affinity-Elektropläne werden im Riesenformat
+exportiert (z.B. **160×90 cm**, A0+). Ohne `fit-to-page` druckt CUPS nur eine
+leere Ecke des Plans aufs A3/A4-Blatt.
+
+**Verify (das ZUERST prüfen, bevor irgendwas am Drucker geändert wird):**
+```bash
+pdfinfo "dein-plan.pdf" | grep "Page size"
+# Wenn das viel größer als A4 (595x842 pts) / A3 (842x1191 pts) ist -> Skalierungsproblem
+```
+
+**Fix:** Mit fit-to-page drucken (ist jetzt Drucker-Default, aber bei direktem lp):
+```bash
+lp -d werkstatt -o fit-to-page -o media=A3 "dein-plan.pdf"
+```
+
+**Diagnose-Test ob der Drucker selbst OK ist** (umgeht CUPS komplett):
+```bash
+printf '%%!PS\n/Helvetica findfont 24 scalefont setfont 200 400 moveto (TEST) show showpage\n' \
+  | socat -u STDIN TCP:192.168.125.210:9100
+# Kommt ein Blatt mit "TEST" -> Drucker + PostScript funktionieren, Problem liegt woanders.
+```
+
+**Drucker-Hintergrund (wichtig, spart dir die Sackgasse die wir 2026-05-20 hatten):**
+- Der Drucker an `192.168.125.210` ist ein **Develop ineo+ 450i** (= Konica
+  Minolta bizhub 450i, ~2020), NICHT der bizhub C451 für den die foomatic-PPD ist.
+- **Transport: Raw-Socket (`socket://...:9100`) verwenden, NICHT IPP.**
+  - IPP `/ipp` + PPD → leere Blätter (IPP-PostScript-Handling des Geräts buggy)
+  - IPP driverless (`everywhere`) → roher `%PDF`-Text (PDF-Direct-Print ist eine
+    kostenpflichtige Lizenz-Option die nicht aktiviert ist)
+  - Raw-Socket + C451-PPD → druckt sauber (Gerät interpretiert rohes PostScript)
+- Toner-Status kommt trotz Raw-Socket (CUPS fragt per SNMP, transport-unabhängig):
+  `lpstat -A werkstatt`
+- **Lehre:** "Leeres Blatt" ist ein irreführendes Symptom. Erst das PDF
+  inspizieren (`pdfinfo`), DANN am Drucker debuggen. Wir haben Stunden mit
+  IPP/PPD/driverless verloren, dabei war es nur die PDF-Größe.
+
+**Drucker ist disabled ("configuration is incorrect"):**
+```bash
+lpstat -p werkstatt          # zeigt "disabled since ..."?
+sudo cupsenable werkstatt
+sudo cupsaccept werkstatt
+cancel -a werkstatt          # alte hängende Jobs leeren
+```
+
+---
+
 ## Recovery procedures
 
 ### "System won't boot" (worst case)

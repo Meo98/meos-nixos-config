@@ -111,11 +111,18 @@
         # Toner-Status kommt trotzdem (CUPS fragt per SNMP ab, transport-unabhängig).
         deviceUri = "socket://192.168.125.210:9100";
         model = "foomatic-db-ppds/KONICA_MINOLTA-bizhub_C451-Postscript-KONICA_MINOLTA.ppd.gz";
-        # PPD-Keyword-Namen (PageSize/Duplex/ColorModel), im GTK-Dialog überschreibbar.
+        # PPD-Keyword-Namen (PageSize/Duplex/ColorModel) + CUPS-job-defaults.
+        # A3 + fit-to-page als Default, weil die Affinity-Elektropläne im
+        # Riesenformat exportiert werden (z.B. 160x90 cm). Ohne fit-to-page
+        # druckt CUPS nur eine leere A4/A3-Ecke des Plans (= das berüchtigte
+        # "leere Blatt" das uns die ganze IPP-Debugging-Sackgasse beschert hat;
+        # siehe docs/TROUBLESHOOTING.md). Mit fit-to-page wird der Plan auf das
+        # Blatt skaliert. Alles im GTK-Dialog (yazi Ctrl+P) per-Job umstellbar.
         ppdOptions = {
-          PageSize = "A4";
-          Duplex = "None";          # Simplex default
-          ColorModel = "Color";     # Farbe; im Dialog auf Gray umstellbar
+          PageSize = "A3";                # A3 default — Hauptformat für Pläne
+          "fit-to-page-default" = "true";  # übergroße PDFs auf Blatt skalieren
+          Duplex = "None";                # Simplex default
+          ColorModel = "Color";           # Farbe; im Dialog auf Gray umstellbar
           # InputSlot bewusst weggelassen -> Bizhub Firmware-"Auto Paper Select"
           # wählt das Fach (falls am Bedienfeld aktiviert).
         };
