@@ -102,28 +102,22 @@
       {
         name = "werkstatt";
         location = "Werkstatt";
-        # MODIFIED: Der Drucker an dieser IP ist ein "Develop ineo+ 450i"
-        # (= Konica Minolta bizhub 450i, ~2020), NICHT der bizhub C451 für den
-        # die alte foomatic-PPD war. Die C451-PPD erzeugte PostScript, das der
-        # 450i nicht versteht -> leere Blätter.
-        #
-        # Lösung: driverless IPP Everywhere ("everywhere"). CUPS fragt den
-        # Drucker live nach seinen Fähigkeiten (er meldet: bevorzugt PDF,
-        # unterstützt URF-Raster/sRGB24) und schickt das passende Format —
-        # kein Modell-Mismatch mehr.
-        #
-        # IPP-Endpunkt ist /ipp (NICHT /ipp/print — das gibt not-found).
-        # Verifiziert: ipptool -tv ipp://192.168.125.210/ipp get-printer-attributes.test
-        # Fallback falls driverless zickt: socket://192.168.125.210:9100 (Raw).
-        deviceUri = "ipp://192.168.125.210/ipp";
-        model = "everywhere";
-        # MODIFIED: IPP-Attribut-Namen (nicht PPD-Keywords!). Bei driverless heißen
-        # die Optionen media/sides/print-color-mode statt PageSize/Duplex/ColorModel.
-        # Alle im GTK-Print-Dialog (yazi Ctrl+P) per-Job überschreibbar.
+        # Der Drucker ist ein "Develop ineo+ 450i" (= Konica Minolta bizhub 450i).
+        # Erkenntnisse aus Debugging (2026-05-20):
+        #   - IPP /ipp + PPD     -> leeres Blatt (IPP-PostScript-Handling kaputt)
+        #   - IPP everywhere/PDF -> roher %PDF-Text (PDF-Direct nicht lizenziert)
+        #   - Raw-Socket + PPD   -> druckt sauber (Drucker liest rohes PostScript)
+        # => Raw-Socket ist der zuverlässige Transport für dieses Gerät.
+        # Toner-Status kommt trotzdem (CUPS fragt per SNMP ab, transport-unabhängig).
+        deviceUri = "socket://192.168.125.210:9100";
+        model = "foomatic-db-ppds/KONICA_MINOLTA-bizhub_C451-Postscript-KONICA_MINOLTA.ppd.gz";
+        # PPD-Keyword-Namen (PageSize/Duplex/ColorModel), im GTK-Dialog überschreibbar.
         ppdOptions = {
-          media = "iso_a4_210x297mm";        # A4 default
-          sides = "one-sided";               # Simplex; "two-sided-long-edge" für Duplex
-          "print-color-mode" = "color";      # "monochrome" für S/W (Bindestrich-Key muss gequotet sein)
+          PageSize = "A4";
+          Duplex = "None";          # Simplex default
+          ColorModel = "Color";     # Farbe; im Dialog auf Gray umstellbar
+          # InputSlot bewusst weggelassen -> Bizhub Firmware-"Auto Paper Select"
+          # wählt das Fach (falls am Bedienfeld aktiviert).
         };
       }
     ];
