@@ -61,6 +61,35 @@ KRAKEN_EOF
     ERRORS="$ERRORS\n  - \"Kraken API\" (Username = API key, Password = API secret)"
   fi
 
+  # --- Obsidian Stack CouchDB → services/.env ---
+  OBSIDIAN_USER=$(bw get username "Obsidian_Printbrigata" --session "$BW_SESSION" 2>/dev/null || echo "")
+  OBSIDIAN_PW=$(bw get password "Obsidian_Printbrigata" --session "$BW_SESSION" 2>/dev/null || echo "")
+
+  if [ -n "$OBSIDIAN_USER" ] && [ -n "$OBSIDIAN_PW" ]; then
+    OBSIDIAN_DIR="$HOME/obsidian-stack"
+    if [ -d "$OBSIDIAN_DIR" ]; then
+      ENV_FILE="$OBSIDIAN_DIR/services/.env"
+      # If .env doesn't exist, seed from .env.example so other vars remain
+      if [ ! -f "$ENV_FILE" ] && [ -f "$OBSIDIAN_DIR/services/.env.example" ]; then
+        cp "$OBSIDIAN_DIR/services/.env.example" "$ENV_FILE"
+      fi
+      # Idempotent: remove old COUCHDB_* lines, then append fresh
+      if [ -f "$ENV_FILE" ]; then
+        ${pkgs.gnused}/bin/sed -i -e '/^COUCHDB_USER=/d' -e '/^COUCHDB_PASSWORD=/d' "$ENV_FILE"
+      else
+        touch "$ENV_FILE"
+      fi
+      {
+        echo "COUCHDB_USER=$OBSIDIAN_USER"
+        echo "COUCHDB_PASSWORD=$OBSIDIAN_PW"
+      } >> "$ENV_FILE"
+      chmod 600 "$ENV_FILE"
+      echo "  Obsidian CouchDB credentials → $ENV_FILE"
+    fi
+  else
+    ERRORS="$ERRORS\n  - \"Obsidian_Printbrigata\" (Username = Admin_Pb, Password = <your strong password>)"
+  fi
+
   # --- Write shell secrets file ---
   {
     echo "# Local secrets – managed by setup-secrets, do not commit"
