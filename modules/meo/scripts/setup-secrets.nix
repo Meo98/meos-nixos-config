@@ -29,18 +29,35 @@ pkgs.writeShellScriptBin "setup-secrets" ''
     exit 1
   fi
 
-  echo "Fetching secrets from Bitwarden..."
+  # --- Fetch ALL items in ONE bw call (much faster than per-item get) ---
+  echo "Fetching items from Bitwarden (one call instead of N)..."
+  ITEMS=$(bw list items --session "$BW_SESSION" 2>/dev/null || echo "")
+  if [ -z "$ITEMS" ] || [ "$ITEMS" = "null" ]; then
+    echo "Failed to fetch items from Bitwarden. Try: bw sync"
+    exit 1
+  fi
+
+  # Helpers: extract username/password by item name (case-sensitive, first match)
+  get_password() {
+    printf '%s' "$ITEMS" | $JQ -r --arg n "$1" \
+      '.[] | select(.name == $n) | .login.password // ""' | head -n1
+  }
+  get_username() {
+    printf '%s' "$ITEMS" | $JQ -r --arg n "$1" \
+      '.[] | select(.name == $n) | .login.username // ""' | head -n1
+  }
+
   ERRORS=""
 
   # --- Notion API Token ---
-  NOTION_TOKEN=$(bw get password "Notion API Token" --session "$BW_SESSION" 2>/dev/null || echo "")
+  NOTION_TOKEN=$(get_password "Notion API Token")
   if [ -z "$NOTION_TOKEN" ]; then
     ERRORS="$ERRORS\n  - \"Notion API Token\" (Password = ntn_...)"
   fi
 
   # --- Kraken API Keys → config.json ---
-  KRAKEN_KEY=$(bw get username "Kraken API" --session "$BW_SESSION" 2>/dev/null || echo "")
-  KRAKEN_SECRET=$(bw get password "Kraken API" --session "$BW_SESSION" 2>/dev/null || echo "")
+  KRAKEN_KEY=$(get_username "Kraken API")
+  KRAKEN_SECRET=$(get_password "Kraken API")
 
   if [ -n "$KRAKEN_KEY" ] && [ -n "$KRAKEN_SECRET" ]; then
     TRADING_DIR="$HOME/quant-trading-bot"
@@ -62,8 +79,8 @@ KRAKEN_EOF
   fi
 
   # --- Obsidian Stack CouchDB → services/.env ---
-  OBSIDIAN_USER=$(bw get username "Obsidian_Printbrigata" --session "$BW_SESSION" 2>/dev/null || echo "")
-  OBSIDIAN_PW=$(bw get password "Obsidian_Printbrigata" --session "$BW_SESSION" 2>/dev/null || echo "")
+  OBSIDIAN_USER=$(get_username "Obsidian_Printbrigata")
+  OBSIDIAN_PW=$(get_password "Obsidian_Printbrigata")
 
   if [ -n "$OBSIDIAN_USER" ] && [ -n "$OBSIDIAN_PW" ]; then
     OBSIDIAN_DIR="$HOME/obsidian-stack"
