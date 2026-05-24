@@ -46,6 +46,7 @@
     onlyoffice-desktopeditors # Office-Suite mit sehr hoher Kompatibilität zu MS Office-Formaten
     insync                    # Synchronisations-Client für Google Drive und OneDrive
     kicad                     # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
+    obsidian                  # Markdown-Note-Editor + Vault für obsidian-stack Projekt
 
     # --- Entwicklung & System-Tools ---
     nodejs                    # JavaScript-Laufzeitumgebung für Server- und Frontend-Entwicklung
