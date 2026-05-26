@@ -18,5 +18,15 @@
     # PrusaSlicer: STL -> G-Code für den 3D-Drucker (Slicing). Falls dein
     # Drucker einen anderen Slicer braucht (Bambu/Cura), sag Bescheid.
     prusa-slicer
+
+    # Python mit OpenCascade-Bindings für code-basierte parametrische CAD.
+    # pythonocc-core ist die Library auf der CadQuery basiert — gleicher
+    # B-Rep-Kernel wie FreeCAD. Kann STEP direkt lesen, echte Fillets/
+    # Chamfers, schnelle Boolean-Ops auf B-Rep (statt langsam auf Mesh).
+    # Workflow: case_v3.py → STEP/STL Export → PrusaSlicer → Drucker.
+    (python3.withPackages (ps: with ps; [
+      pythonocc-core
+      numpy
+    ]))
   ];
 }
