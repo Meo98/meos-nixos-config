@@ -10,11 +10,14 @@
     };
 
     stylix = {
-      # Bleibt vorerst auf github: (kein git+https-Workaround), weil
-      # 2026-06-05-Version Breaking-Changes hat (gtk4.theme conflict +
-      # services.kmscon.config -> extraConfig rename). Beim naechsten
-      # Stylix-Release umstellen.
-      url = "github:danth/stylix";
+      # PINNED auf 2026-05-14-Version (e8ea85b...), weil die naechste Version
+      # (2026-06-05, 3a02d9f...) Breaking-Changes hat:
+      #   1. gtk.gtk4.theme = config.gtk.theme  (Konflikt mit upstream/home/gtk.nix)
+      #   2. services.kmscon.config             (in nixpkgs zu .extraConfig umbenannt)
+      # Explizite SHA in URL = `nix flake update` (und damit `nh os switch --update`)
+      # IGNORIERT diesen Input. Beim naechsten Stylix-Release den SHA entfernen
+      # oder auf 'git+https://github.com/danth/stylix.git' umstellen.
+      url = "github:danth/stylix/e8ea85b4f7dddda9603e0f1ac86cd92cee3b2819";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
