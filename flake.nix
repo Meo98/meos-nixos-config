@@ -5,11 +5,15 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "git+https://github.com/nix-community/home-manager.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     stylix = {
+      # Bleibt vorerst auf github: (kein git+https-Workaround), weil
+      # 2026-06-05-Version Breaking-Changes hat (gtk4.theme conflict +
+      # services.kmscon.config -> extraConfig rename). Beim naechsten
+      # Stylix-Release umstellen.
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -17,18 +21,20 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak?ref=latest";
 
     nvf = {
-      url = "github:notashelf/nvf";
+      url = "git+https://github.com/notashelf/nvf.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixvim = {
-      url = "github:nix-community/nixvim";
+      url = "git+https://github.com/nix-community/nixvim.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
+      url = "git+https://github.com/noctalia-dev/noctalia-shell.git";
       inputs.nixpkgs.follows = "nixpkgs";
+      # Sub-Input-Override: noctalia-qs auch via git+https statt /archive/-Endpoint
+      inputs.noctalia-qs.url = "git+https://github.com/noctalia-dev/noctalia-qs.git";
     };
 
     quickshell = {
@@ -47,7 +53,7 @@
     };
 
     zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake/beta";
+      url = "git+https://github.com/0xc000022070/zen-browser-flake.git?ref=beta";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -58,17 +64,17 @@
     # - DXVK 2.4.1 zusammen mit vkd3d-proton (fixt WARP-Software-Renderer-
     #   Fallback der CPU sättigt)
     affinity-nix = {
-      url = "github:Meo98/affinity-nix-fork";
+      url = "git+https://github.com/Meo98/affinity-nix-fork.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     alejandra = {
-      url = "github:kamadorueda/alejandra";
+      url = "git+https://github.com/kamadorueda/alejandra.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     sddm-noctalia = {
-      url = "github:mahaveergurjar/sddm/noctalia";
+      url = "git+https://github.com/mahaveergurjar/sddm.git?ref=noctalia";
       flake = false;
     };
 

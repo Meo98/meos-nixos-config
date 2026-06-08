@@ -5,6 +5,7 @@
     ./kanata.nix
     ./affinity.nix
     ../../modules/meo/hyprland-gpu-smart.nix
+    ../../modules/meo/stylix-pin-warning.nix
   ];
 
   # Add our custom home-manager modules on top of modules/upstream/home/.
