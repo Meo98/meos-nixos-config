@@ -1,4 +1,8 @@
-{lib, ...}:
+{lib, ...}: let
+  # Catppuccin Mocha statt Stylix-Farben (User-Wunsch).
+  # Stylix's nixvim-Target wird deaktiviert, damit das in nixvim.nix
+  # konfigurierte 'colorschemes.catppuccin' nicht von Stylix ueberschrieben wird.
+in
 # Erweiterungen zum upstream-nixvim-Setup
 # (modules/upstream/home/editors/nixvim.nix hat schon 30+ Plugins).
 #
@@ -12,6 +16,11 @@
 #   5. Center-cursor nach Scroll/Search (zz auto)
 #   6. EDITOR=nvim als Session-Variable (ueberschreibt evil-helix.nix)
 {
+  # ============================================================
+  # 0) Stylix-Override fuer nvim deaktivieren (Catppuccin Mocha behalten)
+  # ============================================================
+  stylix.targets.nixvim.enable = false;
+
   # ============================================================
   # 1) Default-Editor auf nvim (kombiniert mit hyprland/env.nix)
   # ============================================================
@@ -90,9 +99,11 @@
       render-markdown = {
         enable = true;
         settings = {
+          # Sign-Spalte abschalten (kein "H1"/"H2" links neben dem Heading)
+          sign = {enabled = false;};
           heading = {
             icons = ["󰉫 " "󰉬 " "󰉭 " "󰉮 " "󰉯 " "󰉰 "];
-            sign = false;
+            position = "overlay";
           };
           code = {
             style = "language";
