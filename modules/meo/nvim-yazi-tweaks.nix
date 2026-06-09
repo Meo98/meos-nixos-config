@@ -44,13 +44,18 @@
       updatetime = lib.mkForce 100;
       timeoutlen = 300;
 
-      # Schoenere Window-Borders + Trennlinien
+      # Schoenere Window-Borders + Trennlinien.
+      # Wichtig: fillchars-Werte muessen einzelne Grapheme sein.
+      # Nerd-Font-Icons koennen je nach Terminal/Font als 0 oder >1
+      # Grapheme zaehlen -> E1511. Daher hier portable Unicode-Box-
+      # Drawing-Chars die in jedem monospace-Font ein einzelnes
+      # Zeichen sind.
       fillchars = {
         eob = " ";
         fold = " ";
-        foldopen = "";
+        foldopen = "▾";
         foldsep = " ";
-        foldclose = "";
+        foldclose = "▸";
       };
 
       # List/Whitespace-Indikatoren (nur subtle)
