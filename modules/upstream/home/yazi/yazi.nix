@@ -145,9 +145,12 @@
           name = "*/";
           use = ["edit" "open" "reveal"];
         }
+        # MODIFIED: edit zuerst (-> nvim mit render-markdown), markdown (glow)
+        # als 2. Option fuer reinen Read-Only Preview. Siehe
+        # modules/meo/nvim-yazi-tweaks.nix
         {
           name = "*.{md,markdown}";
-          use = ["markdown" "edit" "reveal"];
+          use = ["edit" "markdown" "reveal"];
         }
         {
           mime = "text/*";

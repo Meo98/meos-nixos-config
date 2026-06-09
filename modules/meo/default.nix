@@ -8,5 +8,6 @@
     ./scripts.nix
     ./pdf-tools.nix
     ./cad-tools.nix
+    ./nvim-yazi-tweaks.nix
   ];
 }
