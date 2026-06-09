@@ -49,6 +49,10 @@ in
       ignorecase = true;
       smartcase = true;
 
+      # Spell-Check mehrsprachig (DE + EN). Upstream nixvim.nix setzt nur "en"
+      # was deutsche Texte komplett rot unterstreicht.
+      spelllang = lib.mkForce ["en" "de"];
+
       # Schneller diagnostic updates
       updatetime = lib.mkForce 100;
       timeoutlen = 300;
