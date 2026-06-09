@@ -38,7 +38,12 @@
       ];
       edit = [
         {
-          run = ''${"EDITOR:-vi"} "$@"'';
+          # MODIFIED: Nix-Antiquotation-Bug gefixt. Original war
+          #   run = ''${"EDITOR:-vi"} "$@"'';
+          # Das setzt den Nix-Literal "EDITOR:-vi" ohne ${...} Wrapper ein
+          # -> shell sucht einen Befehl namens "EDITOR:-vi" -> fail.
+          # ''${...} escaped das Dollar, damit shell-Substitution erhalten bleibt.
+          run = ''''${EDITOR:-vi} "$@"'';
           desc = "$EDITOR";
           block = true;
           for = "unix";
