@@ -9,5 +9,6 @@
     ./pdf-tools.nix
     ./cad-tools.nix
     ./nvim-yazi-tweaks.nix
+    ./bun.nix
   ];
 }
