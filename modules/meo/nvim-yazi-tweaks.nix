@@ -179,6 +179,10 @@ in
       # Besseres UI fuer vim.ui.input/select (rename, code-action, etc.)
       dressing.enable = true;
 
+      # Lualine theme-name fix: "catppuccin" -> "catppuccin-mocha"
+      # (neuere Catppuccin-Version hat Flavour als Suffix im Theme-Namen)
+      lualine.settings.options.theme = lib.mkForce "catppuccin-mocha";
+
       # Schnellere telescope-Suche
       telescope = {
         extensions = {
