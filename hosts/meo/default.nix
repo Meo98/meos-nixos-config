@@ -82,6 +82,14 @@
     SUBSYSTEM=="usb", ATTRS{idVendor}=="3434", TAG+="uaccess"
   '';
 
+  # MODIFIED 2026-06-12: hypridle ist als pkgs.hypridle über einen flake-input
+  # in environment.systemPackages drin (Quelle nicht eindeutig — vermutlich
+  # hyprland-meta-default). Das Package shipt sein Unit mit [Install]
+  # WantedBy=graphical-session.target, NixOS legt automatisch den wants-Symlink
+  # an → ohne Override würde hypridle bei jedem Boot wieder hochkommen und mit
+  # Noctalia v5's idle daemon racen. mkForce [] kappt nur den Auto-Start.
+  systemd.user.services.hypridle.wantedBy = lib.mkForce [];
+
   # --- LOGIND: Lid-Close ignorieren, Idle/Suspend nur über Noctalia v5 ---
   services.logind = {
     lidSwitch = "ignore";

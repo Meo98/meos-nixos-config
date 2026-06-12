@@ -11,6 +11,10 @@
 
   programs.kdeconnect.enable = true;
 
+  # MODIFIED 2026-06-12: hypridle Auto-Start kappen — Noctalia v5 macht idle
+  # alleine, sonst race. Siehe Begründung in hosts/meo/default.nix.
+  systemd.user.services.hypridle.wantedBy = lib.mkForce [];
+
   # --- AUTOMOUNTING ---
   services.udisks2.enable = true;
   environment.systemPackages = [ pkgs.udiskie ];
