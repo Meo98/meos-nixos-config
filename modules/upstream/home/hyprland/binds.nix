@@ -7,20 +7,27 @@
     terminal
     ;
   # Noctalia-specific bindings (only included when barChoice == "noctalia")
+  # MODIFIED 2026-06-12: Noctalia v5 IPC syntax. v4 used the binary
+  # `noctalia-shell ipc call <module> <action>`. v5 renames the binary to
+  # `noctalia` and replaces module/action with `msg <command>` plus a generic
+  # `panel-toggle <id> [context]` dispatcher (verified against
+  # src/shell/panel/panel_manager.cpp). Notifications-history is now a tab
+  # inside the control-center, opened via context arg. screenRecorder was
+  # removed in v5 with no IPC replacement; binding is dropped until/unless
+  # v5 reimplements it.
   noctaliaBind =
     if barChoice == "noctalia"
     then [
-      "$modifier,D, Noctalia Launcher, exec, noctalia-shell ipc call launcher toggle"
-      "$modifier SHIFT,Return, Noctalia Launcher, exec, noctalia-shell ipc call launcher toggle"
-      "$modifier,M, Noctalia Notifications, exec,  noctalia-shell ipc call notifications toggleHistory"
-      "$modifier,V, Noctalia Clipboard, exec,  noctalia-shell ipc call launcher clipboard"
-      "$modifier ALT,P, Noctalia Settings, exec, noctalia-shell ipc call settings toggle"
-      "$modifier SHIFT,comma, Noctalia Settings, exec, noctalia-shell ipc call settings toggle"
-      "$modifier ALT,L, Noctalia Lock Screen, exec,  noctalia-shell ipc call sessionMenu lockAndSuspend"
-      "$modifier SHIFT,W, Noctalia Wallpaper, exec, noctalia-shell ipc call wallpaper toggle"
-      "$modifier,X, Noctalia Power Menu, exec,  noctalia-shell ipc call sessionMenu toggle"
-      "$modifier,C, Noctalia Control Center, exec,  noctalia-shell ipc call controlCenter toggle"
-      "$modifier CTRL,R, Noctalia Screen Recorder, exec,  noctalia-shell ipc call screenRecorder toggle"
+      "$modifier,D, Noctalia Launcher, exec, noctalia msg panel-toggle launcher"
+      "$modifier SHIFT,Return, Noctalia Launcher, exec, noctalia msg panel-toggle launcher"
+      "$modifier,M, Noctalia Notifications, exec, noctalia msg panel-toggle control-center notifications"
+      "$modifier,V, Noctalia Clipboard, exec, noctalia msg panel-toggle clipboard"
+      "$modifier ALT,P, Noctalia Settings, exec, noctalia msg settings-toggle"
+      "$modifier SHIFT,comma, Noctalia Settings, exec, noctalia msg settings-toggle"
+      "$modifier ALT,L, Noctalia Lock Screen, exec, noctalia msg session lock-and-suspend"
+      "$modifier SHIFT,W, Noctalia Wallpaper, exec, noctalia msg panel-toggle wallpaper"
+      "$modifier,X, Noctalia Power Menu, exec, noctalia msg panel-toggle session"
+      "$modifier,C, Noctalia Control Center, exec, noctalia msg panel-toggle control-center"
     ]
     else [];
   # Rofi launcher bindings (only included when barChoice != "noctalia")

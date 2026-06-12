@@ -1,21 +1,149 @@
+# MODIFIED: 2026-06-12 — full rewrite for Noctalia v5 (alpha).
+# v5 is a native C++ Wayland shell, no Qt/Quickshell, config is TOML at
+# ~/.config/noctalia/config.toml. The official home-manager module from
+# inputs.noctalia.homeModules.default handles the systemd service, package,
+# and TOML generation. Previously this file:
+#   - ran a custom systemd-user-service pointing at bin/noctalia-shell
+#   - seeded a QML config tree into ~/.config/quickshell/noctalia-shell/
+#   - sed-patched AudioService.qml to call `wpctl set-default` after sink change
+# All three are obsolete in v5: binary is now `noctalia`, there is no QML tree,
+# and v5 sets the pipewire default-sink natively via pw_metadata (see
+# src/pipewire/pipewire_service.cpp upstream).
 {
   pkgs,
   inputs,
-  lib,
   ...
 }: let
-  system = pkgs.stdenv.hostPlatform.system;
-  noctaliaPkg = inputs.noctalia.packages.${system}.default;
-  configDir = "${noctaliaPkg}/share/noctalia-shell";
   bt-audio-monitor = import ../../meo/scripts/bt-audio-monitor.nix {inherit pkgs;};
 in {
-  # Install the Noctalia package
-  home.packages = [
-    noctaliaPkg
-    pkgs.quickshell # Ensure quickshell is available for the service
+  imports = [
+    inputs.noctalia.homeModules.default
   ];
 
-  # Monitor Hot-Plug: Layout wiederherstellen wenn Bildschirm angeschlossen wird
+  programs.noctalia = {
+    enable = true;
+    systemd.enable = true;
+
+    # Boot-defaults. The TOML is hot-reloaded by the daemon; runtime edits via
+    # the Settings UI write back to ~/.config/noctalia/config.toml. Keep this
+    # attrset to the values that must be correct on first boot or rebuild —
+    # use the GUI for fine-tuning the rest. Validated against v5's example.toml
+    # schema and noctalia config validate.
+    settings = {
+      theme = {
+        mode = "dark";
+        source = "builtin";
+        builtin = "Dracula";
+      };
+
+      shell = {
+        font_family = "JetBrains Mono";
+        ui_scale = 1.05;
+        corner_radius_scale = 1.09;
+        time_format = "{:%H:%M}";
+        avatar_path = "~/.face.icon";
+        polkit_agent = true;
+        clipboard_enabled = true;
+        clipboard_history_max_entries = 100;
+      };
+
+      shell.animation = {
+        enabled = true;
+        speed = 1.0;
+      };
+
+      bar.main = {
+        position = "top";
+        background_opacity = 0.56;
+        radius = 12;
+        margin_h = 15;
+        margin_v = 5;
+        widget_spacing = 6;
+        capsule = true;
+        capsule_opacity = 0.39;
+        shadow = true;
+        reserve_space = true;
+      };
+
+      wallpaper = {
+        enabled = true;
+        directory = "~/Pictures/Wallpapers";
+        fill_mode = "crop";
+        transition_duration = 1500;
+      };
+
+      wallpaper.automation = {
+        enabled = true;
+        interval_minutes = 5;
+        order = "random";
+        recursive = true;
+      };
+
+      location = {
+        auto_locate = false;
+        address = "Zürich";
+      };
+
+      nightlight = {
+        enabled = false;
+        temperature_day = 6500;
+        temperature_night = 4000;
+      };
+
+      dock = {
+        enabled = true;
+        position = "bottom";
+        pinned = ["vivaldi-stable" "antigravity" "tidal-hifi"];
+      };
+
+      notification = {
+        enable_daemon = true;
+        show_app_name = true;
+        show_actions = true;
+        layer = "top";
+        background_opacity = 0.91;
+      };
+
+      osd = {
+        position = "top_right";
+        background_opacity = 1.0;
+      };
+
+      lockscreen = {
+        enabled = true;
+      };
+
+      audio = {
+        enable_overdrive = true;
+      };
+
+      brightness = {
+        enable_ddcutil = true;
+      };
+
+      idle.behavior.lock = {
+        enabled = true;
+        timeout = 660;
+        command = "noctalia:session lock";
+      };
+
+      idle.behavior."screen-off" = {
+        enabled = true;
+        timeout = 600;
+        command = "noctalia:dpms-off";
+        resume_command = "noctalia:dpms-on";
+      };
+
+      weather = {
+        enabled = true;
+        unit = "celsius";
+        effects = true;
+      };
+    };
+  };
+
+  # Monitor Hot-Plug: Layout wiederherstellen wenn Bildschirm angeschlossen wird.
+  # Orthogonal to Noctalia — keeps Hyprland's monitor layout sane on hotplug.
   home.file.".local/bin/hypr-monitor-hotplug" = {
     executable = true;
     text = ''
@@ -38,8 +166,8 @@ in {
   systemd.user.services.hyprland-monitor-hotplug = {
     Unit = {
       Description = "Restore Hyprland monitor layout on hotplug";
-      After = [ "graphical-session.target" ];
-      PartOf = [ "graphical-session.target" ];
+      After = ["graphical-session.target"];
+      PartOf = ["graphical-session.target"];
     };
     Service = {
       Type = "simple";
@@ -47,16 +175,17 @@ in {
       Restart = "on-failure";
       RestartSec = "3s";
     };
-    Install.WantedBy = [ "graphical-session.target" ];
+    Install.WantedBy = ["graphical-session.target"];
   };
 
   # Bluetooth audio auto-switch: lauscht auf BT-Connect-Events und routet
   # Audio automatisch auf das verbindende Gerät um (wie macOS/Windows).
+  # Orthogonal to Noctalia.
   systemd.user.services.bt-audio-monitor = {
     Unit = {
       Description = "Bluetooth audio auto-switch monitor";
-      After = [ "graphical-session.target" "pipewire.service" ];
-      PartOf = [ "graphical-session.target" ];
+      After = ["graphical-session.target" "pipewire.service"];
+      PartOf = ["graphical-session.target"];
     };
     Service = {
       Type = "simple";
@@ -64,65 +193,6 @@ in {
       Restart = "on-failure";
       RestartSec = "5s";
     };
-    Install.WantedBy = [ "graphical-session.target" ];
+    Install.WantedBy = ["graphical-session.target"];
   };
-
-  # Systemd user service — startet noctalia automatisch und nach jedem rebuild neu
-  systemd.user.services.noctalia-shell = {
-    Unit = {
-      Description = "Noctalia Shell Bar";
-      After = [ "graphical-session.target" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Service = {
-      ExecStartPre = "/bin/sh -c 'pkill -f \"quickshell$\" || true'";
-      ExecStart = "${noctaliaPkg}/bin/noctalia-shell";
-      Restart = "on-failure";
-      RestartSec = "2s";
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
-
-  # Seed the configuration when the noctalia package version changes.
-  home.activation.seedNoctaliaShellCode = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    set -eu
-    DEST="$HOME/.config/quickshell/noctalia-shell"
-    SRC="${configDir}"
-    VERSION_MARKER="$DEST/.noctalia-nix-version"
-    CURRENT_VERSION="${noctaliaPkg}"
-
-    if [ ! -d "$DEST" ] || [ ! -f "$VERSION_MARKER" ] || [ "$(cat "$VERSION_MARKER" 2>/dev/null)" != "$CURRENT_VERSION" ]; then
-      $DRY_RUN_CMD rm -rf "$DEST"
-      $DRY_RUN_CMD mkdir -p "$HOME/.config/quickshell"
-      $DRY_RUN_CMD cp -R "$SRC" "$DEST"
-      $DRY_RUN_CMD chmod -R u+rwX "$DEST"
-      $DRY_RUN_CMD sh -c "echo '$CURRENT_VERSION' > '$VERSION_MARKER'"
-    fi
-  '';
-
-  # Patch Noctalia's AudioService.qml so that clicking a device in the audio
-  # panel ALSO updates WirePlumber's system-wide default sink (via wpctl),
-  # not just Quickshell's internal preference. Without this, other apps
-  # (Tidal, browsers, …) ignore Noctalia's selection. Idempotent — uses a
-  # marker comment to detect prior patches and skip re-patching.
-  home.activation.patchNoctaliaAudioService = lib.hm.dag.entryAfter ["seedNoctaliaShellCode"] ''
-    set -eu
-    QML="$HOME/.config/quickshell/noctalia-shell/Services/Media/AudioService.qml"
-    MARKER="// PATCH: zaneyos wpctl set-default"
-
-    if [ -f "$QML" ] && ! ${pkgs.gnugrep}/bin/grep -qF "$MARKER" "$QML"; then
-      $DRY_RUN_CMD ${pkgs.gnused}/bin/sed -i \
-        -e '/Pipewire\.preferredDefaultAudioSink = newSink;/a\    if (newSink) Quickshell.execDetached(["wpctl", "set-default", String(newSink.id)]); '"$MARKER" \
-        -e '/Pipewire\.preferredDefaultAudioSource = newSource;/a\    if (newSource) Quickshell.execDetached(["wpctl", "set-default", String(newSource.id)]); '"$MARKER" \
-        "$QML"
-    fi
-  '';
-
-  # After every rebuild, reload systemd and restart noctalia so the running
-  # quickshell binary always matches the IPC client. quickshell can update
-  # independently of the noctalia package (separate flake input), so a
-  # version-marker check alone is not enough.
-  home.activation.restartNoctaliaService = lib.hm.dag.entryAfter ["patchNoctaliaAudioService"] ''
-    $DRY_RUN_CMD sh -c "systemctl --user daemon-reload && systemctl --user restart noctalia-shell || true"
-  '';
 }

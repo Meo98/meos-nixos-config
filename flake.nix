@@ -26,11 +26,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # 2026-06-12: repo renamed upstream (noctalia-shell → noctalia) for the v5
+    # rewrite. v5 is a native C++ Wayland shell (no Qt/Quickshell). The official
+    # home-manager module lives at inputs.noctalia.homeModules.default and
+    # generates ~/.config/noctalia/config.toml from programs.noctalia.settings.
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
+      url = "github:noctalia-dev/noctalia";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # quickshell input retained — other modules may still want it, but Noctalia
+    # v5 itself does not. Safe to remove if nothing else depends on it after the
+    # v5 cutover.
     quickshell = {
       url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
