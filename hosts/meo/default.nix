@@ -82,7 +82,7 @@
     SUBSYSTEM=="usb", ATTRS{idVendor}=="3434", TAG+="uaccess"
   '';
 
-  # --- LOGIND: Lid-Close ignorieren, Suspend nur über hypridle ---
+  # --- LOGIND: Lid-Close ignorieren, Idle/Suspend nur über Noctalia v5 ---
   services.logind = {
     lidSwitch = "ignore";
     lidSwitchDocked = "ignore";
