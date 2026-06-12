@@ -6,6 +6,7 @@
     ./affinity.nix
     ../../modules/meo/hyprland-gpu-smart.nix
     ../../modules/meo/android-dev.nix
+    ../../modules/meo/dns-override.nix
   ];
 
   # Add our custom home-manager modules on top of modules/upstream/home/.
