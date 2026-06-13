@@ -109,8 +109,14 @@ in {
         background_opacity = 1.0;
       };
 
+      # MODIFIED 2026-06-13: noctalia v5 alpha lock screen ist instabil — jeder
+      # lock-cycle SEGV't den Prozess mit `wl_display#1: error 0: invalid object`.
+      # In 80min am 12.06. waren das 5 Crashes hintereinander bis xdg-desktop-
+      # portal mit cascaded und SDDM die Session nicht mehr authentifizieren
+      # konnte → reboot war der einzige Ausweg. Stattdessen hyprlock (mature,
+      # designed-for-Hyprland) als externen Lock-Process spawnen.
       lockscreen = {
-        enabled = true;
+        enabled = false;
       };
 
       audio = {
@@ -121,10 +127,13 @@ in {
         enable_ddcutil = true;
       };
 
+      # MODIFIED 2026-06-13: command = "hyprlock" statt "noctalia:session lock".
+      # Action wird damit "command" (kein noctalia: prefix) → noctalia fork't
+      # hyprlock als externen Prozess, eigener Wayland-State unangerührt.
       idle.behavior.lock = {
         enabled = true;
         timeout = 660;
-        command = "noctalia:session lock";
+        command = "hyprlock";
       };
 
       idle.behavior."screen-off" = {

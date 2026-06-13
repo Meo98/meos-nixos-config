@@ -24,7 +24,12 @@
       "$modifier,V, Noctalia Clipboard, exec, noctalia msg panel-toggle clipboard"
       "$modifier ALT,P, Noctalia Settings, exec, noctalia msg settings-toggle"
       "$modifier SHIFT,comma, Noctalia Settings, exec, noctalia msg settings-toggle"
-      "$modifier ALT,L, Noctalia Lock Screen, exec, noctalia msg session lock-and-suspend"
+      # MODIFIED 2026-06-13: noctalia v5's session lock-and-suspend SEGV't (siehe
+      # noctalia.nix lockscreen-Block). Stattdessen hyprlock direkt forken, kurz
+      # warten bis das Lock-Surface acquired ist, dann systemctl suspend. sleep
+      # 0.5 verhindert dass Suspend feuert BEVOR der Lock visible ist (sonst
+      # könnte beim Resume kurz ungelockter Desktop sichtbar sein).
+      "$modifier ALT,L, Lock and Suspend, exec, sh -c \"hyprlock & sleep 0.5 && systemctl suspend\""
       "$modifier SHIFT,W, Noctalia Wallpaper, exec, noctalia msg panel-toggle wallpaper"
       "$modifier,X, Noctalia Power Menu, exec, noctalia msg panel-toggle session"
       "$modifier,C, Noctalia Control Center, exec, noctalia msg panel-toggle control-center"
