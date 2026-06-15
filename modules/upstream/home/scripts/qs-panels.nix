@@ -8,7 +8,9 @@ pkgs.writeShellScriptBin "qs-panels" ''
     if pgrep -x hyprpanel >/dev/null 2>&1; then active="hyprpanel"; fi
     if pgrep -x waybar >/dev/null 2>&1; then active="waybar"; fi
     if pgrep -x dms >/dev/null 2>&1 || pgrep -fa dms | grep -q "\bdms\b.*\brun\b"; then active="dms"; fi
-  if pgrep -fa quickshell | grep -q "noctalia-shell"; then active="noctalia"; fi
+  # MODIFIED 2026-06-15: Noctalia v5 ist natives Binary "noctalia" (kein
+  # quickshell-Wrapper mehr). Legacy-Fallback fuer alte noctalia-shell-Installs.
+  if pgrep -x noctalia >/dev/null 2>&1 || pgrep -fa quickshell | grep -q "noctalia-shell"; then active="noctalia"; fi
 
     tmpdir=$(${pkgs.coreutils}/bin/mktemp -d)
     qml="$tmpdir/panels.qml"
