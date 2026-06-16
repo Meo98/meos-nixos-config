@@ -11,6 +11,7 @@
         grace = 10;
         hide_cursor = true;
         no_fade_in = false;
+        screencopy_mode = 1;
       };
       background = [
         {
