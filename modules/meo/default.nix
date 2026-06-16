@@ -10,5 +10,6 @@
     ./cad-tools.nix
     ./nvim-yazi-tweaks.nix
     ./bun.nix
+    ./cli-modern.nix
   ];
 }
