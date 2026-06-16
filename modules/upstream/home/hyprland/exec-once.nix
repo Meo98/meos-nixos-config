@@ -15,7 +15,6 @@
       "pkill swaync"
       "killall -q swww;sleep .5 && swww-daemon"
       "sh -lc 'sleep 2 && (qs-wallpapers-restore || waypaper --wallpaper ${stylixImage} --backend swww) >/dev/null 2>&1 || true'"
-      "noctalia"
     ]
     else [];
   # Waybar-specific startup commands

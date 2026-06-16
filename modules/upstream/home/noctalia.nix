@@ -22,7 +22,7 @@ in {
 
   programs.noctalia = {
     enable = true;
-    systemd.enable = false;
+    systemd.enable = true;
 
     # Boot-defaults. The TOML is hot-reloaded by the daemon; runtime edits via
     # the Settings UI write back to ~/.config/noctalia/config.toml. Keep this
