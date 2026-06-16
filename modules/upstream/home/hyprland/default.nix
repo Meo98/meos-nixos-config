@@ -1,16 +1,19 @@
 {host, ...}: let
   inherit (import ../../../../hosts/${host}/variables.nix) animChoice;
 in {
-  # MODIFIED 2026-06-12: hypridle entfernt — Noctalia v5 hat eingebauten idle
-  # daemon (idle.behavior.{lock,screen-off}) der lock + DPMS + sleep-inhibit
-  # vollständig übernimmt. Parallelbetrieb verursachte race conditions beim
-  # DPMS-resume (hypridle's `hyprctl reload` triggerte monitor-scale regression
-  # 1.6× → 1.0× → "alles riesig" auf eDP-1). Siehe noctalia.nix settings.
+  # MODIFIED 2026-06-16: hypridle wieder rein. Vorgängerversuch am 2026-06-12,
+  # Noctalia v5's eingebauten idle daemon zu nutzen, hat in stuck-lockscreen
+  # gemündet (DPMS-off vor lock → hyprlock konnte Lock-Surface auf totem Display
+  # nicht acquirieren). Lösung: ZaneyOS-Pattern wiederherstellen, Noctalia nur
+  # noch als Shell/Bar, hypridle steuert lock + DPMS in der RICHTIGEN Reihenfolge.
+  # Monitor-scale regression von früher ist hier kein Risiko mehr — neue
+  # hypridle.nix nutzt ausschließlich `dispatch dpms on/off`, kein `hyprctl reload`.
   imports = [
     animChoice
     ./binds.nix
     ./env.nix
     ./exec-once.nix
+    ./hypridle.nix
     ./hyprland.nix
     ./hyprlock.nix
     ./windowrules.nix

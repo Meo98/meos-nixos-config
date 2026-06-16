@@ -127,21 +127,13 @@ in {
         enable_ddcutil = true;
       };
 
-      # MODIFIED 2026-06-13: command = "hyprlock" statt "noctalia:session lock".
-      # Action wird damit "command" (kein noctalia: prefix) → noctalia fork't
-      # hyprlock als externen Prozess, eigener Wayland-State unangerührt.
-      idle.behavior.lock = {
-        enabled = true;
-        timeout = 660;
-        command = "hyprlock";
-      };
-
-      idle.behavior."screen-off" = {
-        enabled = true;
-        timeout = 600;
-        command = "noctalia:dpms-off";
-        resume_command = "noctalia:dpms-on";
-      };
+      # MODIFIED 2026-06-16: idle.behavior.{lock,screen-off} komplett entfernt.
+      # Symptom war "stuck in hyprlock" nach idle: Noctalia hatte DPMS-off bei
+      # 600s und lock bei 660s — also Display tot BEVOR hyprlock sein Lock-
+      # Surface acquirieren konnte. hypridle übernimmt jetzt die Idle-Chain
+      # mit der richtigen Reihenfolge (lock zuerst, DPMS-off danach) und einem
+      # `after_sleep_cmd` der DPMS nach suspend zurückholt.
+      # Siehe modules/upstream/home/hyprland/hypridle.nix.
 
       weather = {
         enabled = true;
