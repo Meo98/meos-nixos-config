@@ -11,7 +11,7 @@
   tmuxEnable = false;
   alacrittyEnable = false;
   weztermEnable = false;
-  ghosttyEnable = false;
+  ghosttyEnable = true;
   vscodeEnable = false;
   antigravityEnable = false;
   helixEnable = true;
@@ -37,7 +37,7 @@
   browser = "vivaldi";
 
   # Terminal
-  terminal = "kitty";
+  terminal = "ghostty";
 
   # Keyboard Layout (Schweizer Deutsch)
   keyboardLayout = "ch";
