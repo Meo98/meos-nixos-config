@@ -11,6 +11,7 @@
   # 1.6× → 1.0× auf eDP-1 ausgelöst. Nur `dispatch dpms on/off` ist scale-safe.
   services.hypridle = {
     enable = true;
+    systemdTarget = "hyprland-session.target";
     settings = {
       general = {
         after_sleep_cmd = "hyprctl dispatch dpms on";
