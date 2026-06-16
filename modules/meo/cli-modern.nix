@@ -1,8 +1,10 @@
-# Modern CLI stack: Starship prompt + zoxide (smart cd) + atuin (history).
-# eza and bat are already enabled via modules/upstream/home/{eza.nix,cli/bat.nix}.
+# Modern CLI stack: Starship prompt + atuin (history).
+# eza, bat, and zoxide are already enabled upstream via
+# modules/upstream/home/{eza.nix,cli/bat.nix,zoxide.nix}.
+# Note: upstream zoxide uses `options = ["--cmd cd"]`, so the
+# directory-jumping command is `cd`, not `z` or `zi`.
 {
   lib,
-  pkgs,
   ...
 }: {
   # Starship — override the upstream `enable = false` default.
@@ -42,12 +44,6 @@
         crust = "#11111b";
       };
     };
-  };
-
-  # zoxide — smarter cd. Use with `z <hint>` or `zi` (interactive).
-  programs.zoxide = {
-    enable = true;
-    enableZshIntegration = true;
   };
 
   # atuin — shell history with fzf-style picker. Local only; no cloud sync.
