@@ -45,14 +45,13 @@
     # Laptop links
     monitor = eDP-1,2560x1600@240,0x0,1.6
     # Externer rechts, leicht tiefer (wie dein Screenshot)
-    monitor = DP-1,preferred,1600x141,1
+    monitor = DP-1,preferred,1600x141,1.2
 
   '';
-  
+
   # Bar/Shell Settings
   # Choose between noctalia or waybar
   barChoice = "noctalia";
-
 
   # Waybar Settings (used when barChoice = "waybar")
   clock24h = true;
@@ -79,7 +78,6 @@
   nvidiaID = "PCI:1:0:0";
 
   enableAffinity = true;
-
 
   # Enable NFS
   enableNFS = true;
@@ -148,13 +146,13 @@
 
   # Default Applications
   mimeDefaultApps = {
-    "x-scheme-handler/http"         = "vivaldi-stable.desktop";
-    "x-scheme-handler/https"        = "vivaldi-stable.desktop";
-    "x-scheme-handler/about"        = "vivaldi-stable.desktop";
-    "x-scheme-handler/unknown"      = "vivaldi-stable.desktop";
-    "text/html"                     = "vivaldi-stable.desktop";
-    "application/pdf"               = "onlyoffice-desktopeditors.desktop";
-    "application/x-pdf"             = "onlyoffice-desktopeditors.desktop";
+    "x-scheme-handler/http" = "vivaldi-stable.desktop";
+    "x-scheme-handler/https" = "vivaldi-stable.desktop";
+    "x-scheme-handler/about" = "vivaldi-stable.desktop";
+    "x-scheme-handler/unknown" = "vivaldi-stable.desktop";
+    "text/html" = "vivaldi-stable.desktop";
+    "application/pdf" = "onlyoffice-desktopeditors.desktop";
+    "application/x-pdf" = "onlyoffice-desktopeditors.desktop";
   };
 
   # Set network hostId if required (needed for zfs)
