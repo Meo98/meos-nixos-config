@@ -15,6 +15,20 @@
   ...
 }: let
   bt-audio-monitor = import ../../meo/scripts/bt-audio-monitor.nix {inherit pkgs;};
+
+  # MODIFIED 2026-06-17: Lokaler Patch für noctalia v5 (08e74ff) — Default-Wert
+  # von m_sessionLockIntegrationEnabled (true → false) damit der erste Aufruf
+  # setSessionLockIntegrationEnabled(true) den false→true Transition-Pfad nimmt
+  # und ensureSessionLockMonitor() aufruft. Ohne den Patch wird der dbus
+  # Lock-Listener bei fresh startup nicht gebunden → loginctl lock-session
+  # triggert keinen Lockscreen. Siehe noctalia-patches/fix-session-lock-monitor.patch
+  # für die volle Begründung. Wenn upstream den Bug fixt, kann der Patch
+  # ersatzlos entfernt werden und der overrideAttrs-Block wieder raus.
+  noctaliaPkg = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+    patches = (old.patches or []) ++ [
+      ./noctalia-patches/fix-session-lock-monitor.patch
+    ];
+  });
 in {
   imports = [
     inputs.noctalia.homeModules.default
@@ -23,6 +37,7 @@ in {
   programs.noctalia = {
     enable = true;
     systemd.enable = true;
+    package = noctaliaPkg;
 
     # Boot-defaults. The TOML is hot-reloaded by the daemon; runtime edits via
     # the Settings UI write back to ~/.config/noctalia/config.toml. Keep this

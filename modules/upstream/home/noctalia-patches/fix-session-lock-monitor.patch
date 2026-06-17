@@ -1,0 +1,32 @@
+From: meo <chenevard.romeo@gmail.com>
+Date: 2026-06-17
+Subject: [PATCH] logind: fix session lock monitor not bound on fresh startup
+
+LogindService::setSessionLockIntegrationEnabled() returns early when the
+new value matches the cached one. m_sessionLockIntegrationEnabled defaults
+to `true`, so on fresh app startup with `lockscreen.enabled = true` the
+initial call setSessionLockIntegrationEnabled(true) is true→true and skips
+ensureSessionLockMonitor() — the dbus session proxy is never constructed
+and the Lock/Unlock signals are never subscribed.
+
+Result: `loginctl lock-session` (or any equivalent) does not trigger
+noctalia's lockscreen on fresh startup. Workaround would be toggling the
+config option after startup to force a false→true transition.
+
+Cleanest fix is to flip the default to `false` so the first call with
+`true` always performs the transition. ensureSessionLockMonitor() has its
+own internal m_sessionProxy null-guard so repeated invocations are safe.
+
+Filed upstream at: <to-be-added when issue is posted>
+
+--- a/src/dbus/logind/logind_service.h
++++ b/src/dbus/logind/logind_service.h
+@@ -30,7 +30,7 @@ private:
+   SystemBus& m_bus;
+   std::unique_ptr<sdbus::IProxy> m_managerProxy;
+   std::unique_ptr<sdbus::IProxy> m_sessionProxy;
+-  bool m_sessionLockIntegrationEnabled = true;
++  bool m_sessionLockIntegrationEnabled = false;
+   PrepareForSleepCallback m_prepareForSleepCallback;
+   SessionLockCallback m_lockCallback;
+   SessionLockCallback m_unlockCallback;
