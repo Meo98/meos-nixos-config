@@ -74,6 +74,7 @@ in {
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.permittedInsecurePackages = [
     "openssl-1.1.1w" # Benötigt von einem Paket im Stack; EOL aber intern genutzt
+    "electron-39.8.10" # Bitwarden Desktop 2026.5 bundles Electron 39 (EOL Juni 2026); remove when nixpkgs bumps bitwarden-desktop to Electron 40+
   ];
 
   environment.systemPackages = with pkgs;

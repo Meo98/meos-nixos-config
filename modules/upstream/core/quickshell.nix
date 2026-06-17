@@ -17,7 +17,8 @@
     # alternate options
     # libsForQt5.qt5compat
     kdePackages.qt5compat
-    libsForQt5.qt5.qtgraphicaleffects
+    # MODIFIED: nixpkgs 26.11 removed `libsForQt5.qt5.*` alias namespace; use top-level libsForQt5.<pkg> directly.
+    libsForQt5.qtgraphicaleffects
   ];
 
   # necessary environment variables
