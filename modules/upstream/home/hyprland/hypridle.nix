@@ -1,14 +1,18 @@
 {...}: {
-  # MODIFIED 2026-06-16: hypridle wieder eingeführt nach Noctalia-v5-Idle-Daemon
-  # Race. Reihenfolge ist entscheidend: LOCK ZUERST (acquire wlr-session-lock auf
-  # aktivem Display), DPMS-off DANACH. Vorher hatte Noctalia die Reihenfolge
-  # invertiert (DPMS-off bei 600s, lock bei 660s) — hyprlock konnte sein Lock-
-  # Surface nicht sauber auf einem DPMS-off Display acquirieren, was den
-  # "stuck in hyprlock"-Bug verursachte. ZaneyOS upstream macht es identisch
-  # (siehe /tmp/zaneyos-v5/modules/home/hyprland/hypridle.nix).
+  # MODIFIED 2026-06-17: hypridle reduziert auf REINEN suspend-handler.
+  # Idle-Timing + Lock-Rendering machen jetzt noctalia v5 selbst (siehe
+  # modules/upstream/home/noctalia.nix idle.behavior.{lock,screen-off} + die
+  # lockscreen.enabled=true). hypridle existiert nur noch um:
+  #   - vor suspend `loginctl lock-session` zu feuern (triggert noctalia's
+  #     logind Lock-Listener → noctalia rendert sein Lockscreen-Surface)
+  #   - nach resume `hyprctl dispatch dpms on` zu feuern (DPMS recovery, da
+  #     noctalia v5's PrepareForSleep-Callback bei sleeping=false nur Bluetooth
+  #     und Nightlight resynct, NICHT explizit DPMS einschaltet)
   #
-  # KEINE `hyprctl reload`-Calls — die hatten 2026-06-12 monitor-scale regression
-  # 1.6× → 1.0× auf eDP-1 ausgelöst. Nur `dispatch dpms on/off` ist scale-safe.
+  # KEINE listener-blocks mehr — sonst doppeltes Idle-Timing parallel zu
+  # noctalia (würde Lock-Surface evtl. doppelt anfordern). KEIN lock_cmd —
+  # noctalia hört dbus "Lock"-Signal selbst und braucht keinen externen
+  # Spawn-Helfer (siehe noctalia src/dbus/logind/logind_service.cpp:74).
   services.hypridle = {
     enable = true;
     systemdTarget = "hyprland-session.target";
@@ -17,19 +21,7 @@
         before_sleep_cmd = "loginctl lock-session";
         after_sleep_cmd = "hyprctl dispatch dpms on";
         ignore_dbus_inhibit = false;
-        lock_cmd = "pidof hyprlock || hyprlock";
       };
-      listener = [
-        {
-          timeout = 600;
-          on-timeout = "pidof hyprlock || hyprlock";
-        }
-        {
-          timeout = 660;
-          on-timeout = "hyprctl dispatch dpms off";
-          on-resume = "hyprctl dispatch dpms on";
-        }
-      ];
     };
   };
 }

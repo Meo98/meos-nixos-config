@@ -109,14 +109,15 @@ in {
         background_opacity = 1.0;
       };
 
-      # MODIFIED 2026-06-13: noctalia v5 alpha lock screen ist instabil — jeder
-      # lock-cycle SEGV't den Prozess mit `wl_display#1: error 0: invalid object`.
-      # In 80min am 12.06. waren das 5 Crashes hintereinander bis xdg-desktop-
-      # portal mit cascaded und SDDM die Session nicht mehr authentifizieren
-      # konnte → reboot war der einzige Ausweg. Stattdessen hyprlock (mature,
-      # designed-for-Hyprland) als externen Lock-Process spawnen.
+      # MODIFIED 2026-06-17: noctalia lockscreen wieder enabled. Original-SEGV
+      # (`wl_display#1: error 0: invalid object` jede 11min am 12.06.) sollte
+      # gefixt sein durch upstream-Commits seit unserem alten Pin: 7f6b7ce
+      # (defer popup teardown to avoid Wayland destroy crash), 4a5d8c7 (fork
+      # PAM auth into single-threaded child process), b1de9b2 (run PAM
+      # off-thread). Wenn der SEGV wiederkommt: `enabled = false` setzen und
+      # idle.behavior.lock.command zurück auf "hyprlock".
       lockscreen = {
-        enabled = false;
+        enabled = true;
       };
 
       audio = {
@@ -127,13 +128,25 @@ in {
         enable_ddcutil = true;
       };
 
-      # MODIFIED 2026-06-16: idle.behavior.{lock,screen-off} komplett entfernt.
-      # Symptom war "stuck in hyprlock" nach idle: Noctalia hatte DPMS-off bei
-      # 600s und lock bei 660s — also Display tot BEVOR hyprlock sein Lock-
-      # Surface acquirieren konnte. hypridle übernimmt jetzt die Idle-Chain
-      # mit der richtigen Reihenfolge (lock zuerst, DPMS-off danach) und einem
-      # `after_sleep_cmd` der DPMS nach suspend zurückholt.
-      # Siehe modules/upstream/home/hyprland/hypridle.nix.
+      # MODIFIED 2026-06-17: noctalia übernimmt wieder das Idle-Timing UND die
+      # Lock-Rendering selbst. Lock FIRST (600s), DPMS-off SECOND (660s) — diese
+      # Reihenfolge ist kritisch und der Grund warum die ursprüngliche Config
+      # vom 12.06. das Lock-Surface auf einem DPMS-off Display zu acquirieren
+      # versuchte (war 660s lock NACH 600s DPMS-off). hypridle bleibt nur noch
+      # für die suspend-hooks (before_sleep_cmd lock, after_sleep_cmd DPMS-on),
+      # listener blocks dort entfernt um Doppel-Timer zu vermeiden.
+      idle.behavior.lock = {
+        enabled = true;
+        timeout = 600;
+        command = "noctalia:session lock";
+      };
+
+      idle.behavior."screen-off" = {
+        enabled = true;
+        timeout = 660;
+        command = "noctalia:dpms-off";
+        resume_command = "noctalia:dpms-on";
+      };
 
       weather = {
         enabled = true;
