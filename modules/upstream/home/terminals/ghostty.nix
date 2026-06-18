@@ -4,7 +4,6 @@
   ...
 }: let
   ghostHome = "${config.xdg.configHome}/ghostty";
-  shaderFile = "${ghostHome}/shaders/shader.glsl";
 in {
   # Install Ghostty theme(s) so referenced names resolve even if the package's share/themes doesn't include them
   home.file = {
@@ -20,16 +19,6 @@ in {
       background-image-fit=cover
       background-image-repeat=false
     '';
-
-    "${shaderFile}".source = pkgs.fetchurl {
-      # enabling custom-shader-animation = always, as cursors
-      # can get stuck on losing focus and look terrible. this
-      # will only animate for half a second, if you change to
-      # a whole-terminal crazily animated thing then probably
-      # disable that option
-      url = "https://github.com/sahaj-b/ghostty-cursor-shaders/raw/88c27a55b2e970eec19c21ef858a1a5bea489a1d/cursor_warp.glsl";
-      sha256 = "sha256-9ZlLcNu5cH0Ibc7qrS+lfrY4neesQm/5FdTCNa85G+s=";
-    };
   };
 
   programs.ghostty = {
@@ -40,9 +29,7 @@ in {
     enableBashIntegration = true;
     clearDefaultKeybinds = true;
     settings = {
-      custom-shader = shaderFile;
-      custom-shader-animation = "always";
-      term = "xterm-256color";
+      term = "xterm-ghostty";
       confirm-close-surface = "false";
       font-family = "Maple Mono NF";
       font-size = 12;
@@ -52,7 +39,7 @@ in {
       window-height = "32";
       window-width = "110";
       background-opacity = "1.00";
-      background-blur-radius = "60";
+      background-blur-radius = "0";
       selection-background = "#2d3f76";
       selection-foreground = "#c8d3f5";
       cursor-style = "bar";
