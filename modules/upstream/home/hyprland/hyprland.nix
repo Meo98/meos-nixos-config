@@ -87,7 +87,8 @@ in {
         touchpad = {
           natural_scroll = true;
           disable_while_typing = true;
-          scroll_factor = 0.8;
+          # MODIFIED: 0.8 → 1.0 (neutral; vorher künstlich gebremst)
+          scroll_factor = 1.0;
         };
       };
 

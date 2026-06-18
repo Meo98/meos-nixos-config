@@ -44,6 +44,7 @@ in {
       selection-foreground = "#c8d3f5";
       cursor-style = "bar";
       mouse-hide-while-typing = "true";
+      mouse-scroll-multiplier = "precision:1,discrete:5";
       wait-after-command = "false";
       shell-integration = "detect";
       window-save-state = "always";
