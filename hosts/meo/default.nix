@@ -55,6 +55,11 @@
     # NVIDIA Backlight-Handler deaktivieren (blockiert sonst den Intel DPCD-Pfad)
     "nvidia.NVreg_EnableBacklightHandler=0"
     "nvidia.NVreg_RegistryDwords=EnableBrightnessControl=0"
+    # PSR-Freeze-Fix (2026-06-21): internes OLED-eDP-1 Panel bleibt bei Idle/DPMS
+    # im Intel Panel Self Refresh haengen (i915_psr_status: "PSR1 enabled",
+    # Status SRDENT) -> eingefrorenes Lockscreen-Standbild, nur auf eDP, nie auf
+    # externem DP-1. PSR komplett abschalten.
+    "i915.enable_psr=0"
   ];
   
   services.pipewire = {
