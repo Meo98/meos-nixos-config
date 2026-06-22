@@ -48,7 +48,39 @@
     # Raspberry Pi Pico / Pico W / Pico 2W (MicroPython + BOOTSEL)
     SUBSYSTEM=="usb", ATTRS{idVendor}=="2e8a", MODE="0666", TAG+="uaccess"
     SUBSYSTEM=="tty", ATTRS{idVendor}=="2e8a", MODE="0666", TAG+="uaccess"
+    # Microchip ICD3 In-Circuit Debugger (PIC18F4520 / StroboGlas). Ganze VID,
+    # da der ICD3 nach dem Firmware-Load seine PID wechselt (Boot 0x9009 -> Runtime).
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="04d8", MODE="0666", TAG+="uaccess"
   '';
+
+  # MPLAB X IDE (Java/NetBeans-Swing) + XC8 ueber nix-ld lauffaehig machen.
+  # Diese Liste MERGT mit der Basisliste in modules/upstream/core/packages.nix.
+  # Host-lokal -> meo (Trading-Bot) bleibt unveraendert.
+  programs.nix-ld.libraries = with pkgs; [
+    gtk2
+    gtk3
+    cairo
+    pango
+    gdk-pixbuf
+    atk
+    at-spi2-core
+    at-spi2-atk
+    nss
+    nspr
+    cups
+    libxkbcommon
+    xorg.libXtst
+    xorg.libXt
+    xorg.libXxf86vm
+    xorg.libxcb
+    xorg.libXcomposite
+    xorg.libXcursor
+    xorg.libXdamage
+    xorg.libXfixes
+    xorg.libXScrnSaver
+    xorg.libXft
+    xorg.libXinerama
+  ];
 
   # --- MONITOR LAYOUT NACH SUSPEND WIEDERHERSTELLEN ---
   systemd.services.hyprland-monitor-restore = {
