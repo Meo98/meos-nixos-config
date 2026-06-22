@@ -44,7 +44,14 @@ in {
       selection-foreground = "#c8d3f5";
       cursor-style = "bar";
       mouse-hide-while-typing = "true";
-      mouse-scroll-multiplier = "precision:1,discrete:5";
+      # MODIFIED 2026-06-18: auf User-Wunsch Einzelwert 0.5 (gilt fuer precision
+      # UND discrete) statt "precision:1,discrete:5". discrete-only Aenderungen
+      # (1..4) zeigten keinen Effekt, weil das Mausrad high-res/precision-Events
+      # sendet; 0.5 trifft endlich den precision-Pfad. Feintunen via
+      # `ghostty --mouse-scroll-multiplier=precision:0.3`.
+      mouse-scroll-multiplier = "0.5";
+      # scrollbar=system ist bereits Ghostty-Default (1.3.1), hier nur explizit.
+      scrollbar = "system";
       wait-after-command = "false";
       shell-integration = "detect";
       window-save-state = "always";
