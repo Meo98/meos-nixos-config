@@ -44,12 +44,9 @@ in {
       selection-foreground = "#c8d3f5";
       cursor-style = "bar";
       mouse-hide-while-typing = "true";
-      # MODIFIED 2026-06-18: auf User-Wunsch Einzelwert 0.5 (gilt fuer precision
-      # UND discrete) statt "precision:1,discrete:5". discrete-only Aenderungen
-      # (1..4) zeigten keinen Effekt, weil das Mausrad high-res/precision-Events
-      # sendet; 0.5 trifft endlich den precision-Pfad. Feintunen via
-      # `ghostty --mouse-scroll-multiplier=precision:0.3`.
-      mouse-scroll-multiplier = "0.5";
+      # MODIFIED 2026-06-23: zurueck auf 1 (Ghostty-Default-Geschwindigkeit) auf
+      # User-Wunsch. Linearer Faktor: <1=langsamer, 1=Default, >1=schneller.
+      mouse-scroll-multiplier = "1";
       # scrollbar=system ist bereits Ghostty-Default (1.3.1), hier nur explizit.
       scrollbar = "system";
       wait-after-command = "false";
