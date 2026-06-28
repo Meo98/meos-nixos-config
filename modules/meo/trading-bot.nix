@@ -21,6 +21,10 @@ in {
       StandardOutput = "append:/tmp/matrix_quant.log";
       StandardError = "append:/tmp/matrix_quant.log";
     };
-    Install.WantedBy = [ "default.target" ];
+    # Autostart deaktiviert 2026-06-28 (Performance-Review: Bot tritt auf €322
+    # Konto netto Wasser, Maker-Fill-Rate 25%). Service bleibt definiert und
+    # kann manuell gestartet werden: `systemctl --user start matrix-quant`.
+    # Zum Reaktivieren des Reboot-Autostarts: Zeile wieder einkommentieren.
+    # Install.WantedBy = [ "default.target" ];
   };
 }
