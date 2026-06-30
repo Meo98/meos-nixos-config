@@ -96,10 +96,40 @@
   };
 
   # --- ZRAM SWAP (verhindert OOM-Kills bei Speicherdruck) ---
+  # Bei 16 GB RAM + Affinity (unter Wine, ~5-10 GB RSS) ist der Speicher der
+  # harte Engpass. zram = komprimierter RAM-Swap (zstd ~3-5:1). 50% logisch
+  # ≈ 8 GB Swap, kostet real nur ~1.5-2 GB RAM. Füllt sich VOR der Disk-Swap
+  # (zram-generator setzt swap-priority=5).
   zramSwap = {
     enable = true;
     algorithm = "zstd";
-    memoryPercent = 25;
+    memoryPercent = 50;   # war 25 — verdoppelt, da RAM der harte Engpass ist
+  };
+
+  # --- DISK-SWAP als Überlauf hinter zram (Notnetz gegen OOM-Kills) ---
+  # Wenn zram voll ist, lagert der Kernel kalte Seiten hierher aus, statt
+  # Affinity per OOM-Killer abzuschiessen (siehe 25.06.: Affinity bei 9.7 GB
+  # RSS gekillt). 8 GB reichen als Puffer; Root hat ~48 GB frei. ext4 -> simple
+  # Swap-Datei, niedrigere Prio als zram -> nur Überlauf.
+  swapDevices = [{
+    device = "/swapfile";
+    size = 8 * 1024;   # 8 GiB
+  }];
+
+  # --- KERNEL-VM-TUNING (knapper RAM + schnelles zstd-zram) ---
+  # Merged mit vm.max_map_count aus modules/upstream/core/boot.nix.
+  boot.kernel.sysctl = {
+    # zram ist schnell -> aggressiv auslagern statt File-Cache wegzuwerfen.
+    "vm.swappiness" = 150;
+    # zram mag Einzelseiten (kein Read-ahead beim Swap-In).
+    "vm.page-cluster" = 0;
+    # Dentry/Inode-Cache länger halten -> snappigere Dateioperationen.
+    "vm.vfs_cache_pressure" = 50;
+    # Früher Speicher zurückfordern -> weniger plötzliche Stalls/OOM unter Druck.
+    "vm.watermark_scale_factor" = 125;
+    # Sanftere Writeback-Schübe auf der einzelnen SSD (weniger I/O-Stalls).
+    "vm.dirty_background_ratio" = 5;
+    "vm.dirty_ratio" = 10;
   };
 
   # --- THERMALD (Intel Thermal Management) ---
