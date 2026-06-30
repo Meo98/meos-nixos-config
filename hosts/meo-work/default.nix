@@ -135,6 +135,21 @@
   # --- THERMALD (Intel Thermal Management) ---
   services.thermald.enable = true;
 
+  # --- BUILD-LAST ZÄHMEN (schützt offene Apps vor dem OOM-Killer) ---
+  # Am 30.06. 08:52 hat der Kernel-OOM-Killer Affinity (4.8 GB, oom_score_adj
+  # 200 = bevorzugtes Opfer) abgeschossen, weil ein Hintergrund-Rebuild
+  # (Noctalia/Wine aus Source) den RAM auf 16 GB sprengte. Statt einer App
+  # Sonderrechte zu geben, zähmen wir den Verursacher:
+  #   - MemoryHigh: ab 10 GB wird der Build-cgroup aggressiv in den (neuen)
+  #     Disk-Swap ausgelagert statt das ganze System zu ersticken (weiche
+  #     Bremse, kein Kill).
+  #   - OOMScoreAdjust: falls es DOCH global eng wird, ist der Build das
+  #     bevorzugte Opfer — deine offene Arbeit (Affinity) überlebt.
+  systemd.services.nix-daemon.serviceConfig = {
+    MemoryHigh = "10G";
+    OOMScoreAdjust = 500;
+  };
+
   # --- NOATIME auf Root-Partition (reduziert SSD-Schreibzugriffe) ---
   fileSystems."/".options = [ "noatime" ];
 
