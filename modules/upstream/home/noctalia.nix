@@ -16,19 +16,15 @@
 }: let
   bt-audio-monitor = import ../../meo/scripts/bt-audio-monitor.nix {inherit pkgs;};
 
-  # MODIFIED 2026-06-17: Lokaler Patch für noctalia v5 (08e74ff) — Default-Wert
-  # von m_sessionLockIntegrationEnabled (true → false) damit der erste Aufruf
-  # setSessionLockIntegrationEnabled(true) den false→true Transition-Pfad nimmt
-  # und ensureSessionLockMonitor() aufruft. Ohne den Patch wird der dbus
-  # Lock-Listener bei fresh startup nicht gebunden → loginctl lock-session
-  # triggert keinen Lockscreen. Siehe noctalia-patches/fix-session-lock-monitor.patch
-  # für die volle Begründung. Wenn upstream den Bug fixt, kann der Patch
-  # ersatzlos entfernt werden und der overrideAttrs-Block wieder raus.
-  noctaliaPkg = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
-    patches = (old.patches or []) ++ [
-      ./noctalia-patches/fix-session-lock-monitor.patch
-    ];
-  });
+  # MODIFIED 2026-06-30: Session-Lock-Monitor-Patch ENTFERNT — upstream hat den
+  # Bug gefixt (m_sessionLockIntegrationEnabled / ensureSessionLockMonitor). Der
+  # noctalia-Input-Bump zog die Fix-Commits rein, wodurch unser lokaler Patch
+  # als "Reversed (or previously applied)" fehlschlug und jeden Rebuild auf
+  # beiden Hosts blockierte. Wie im Patch-Kommentar (2026-06-17) angekündigt:
+  # bei upstream-Fix den overrideAttrs-Block ersatzlos raus, Paket direkt nutzen.
+  # Patch-Datei bleibt unter noctalia-patches/ als Referenz liegen (nicht mehr
+  # angewendet). Falls der Lockscreen-Bug wiederkehrt, hier reaktivieren.
+  noctaliaPkg = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in {
   imports = [
     inputs.noctalia.homeModules.default
