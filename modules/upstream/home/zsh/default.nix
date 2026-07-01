@@ -59,6 +59,30 @@
         git -C ~/nixos-config push || { echo "✗ Git push failed"; return 1; }
         echo "✓ Sync done"
       }
+
+      # MODIFIED: Kernel-Bump-Guard (2026-07-01). fr synct + rebuildet, updated
+      # aber KEINE Inputs (kein --update). Falls der pull in _zsync dennoch
+      # flake.lock aendert (z.B. ein bewusstes 'fu' vom anderen Host), steckt
+      # evtl. ein neuer linuxPackages_latest-Kernel drin -> NVIDIA-Modul ist nie
+      # gecacht (unfree) und muss dann lokal neu kompiliert werden (langsam).
+      # Deshalb erst nachfragen, statt still einen langen Build zu starten.
+      # Bewusste Kernel-/Input-Updates weiterhin via 'fu'.
+      fr() {
+        local before after
+        before=$(git -C ~/nixos-config rev-parse HEAD:flake.lock 2>/dev/null)
+        _zsync || return 1
+        after=$(git -C ~/nixos-config rev-parse HEAD:flake.lock 2>/dev/null)
+        if [ "$before" != "$after" ]; then
+          echo "⚠ flake.lock hat sich geaendert – evtl. neuer Kernel + NVIDIA-Recompile (kann lange dauern)."
+          if ! read -q "?Jetzt trotzdem rebuilden? [y/N] "; then
+            echo
+            echo "→ Rebuild uebersprungen. Config-Dateien sind gesynct; spaeter bewusst mit 'fr' bauen."
+            return 0
+          fi
+          echo
+        fi
+        nh os switch --hostname ${nixosTarget}
+      }
     '';
 
     shellAliases = {
@@ -66,7 +90,7 @@
       sv = "sudo nvim";
       v = "nvim";
       c = "clear";
-      fr = "_zsync && nh os switch --hostname ${nixosTarget}";
+      # fr ist jetzt eine Funktion (siehe oben, Kernel-Bump-Guard) — kein Alias mehr.
       fu = "_zsync && nh os switch --hostname ${nixosTarget} --update && _zsync";
       # Warnung: curl|sh ohne Checksum-Verifikation — nur in vertrautem Netz nutzen
       zu = ''echo "⚠ Führt Remote-Script aus – prüfe: https://gitlab.com/Zaney/zaneyos/-/releases" && read -q "?Fortfahren? [y/N] " && echo && sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/releases/latest/download/install-zaneyos.sh)'';
