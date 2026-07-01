@@ -67,6 +67,14 @@
     # Standbild haengen, nur eDP-1, nie externer DP. FBC abschalten.
     # Diagnose: sudo cat /sys/kernel/debug/dri/*/i915_fbc_status
     "i915.enable_fbc=0"
+    # DC-State-Freeze-Fix (2026-07-01): Freeze kehrte trotz PSR=0 UND FBC=0
+    # zurueck. Live-Analyse bei eingefrorenem Panel: KEIN Kernel-Fehler, Hyprland
+    # haelt eDP-1 fuer gesund (dpms on), aber weder Modeset noch voller Output-
+    # Neuaufbau holen das Bild zurueck -> Wedge sitzt in der i915-Pipe/Power-Well
+    # unter dem Compositor. DC5/DC6 (Display Power Wells) sind das letzte
+    # SW-unaware Stromsparfeature -> abschalten. Diagnose bei frozen Panel:
+    # sudo cat /sys/kernel/debug/dri/*/i915_dmc_info  (DC5->DC6 count)
+    "i915.enable_dc=0"
   ];
   
   services.pipewire = {

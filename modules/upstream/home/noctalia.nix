@@ -152,8 +152,18 @@ in {
         command = "noctalia:session lock";
       };
 
+      # MODIFIED 2026-07-01: screen-off DEAKTIVIERT als Workaround gegen den eDP-
+      # Freeze auf `meo`. Der DPMS-off→on-Zyklus (idle screen-off, dann Wake) ist
+      # der Trigger: der interne OLED-eDP-1-Panel wedged beim Wieder-Einschalten
+      # (i915-Pipe/Power-Well haengt, kein Kernel-Fehler, live NICHT loesbar, nur
+      # Reboot). PSR=0 + FBC=0 haben es nicht verhindert; parallel laeuft der
+      # Versuch mit i915.enable_dc=0. Solange der Panel nie DPMS-off geht, kann er
+      # nicht einfrieren. Lock (600s) bleibt aktiv, Panels bleiben nur an.
+      # ACHTUNG: greift auch auf meo-work (shared upstream-Modul) — dort bleibt
+      # der Screen bei Idle ebenfalls an. Rueckgaengig machen, sobald der echte
+      # Fix (dc=0 oder aelterer Kernel) bestaetigt ist. Siehe [[meo-edp-psr-freeze]].
       idle.behavior."screen-off" = {
-        enabled = true;
+        enabled = false;
         timeout = 660;
         command = "noctalia:dpms-off";
         resume_command = "noctalia:dpms-on";
