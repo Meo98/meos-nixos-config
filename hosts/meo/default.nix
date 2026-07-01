@@ -110,11 +110,20 @@
   # Noctalia v5's idle daemon racen. mkForce [] kappt nur den Auto-Start.
   systemd.user.services.hypridle.wantedBy = lib.mkForce [];
 
-  # --- LOGIND: Lid-Close ignorieren, Idle/Suspend nur über Noctalia v5 ---
+  # --- LOGIND: Zuklappen -> Suspend, ABER nur OHNE externen Monitor ---
+  # (2026-07-01) Vorher alles "ignore" (Idle-Screen-off machte noctalia). Da der
+  # noctalia Idle-Screen-off jetzt deaktiviert ist (eDP-Freeze-Workaround, siehe
+  # kernelParams i915.enable_dc=0 + noctalia.nix), bliebe der interne Panel beim
+  # Zuklappen sonst dauerhaft an. Jetzt:
+  #   - kein externer Screen  -> Suspend (Panel physisch aus, hitzesicher)
+  #   - externer Screen = "docked" -> ignore (Maschine + externer Monitor laufen
+  #     weiter; interner Panel bleibt an, aber KEIN DPMS-Freeze-Trigger)
+  # lidSwitchExternalPower=suspend, damit es auch am Netzteil (ohne externen)
+  # suspendet; "docked" hat Vorrang und greift, sobald ein externer Screen haengt.
   services.logind = {
-    lidSwitch = "ignore";
+    lidSwitch = "suspend";
     lidSwitchDocked = "ignore";
-    lidSwitchExternalPower = "ignore";
+    lidSwitchExternalPower = "suspend";
   };
 
   # --- TRAVEL-MODE: root-helper für CPU/GPU Power-Knobs ---
