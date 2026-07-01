@@ -60,6 +60,13 @@
     # Status SRDENT) -> eingefrorenes Lockscreen-Standbild, nur auf eDP, nie auf
     # externem DP-1. PSR komplett abschalten.
     "i915.enable_psr=0"
+    # FBC-Freeze-Fix (2026-07-01): gleiches Symptom kehrte trotz PSR=0 zurueck.
+    # Live-Diagnose bei eingefrorenem Panel: i915_psr_status "PSR mode: disabled"
+    # (PSR sauber aus), aber i915_fbc_status "FBC enabled / Compressing: yes" ->
+    # Framebuffer Compression bleibt beim DPMS-Wakeup auf einem komprimierten
+    # Standbild haengen, nur eDP-1, nie externer DP. FBC abschalten.
+    # Diagnose: sudo cat /sys/kernel/debug/dri/*/i915_fbc_status
+    "i915.enable_fbc=0"
   ];
   
   services.pipewire = {
