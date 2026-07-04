@@ -126,6 +126,20 @@
     lidSwitchExternalPower = "suspend";
   };
 
+  # --- LOCALE: en_GB fuer Bambu Studio (2026-07-04) ---
+  # Bambu Studio (AppImage, wxWidgets) versucht die UI-Sprache "English" auf das
+  # glibc-Locale en_GB.UTF-8 zu setzen und wirft sonst "Switching Bambu Studio to
+  # language en_GB failed". Der Ubuntu-Rat (locale-gen/dpkg-reconfigure) gilt auf
+  # NixOS nicht — Locales sind deklarativ. supportedLocales ersetzt den Default
+  # komplett, daher die bestehenden 3 (C, en_US, de_CH aus system.nix) explizit
+  # mituebernehmen + en_GB.UTF-8 ergaenzen. Nur meo, weil Bambu nur hier laeuft.
+  i18n.supportedLocales = [
+    "C.UTF-8/UTF-8"
+    "en_US.UTF-8/UTF-8"
+    "de_CH.UTF-8/UTF-8"
+    "en_GB.UTF-8/UTF-8"
+  ];
+
   # --- TRAVEL-MODE: root-helper für CPU/GPU Power-Knobs ---
   security.sudo.extraRules = [{
     users = [ "meo" ];
