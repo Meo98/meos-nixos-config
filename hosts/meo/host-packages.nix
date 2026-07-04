@@ -34,7 +34,8 @@
     vlc                       # Universeller Medienplayer, spielt fast jedes Videoformat ab
     tidal-hifi                # Desktop-Client für den High-Fidelity Musik-Streamingdienst Tidal
     morgen                    # All-in-one Calendars, Tasks and Scheduler
-    orca-slicer
+    orca-slicer               # Open-Source Slicer (Bambu-Studio-Fork), native from-source
+    bambu-studio              # Offizieller BambuLab-Slicer (AppImage via modules/meo/bambu.nix overlay)
 
     # --- Webbrowser ---
     vivaldi                   # Feature-reicher Browser mit Fokus auf Tab-Management und Privatsphäre

@@ -2,12 +2,19 @@ self: super: {
   bambu-studio = super.appimageTools.wrapType2 rec {
     name = "BambuStudio";
     pname = "bambu-studio";
-    version = "02.02.02.56";
-    ubuntu_version = "24.04_PR-8184";
-    
+    # MODIFIED 2026-07-04: von 02.02.02.56 auf neueste stabile 02.07.01.62 gebumpt.
+    # Namensschema der AppImage hat sich geaendert: frueher
+    # "Bambu_Studio_ubuntu-${ubuntu_version}.AppImage", jetzt
+    # "BambuStudio_ubuntu24.04-v${version}-${buildstamp}.AppImage".
+    # Bei kuenftigem Bump: neue Version + buildstamp aus dem GitHub-Release holen
+    #   gh release view --repo bambulab/BambuStudio --json tagName,assets
+    # dann Hash: nix store prefetch-file --hash-type sha256 <url>
+    version = "02.07.01.62";
+    buildstamp = "20260616195227";
+
     src = super.fetchurl {
-      url = "https://github.com/bambulab/BambuStudio/releases/download/v${version}/Bambu_Studio_ubuntu-${ubuntu_version}.AppImage";
-      sha256 = "sha256-ziipEMz58lG/+uxubCd53c6BjJ9W3doJ9/Z8VJp+Za4=";
+      url = "https://github.com/bambulab/BambuStudio/releases/download/v${version}/BambuStudio_ubuntu24.04-v${version}-${buildstamp}.AppImage";
+      sha256 = "sha256-+pi2CFMt+7uysJMUg6rEHlf7GcF1osx719Uo1eD7soc=";
     };
   
     profile = ''
