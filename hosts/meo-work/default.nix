@@ -17,7 +17,10 @@
 
   # --- AUTOMOUNTING ---
   services.udisks2.enable = true;
-  environment.systemPackages = [ pkgs.udiskie ];
+  environment.systemPackages = [
+    pkgs.udiskie
+    pkgs.qalculate-gtk   # Taschenrechner: Einheiten, Währungen, Symbolik (CLI: qalc)
+  ];
   systemd.user.services.udiskie = {
     description = "Udiskie Automount Service";
     wantedBy = [ "graphical-session.target" ];
