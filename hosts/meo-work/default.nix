@@ -20,6 +20,7 @@
   environment.systemPackages = [
     pkgs.udiskie
     pkgs.qalculate-gtk   # Taschenrechner: Einheiten, Währungen, Symbolik (CLI: qalc)
+    pkgs.blender         # 3D: Mesh-Modelling/Render. NICHT parametrisch (kein CAD-Ersatz)
   ];
   systemd.user.services.udiskie = {
     description = "Udiskie Automount Service";
