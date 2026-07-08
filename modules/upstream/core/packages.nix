@@ -137,6 +137,7 @@ in {
       upower # noctalia shell battery
       uwsm # Universal Wayland Session Manager (optional must be enabled)
       v4l-utils # Used For Things Like OBS Virtual Camera
+      variety # MODIFIED: Wallhaven/Online-Wallpaper-Browser (v5 hat keine Online-Suche); Downloads -> ~/Pictures/Wallpapers/online, v5-Picker sieht sie via navigateInto
       waypaper # Change wallpaper
       wget # Tool For Fetching Files With Links
       ytmdl # Tool For Downloading Audio From YouTube
