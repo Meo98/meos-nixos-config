@@ -32,7 +32,11 @@
     orca-slicer
 
     # --- Webbrowser ---
-    vivaldi                   # Feature-reicher Browser mit Fokus auf Tab-Management und Privatsphäre
+    # VA-API-Videodecoding auf der Intel Iris Xe Media-Engine aktivieren (iHD-Treiber via intel-drivers.nix).
+    # Entlastet den GPU-Compositing-Pfad, der bei 3 Monitoren + noctalia-Overlay zum Flaschenhals wird.
+    (vivaldi.override {
+      commandLineArgs = "--enable-features=VaapiVideoDecoder,VaapiVideoDecodeLinuxGL --ignore-gpu-blocklist";
+    })                        # Feature-reicher Browser mit Fokus auf Tab-Management und Privatsphäre
 
     # --- Produktivität & Office ---
     signal-desktop            # Signal Messenger (kein Web-Wrapper möglich, braucht native App)

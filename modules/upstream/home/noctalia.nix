@@ -112,7 +112,10 @@ in {
         show_app_name = true;
         show_actions = true;
         layer = "top";
-        background_opacity = 0.91;
+        # MODIFIED 2026-07-08: mkForce, weil neueres upstream-noctalia (hm.nix)
+        # notification.background_opacity=1.0 mit Normal-Prio hart setzt → sonst
+        # "conflicting definition values" beim flake-update-rebuild (fu).
+        background_opacity = pkgs.lib.mkForce 0.91;
       };
 
       osd = {

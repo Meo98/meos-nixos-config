@@ -98,10 +98,14 @@ in {
       decoration = {
         rounding = 10;
         shadow.enabled = true;
+        # MODIFIED 2026-07-15: Blur von passes=3/size=6 auf passes=1/size=5 reduziert.
+        # Ursache Tipp-/Scroll-Ruckeln auf meo-work (Iris Xe treibt 3 Displays):
+        # blur passes=3 tastet pro Frame 3x den Framebuffer ab = teuerste iGPU-Last.
+        # Live-Test (blur aus) brachte spuerbare Besserung; passes=1 behaelt den Glas-Look.
         blur = {
           enabled = true;
-          size = 6;
-          passes = 3;
+          size = 5;
+          passes = 1;
         };
       };
 
