@@ -11,6 +11,9 @@
     # GUI parametrisches 3D-CAD. Für komplexere Gehäuse + die "KiCad StepUp"
     # Workbench (über FreeCAD Addon-Manager nachinstallieren), die .kicad_pcb
     # direkt importiert und passgenaue Cases ermöglicht.
+    # 2026-07-16: pdal-GDAL-Breakage wird via modules/meo/pdal-fix.nix Overlay
+    # (pdal 2.10.0) behoben — freecad wieder aktiv. Achtung: pdal+vtk+freecad
+    # kompilieren einmalig lokal (~20-30 Min), nicht im Binary-Cache.
     freecad
 
     # (Inkscape entfernt — bei Bedarf für 2D-Laser/SVG->DXF wieder hinzufügen.)

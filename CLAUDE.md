@@ -49,11 +49,11 @@ In `flake.nix`:
 
 If you add a new host, set ALL THREE.
 
-### Trading Bot context
+### Trading Bot context (HISTORICAL — bot retired 2026-07-16)
 
-The user runs a live Rust trading bot (Matrix Quant) on the **meo** host. It's a systemd user service defined in `modules/meo/trading-bot.nix`. The service file points to `/home/meo/quant-trading-bot/rust/target/release/matrix_quant_core`.
+The Matrix Quant trading bot no longer exists: user decided it's not needed. `modules/meo/trading-bot.nix` was deleted (history: `git log --follow`). Consequently `flake-update.yml` PRs now carry the `automerge` label — weekly updates merge automatically once `build.yml` is green on both hosts.
 
-**Don't break the meo host casually.** A failed rebuild = bot may stop. Always dry-build (`nh os build`) before suggesting `nh os switch` on meo. For risky changes, use the worktree pattern (see `docs/SYNC_UPSTREAM.md`).
+Dry-building both hosts before pushing is still good practice, but there is no live service that a failed rebuild would take down anymore.
 
 ### Affinity v3 setup
 

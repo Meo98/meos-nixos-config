@@ -56,6 +56,12 @@
   # Waybar Settings (used when barChoice = "waybar")
   clock24h = true;
 
+  # Idle-Screen-Off (noctalia): AUS wegen eDP-OLED-Freeze (DPMS-off->on wedged
+  # die i915-Pipe, siehe kernelParams i915.enable_{psr,fbc,dc}=0 in default.nix).
+  # Erst aktivieren, wenn der Freeze-Fix bestaetigt ist (Test: manuell
+  # `hyprctl dispatch dpms off && sleep 5 && hyprctl dispatch dpms on` auf eDP-1).
+  idleScreenOff = false;
+
   # Program Options
   # Set Default Browser (google-chrome-stable for google-chrome)
   # This does NOT install your browser

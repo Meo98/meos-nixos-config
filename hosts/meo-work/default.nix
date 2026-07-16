@@ -30,10 +30,20 @@
   };
 
   # --- AUDIO FIX (Gegen das Klicken/Knallen) ---
+  # Der eigentliche Fix: HDA-Codec-Powersave auf ALSA-Ebene aus.
   boot.kernelParams = [ "snd_hda_intel.power_save=0" "snd_hda_intel.power_save_controller=N" ];
 
-  services.pipewire.extraConfig.pipewire."99-disable-suspend" = {
-    "context.properties"."node.pause-on-idle" = false;
+  # MODIFIED 2026-07-16: redundanten pipewire-Block (node.pause-on-idle=false)
+  # entfernt — betraf nur Node-Scheduling, nicht Device-Suspend; die Pops
+  # verhindert hier bereits der Kernel-Param oben. Zusaetzlich die etablierte
+  # WirePlumber-Regel als Gurt+Hosentraeger (greift auch fuer USB/BT-Sinks):
+  services.pipewire.wireplumber.extraConfig."51-disable-suspend" = {
+    "monitor.alsa.rules" = [
+      {
+        matches = [ { "node.name" = "~alsa_output.*"; } ];
+        actions.update-props."session.suspend-timeout-seconds" = 0;
+      }
+    ];
   };
 
   # --- WEITERE SERVICES ---

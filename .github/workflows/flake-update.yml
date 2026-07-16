@@ -32,9 +32,14 @@ jobs:
         uses: DeterminateSystems/update-flake-lock@main
         with:
           pr-title: "chore: weekly flake update"
+          # MODIFIED 2026-07-16: automerge-Label ergaenzt. Der Trading-Bot
+          # (der Grund, automerge manuell zu halten) ist abgeschafft. Merge
+          # passiert weiterhin NUR wenn build.yml auf beiden Hosts gruen ist
+          # (required status checks + automerge.yml).
           pr-labels: |
             automated
             dependencies
+            automerge
           pr-body: |
             ## Automatic flake input update
 

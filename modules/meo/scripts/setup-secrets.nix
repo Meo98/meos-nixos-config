@@ -55,28 +55,9 @@ pkgs.writeShellScriptBin "setup-secrets" ''
     ERRORS="$ERRORS\n  - \"Notion API Token\" (Password = ntn_...)"
   fi
 
-  # --- Kraken API Keys → config.json ---
-  KRAKEN_KEY=$(get_username "Kraken API")
-  KRAKEN_SECRET=$(get_password "Kraken API")
-
-  if [ -n "$KRAKEN_KEY" ] && [ -n "$KRAKEN_SECRET" ]; then
-    TRADING_DIR="$HOME/quant-trading-bot"
-    if [ -d "$TRADING_DIR" ]; then
-      cat > "$TRADING_DIR/config.json" << KRAKEN_EOF
-{
-  "max_open_trades": 2,
-  "exchange": {
-    "key": "$KRAKEN_KEY",
-    "secret": "$KRAKEN_SECRET"
-  }
-}
-KRAKEN_EOF
-      chmod 600 "$TRADING_DIR/config.json"
-      echo "  Kraken API keys → $TRADING_DIR/config.json"
-    fi
-  else
-    ERRORS="$ERRORS\n  - \"Kraken API\" (Username = API key, Password = API secret)"
-  fi
+  # Kraken-API-Block entfernt 2026-07-16: schrieb config.json fuer den
+  # Matrix-Quant-Trading-Bot, der abgeschafft wurde (siehe git log --follow
+  # modules/meo/trading-bot.nix). Bitwarden-Item "Kraken API" kann bleiben.
 
   # --- Obsidian Stack CouchDB → services/.env ---
   OBSIDIAN_USER=$(get_username "Obsidian_Printbrigata")

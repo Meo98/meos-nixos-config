@@ -75,17 +75,32 @@
     # SW-unaware Stromsparfeature -> abschalten. Diagnose bei frozen Panel:
     # sudo cat /sys/kernel/debug/dri/*/i915_dmc_info  (DC5->DC6 count)
     "i915.enable_dc=0"
+    # HINWEIS 2026-07-16 (Foren-/Upstream-Recherche): (a) Die PSR-Sync-Failures
+    # sind laut Intel-Community bis in 2026er-Kernel ungeloest -> Workarounds
+    # bleiben noetig. (b) Auf manchen Meteor-Lake-Geraeten half enable_psr=2
+    # statt =0 (CachyOS-Forum) — Plan B, falls der Freeze je zurueckkehrt.
+    # (c) WICHTIG: Neuere Kernel koennen MTL-Grafik an den `xe`-Treiber statt
+    # i915 binden — dann sind ALLE drei i915.*-Params wirkungslos. Check auf meo:
+    #   lspci -k | grep -A3 VGA   (Kernel driver in use: i915 oder xe?)
+    # Falls xe: Params auf xe.enable_psr=0 etc. umstellen.
   ];
   
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     pulse.enable = true;
-    # Deaktiviert den Standby-Modus in PipeWire
-    extraConfig.pipewire."99-disable-suspend" = {
-      "context.properties" = {
-        "node.pause-on-idle" = false;
-      };
+    # MODIFIED 2026-07-16: Audio-Knackser-Fix modernisiert. Der alte Block
+    # (context.properties.node.pause-on-idle=false) betrifft nur Node-Scheduling,
+    # NICHT das Device-Suspend, das die Pops verursacht — praktisch wirkungslos.
+    # Der etablierte Fix ist die WirePlumber-Regel session.suspend-timeout-
+    # seconds=0 (Sink wird nie suspendiert -> kein Knacksen beim Aufwachen).
+    wireplumber.extraConfig."51-disable-suspend" = {
+      "monitor.alsa.rules" = [
+        {
+          matches = [ { "node.name" = "~alsa_output.*"; } ];
+          actions.update-props."session.suspend-timeout-seconds" = 0;
+        }
+      ];
     };
   };
 

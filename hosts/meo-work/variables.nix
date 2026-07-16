@@ -30,6 +30,11 @@
   # Bar/Shell
   barChoice = "noctalia";
 
+  # Idle-Screen-Off (noctalia): Display bei Inaktivitaet abschalten (660s).
+  # meo-work (Tiger Lake, IPS) ist vom eDP-OLED-Freeze auf meo NICHT betroffen
+  # -> Screen-off hier wieder aktiv (2026-07-16, vorher pauschal deaktiviert).
+  idleScreenOff = true;
+
   # Waybar Settings
   clock24h = true;
 

@@ -12,9 +12,14 @@
 {
   pkgs,
   inputs,
+  host,
   ...
 }: let
   bt-audio-monitor = import ../../meo/scripts/bt-audio-monitor.nix {inherit pkgs;};
+
+  # MODIFIED 2026-07-16: Host-Variablen fuer idleScreenOff (Pfad-Tiefe: 3x ..
+  # von modules/upstream/home/ zur Repo-Wurzel — vgl. hyprland/hyprland.nix mit 4x).
+  vars = import ../../../hosts/${host}/variables.nix;
 
   # MODIFIED 2026-06-30: Session-Lock-Monitor-Patch ENTFERNT — upstream hat den
   # Bug gefixt (m_sessionLockIntegrationEnabled / ensureSessionLockMonitor). Der
@@ -160,18 +165,16 @@ in {
         command = "noctalia:session lock";
       };
 
-      # MODIFIED 2026-07-01: screen-off DEAKTIVIERT als Workaround gegen den eDP-
-      # Freeze auf `meo`. Der DPMS-off→on-Zyklus (idle screen-off, dann Wake) ist
-      # der Trigger: der interne OLED-eDP-1-Panel wedged beim Wieder-Einschalten
-      # (i915-Pipe/Power-Well haengt, kein Kernel-Fehler, live NICHT loesbar, nur
-      # Reboot). PSR=0 + FBC=0 haben es nicht verhindert; parallel laeuft der
-      # Versuch mit i915.enable_dc=0. Solange der Panel nie DPMS-off geht, kann er
-      # nicht einfrieren. Lock (600s) bleibt aktiv, Panels bleiben nur an.
-      # ACHTUNG: greift auch auf meo-work (shared upstream-Modul) — dort bleibt
-      # der Screen bei Idle ebenfalls an. Rueckgaengig machen, sobald der echte
-      # Fix (dc=0 oder aelterer Kernel) bestaetigt ist. Siehe [[meo-edp-psr-freeze]].
+      # MODIFIED 2026-07-01: screen-off deaktiviert als Workaround gegen den eDP-
+      # Freeze auf `meo` (DPMS-off→on wedged die i915-Pipe/Power-Well des OLED,
+      # kein Kernel-Fehler, live nicht loesbar, nur Reboot; PSR=0/FBC=0/DC=0 in
+      # hosts/meo/default.nix kernelParams). Solange der Panel nie DPMS-off geht,
+      # kann er nicht einfrieren. Lock (600s) bleibt aktiv.
+      # MODIFIED 2026-07-16: per-Host via variables.nix idleScreenOff — der
+      # Freeze betrifft nur meo (OLED); meo-work (IPS) schaltet den Screen bei
+      # Idle wieder ab, statt ihn grundlos dauerhaft anzulassen.
       idle.behavior."screen-off" = {
-        enabled = false;
+        enabled = vars.idleScreenOff or false;
         timeout = 660;
         command = "noctalia:dpms-off";
         resume_command = "noctalia:dpms-on";

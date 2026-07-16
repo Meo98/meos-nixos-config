@@ -83,7 +83,7 @@ If you want `flake-update.yml` PRs to auto-merge:
 - Trust the build CI to catch breakage
 - Risk: a breaking change that builds but fails at runtime will hit your system
 
-For trading-bot safety, **don't enable auto-merge automatically.** Manual click is 10 seconds.
+~~For trading-bot safety, **don't enable auto-merge automatically.**~~ **ENABLED 2026-07-16:** the trading bot was retired, so `flake-update.yml` now adds the `automerge` label. Merges still require `build.yml` green on both hosts (required status checks).
 
 ## What about Garnix.io?
 

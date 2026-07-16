@@ -31,7 +31,12 @@
     # home-manager module lives at inputs.noctalia.homeModules.default and
     # generates ~/.config/noctalia/config.toml from programs.noctalia.settings.
     noctalia = {
-      url = "github:noctalia-dev/noctalia";
+      # MODIFIED 2026-07-16: auf Release-Tag gepinnt statt master-HEAD.
+      # 'nix flake update' zog master-Commits NACH beta2 mit kaputter
+      # Test-Suite (narrowing conversion in config_schema_roundtrip_test.cpp)
+      # -> Build-Abbruch. Releases sind getestet, master ist Lotterie.
+      # Bei neuem Release: Tag hier bumpen + nix flake lock --update-input noctalia
+      url = "github:noctalia-dev/noctalia/v5.0.0-beta2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
