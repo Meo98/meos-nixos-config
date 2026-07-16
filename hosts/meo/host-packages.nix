@@ -2,9 +2,6 @@
   {
   nixpkgs.overlays = [
     (import ../../modules/meo/bambu.nix)
-    # TEMPORÄR 2026-07-16: pdal 2.10.0 gegen GDAL-3.13-Breakage (freecad-Kette).
-    # Entfernen sobald nixpkgs pdal >= 2.10.0 hat — Details in pdal-fix.nix.
-    (import ../../modules/meo/pdal-fix.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
   ];

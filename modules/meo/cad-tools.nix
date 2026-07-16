@@ -8,13 +8,11 @@
     # F5 = Vorschau, F6 = Render, dann STL-Export für den 3D-Drucker.
     openscad
 
-    # GUI parametrisches 3D-CAD. Für komplexere Gehäuse + die "KiCad StepUp"
-    # Workbench (über FreeCAD Addon-Manager nachinstallieren), die .kicad_pcb
-    # direkt importiert und passgenaue Cases ermöglicht.
-    # 2026-07-16: pdal-GDAL-Breakage wird via modules/meo/pdal-fix.nix Overlay
-    # (pdal 2.10.0) behoben — freecad wieder aktiv. Achtung: pdal+vtk+freecad
-    # kompilieren einmalig lokal (~20-30 Min), nicht im Binary-Cache.
-    freecad
+    # freecad ENTFERNT 2026-07-16 (User: wird nicht mehr benoetigt). Parametrisches
+    # CAD weiterhin via openscad + pythonocc-core/CadQuery unten. Bei Bedarf:
+    # einfach `freecad` wieder in diese Liste — sofern nixpkgs pdal >= 2.10.0 hat,
+    # kommt es aus dem Binary-Cache (Kontext: GDAL-3.13/pdal-Breakage, siehe
+    # git log --follow modules/meo/pdal-fix.nix).
 
     # (Inkscape entfernt — bei Bedarf für 2D-Laser/SVG->DXF wieder hinzufügen.)
 
