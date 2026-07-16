@@ -42,13 +42,17 @@ in {
     # schema and noctalia config validate.
     settings = {
       theme = {
-        mode = "dark";
-        source = "builtin";
+        # MODIFIED 2026-07-16: mkForce mode+source, weil Stylix-noctalia-Integration
+        # (hm.nix) theme.mode/source selbst setzt -> sonst Konflikt beim Build.
+        mode = pkgs.lib.mkForce "dark";
+        source = pkgs.lib.mkForce "builtin";
         builtin = "Dracula";
       };
 
       shell = {
-        font_family = "JetBrains Mono";
+        # MODIFIED 2026-07-16: mkForce, weil neueres upstream-noctalia (hm.nix)
+        # font_family selbst auf "Montserrat" setzt -> sonst Konflikt-Fehler beim Build.
+        font_family = pkgs.lib.mkForce "JetBrains Mono";
         ui_scale = 1.05;
         corner_radius_scale = 1.09;
         time_format = "{:%H:%M}";
@@ -120,7 +124,8 @@ in {
 
       osd = {
         position = "top_right";
-        background_opacity = 1.0;
+        # MODIFIED 2026-07-16: mkForce, Stylix setzt osd.background_opacity selbst.
+        background_opacity = pkgs.lib.mkForce 1.0;
       };
 
       # MODIFIED 2026-06-17: noctalia lockscreen wieder enabled. Original-SEGV
