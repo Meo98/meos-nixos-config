@@ -84,7 +84,29 @@
     #   lspci -k | grep -A3 VGA   (Kernel driver in use: i915 oder xe?)
     # Falls xe: Params auf xe.enable_psr=0 etc. umstellen.
   ];
-  
+
+  # --- NVIDIA SUSPEND-FREEZE-FIX (2026-07-10) ---
+  # Symptom: beim Zuklappen/Suspend wedged die Maschine auf blauem Konsolen-Screen:
+  #   [nvidia-drm] *ERROR* ... Failed to register auto-value-update on pre-wait
+  #                value for sync FD semaphore surface
+  #   Freezing user space processes failed after 20s (2-3 tasks refusing to freeze)
+  # Root Cause: ein GPU-Prozess haengt im uninterruptiblen NVIDIA-Fence-Wait
+  # (__nv_drm_semsurf_wait_fence_work_cb). Der Kernel-Freezer kann ihn nicht
+  # einfrieren -> Suspend bricht ab -> Hard-Reset noetig. VRAM-Preservation
+  # (PreserveVideoMemoryAllocations=1) + nvidia-suspend/resume.service sind bereits
+  # aktiv (upstream nvidia-drivers.nix), also NICHT die Ursache.
+  # Fix Schritt 1: finegrained RTD3-Runtime-PM abschalten. Upstream markiert es
+  # selbst als "Experimental, can cause sleep/suspend to fail" -> die RTD3-
+  # Power-State-Uebergaenge racen mit dem Suspend-Freeze. Trade-off: dGPU bleibt
+  # bei Idle unter Prime-Offload angeschaltet (etwas mehr Akkuverbrauch), dafuer
+  # stabiler Suspend. mkForce, weil upstream finegrained=true hart setzt.
+  # Wenn die semsurf-Fence-Fehler danach WEITER auftreten: Schritt 2 = auf das
+  # NVIDIA open kernel module wechseln (RTX 4080/Ada wird voll unterstuetzt, ist
+  # NVIDIAs empfohlener Pfad auf Treiber 555+ und hat die modernere Wayland-
+  # Explicit-Sync-Implementierung):  hardware.nvidia.open = lib.mkForce true;
+  hardware.nvidia.powerManagement.finegrained = lib.mkForce false;
+
+
   services.pipewire = {
     enable = true;
     alsa.enable = true;
