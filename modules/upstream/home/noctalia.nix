@@ -12,12 +12,7 @@
 {
   pkgs,
   inputs,
-<<<<<<< HEAD
   host,
-||||||| parent of 2033746 (chore: auto-sync from meo 2026-07-17 11:56)
-=======
-  lib,
->>>>>>> 2033746 (chore: auto-sync from meo 2026-07-17 11:56)
   ...
 }: let
   bt-audio-monitor = import ../../meo/scripts/bt-audio-monitor.nix {inherit pkgs;};
@@ -126,21 +121,10 @@ in {
         show_app_name = true;
         show_actions = true;
         layer = "top";
-<<<<<<< HEAD
         # MODIFIED 2026-07-08: mkForce, weil neueres upstream-noctalia (hm.nix)
         # notification.background_opacity=1.0 mit Normal-Prio hart setzt → sonst
         # "conflicting definition values" beim flake-update-rebuild (fu).
         background_opacity = pkgs.lib.mkForce 0.91;
-||||||| parent of 2033746 (chore: auto-sync from meo 2026-07-17 11:56)
-        background_opacity = 0.91;
-=======
-        # MODIFIED 2026-07-10: neueres noctalia-Modul (flake-input) setzt
-        # notification.background_opacity = 1.0 mit Normal-Prioritaet -> Konflikt
-        # mit unserem 0.91 (beide gleich prioritaet, Build bricht ab). mkForce
-        # laesst unseren Wert gewinnen. Selbes Muster wie hypridle-Override in
-        # hosts/meo/default.nix.
-        background_opacity = lib.mkForce 0.91;
->>>>>>> 2033746 (chore: auto-sync from meo 2026-07-17 11:56)
       };
 
       osd = {
