@@ -121,6 +121,12 @@ in {
         # backward compat). misc:vrr (Variable Refresh Rate) below is the
         # remaining refresh-related option and still valid.
         vrr = 2;
+        # MODIFIED 2026-07-18: erlaubt einem neuen ext-session-lock-Client die
+        # Sperre zu uebernehmen, wenn der alte Lock-Client (noctalia) stirbt
+        # oder neu gestartet wird. Ohne das bleibt die Session nach einem
+        # noctalia-Restart im Locked-Zustand ohne entsperrbaren Lockscreen.
+        # Noetig fuer das Resume-Recovery in hypridle.nix.
+        allow_session_lock_restore = true;
       };
     };
 

@@ -36,7 +36,12 @@
       # Test-Suite (narrowing conversion in config_schema_roundtrip_test.cpp)
       # -> Build-Abbruch. Releases sind getestet, master ist Lotterie.
       # Bei neuem Release: Tag hier bumpen + nix flake lock --update-input noctalia
-      url = "github:noctalia-dev/noctalia/v5.0.0-beta2";
+      # MODIFIED 2026-07-18: beta2 -> beta.3. beta2 wedgte nach Suspend/Resume
+      # den EGL-Context (guilty-context-reset -> EGL_BAD_CONTEXT-Loop -> Lock-
+      # screen eingefroren, nur Reboot half). beta.3 fixt das Resume-Redraw
+      # (Commits 918f0549 "redraw active lockscreen after resume" + b6d8447e
+      # "defer surface redraws on resume and unlock").
+      url = "github:noctalia-dev/noctalia/v5.0.0-beta.3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
