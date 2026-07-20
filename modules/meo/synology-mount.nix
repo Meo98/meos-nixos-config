@@ -42,6 +42,10 @@ let
         "_netdev"
         "vers=3.1.1"
         "iocharset=utf8"
+        # Byte-Range-Locks nicht zum SMB-Server durchreichen (nur lokal).
+        # Ohne das halten OnlyOffice/LibreOffice Dateien auf dem Mount für
+        # gesperrt und erlauben nur "Speichern unter" statt Ctrl+S in-place.
+        "nobrl"
       ];
     };
   };
