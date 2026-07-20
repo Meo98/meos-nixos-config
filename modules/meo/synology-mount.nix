@@ -8,7 +8,12 @@ let
 
   # Eine Zeile pro Freigabe; gemountet nach /mnt/edisrv/<name>.
   shares = [
-    "web" # System default shared folder — Dokumentenablage des Synology-Webservers
+    # "web" braucht erst Lesen/Schreiben-Berechtigung in DSM
+    # (Systemsteuerung → Freigegebener Ordner → web → Berechtigungen),
+    # sonst schlägt der Mount mit Permission denied fehl.
+    "edi"
+    "public"
+    "temp"
   ];
 
   # Credentials liegen BEWUSST außerhalb des Repos (fr auto-committed alles
