@@ -151,6 +151,14 @@
   # NVIDIAs empfohlener Pfad auf Treiber 555+ und hat die modernere Wayland-
   # Explicit-Sync-Implementierung):  hardware.nvidia.open = lib.mkForce true;
   hardware.nvidia.powerManagement.finegrained = lib.mkForce false;
+  # Schritt 2 AKTIVIERT (2026-07-22, Akku-Session): open kernel module —
+  # NVIDIAs empfohlener Pfad fuer Ada (RTX 4080), modernere Explicit-Sync-
+  # Implementierung, anderer Codepfad um den semsurf-Fence-Bug herum.
+  # Testplan: einige Tage Suspend/Resume beobachten (journalctl -b -1 nach
+  # "semsurf"/"Failed to register" greppen). Wenn stabil -> Schritt 3:
+  # finegrained (RTD3) oben wieder aktivieren, damit die dGPU in D3cold darf
+  # (-2.8W Idle). Rollback: diese Zeile entfernen.
+  hardware.nvidia.open = lib.mkForce true;
 
 
   services.pipewire = {
