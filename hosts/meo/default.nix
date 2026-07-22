@@ -46,14 +46,59 @@
     serviceConfig.ExecStart = "${pkgs.udiskie}/bin/udiskie --no-notify --tray";
   };
 
+  # --- AKKU: eDP-1 60Hz am Akku, 240Hz am Netz (2026-07-21) ---
+  # 240Hz-Scanout kostet auf dem OLED spuerbar Strom (2-4W), und weil PSR wegen
+  # des eDP-Freeze aus ist, laeuft die Display-Pipe wirklich permanent auf 240Hz.
+  # Event-getrieben via `upower --monitor` (kein Polling). Fasst NUR eDP-1 an,
+  # Werte muessen zu variables.nix extraMonitorSettings passen (0x0, scale 1.6).
+  # Limitation: Hyprland-Config-Reload setzt wieder 240Hz; der naechste
+  # AC-Wechsel korrigiert das.
+  systemd.user.services.edp-refresh-switcher = {
+    description = "eDP-1 refresh: 60Hz on battery, 240Hz on AC";
+    wantedBy = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = 5;
+      ExecStart = pkgs.writeShellScript "edp-refresh-switcher" ''
+        export PATH=/run/current-system/sw/bin:$PATH
+        set_rate() {
+          HYPRLAND_INSTANCE_SIGNATURE=$(ls -t "$XDG_RUNTIME_DIR/hypr" 2>/dev/null | head -1)
+          export HYPRLAND_INSTANCE_SIGNATURE
+          [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] || return 0
+          hyprctl keyword monitor "eDP-1,2560x1600@$1,0x0,1.6" >/dev/null
+        }
+        apply() {
+          if [ "$(cat /sys/class/power_supply/ACAD/online)" = "1" ]; then
+            [ "$last" = ac ] || { last=ac; set_rate 240; }
+          else
+            [ "$last" = bat ] || { last=bat; set_rate 60; }
+          fi
+        }
+        last=""
+        apply
+        upower --monitor | while read -r _; do apply; done
+      '';
+    };
+  };
+
   # --- AUDIO FIX (Gegen das Klicken/Knallen) ---
   boot.kernelParams = [
     "snd_hda_intel.power_save=0"
     "snd_hda_intel.power_save_controller=N"
     # OLED-Brightness Fix für ASUS Zephyrus G16 GU605 (Intel Meteor Lake + NVIDIA)
-    # Intel DPCD-Backlight aktivieren (=1 für VESA Standard, =3 wäre für HDR)
-    "i915.enable_dpcd_backlight=1"
+    # MODIFIED 2026-07-21: =1 (VESA) -> =3 (Intel HDR Interface). Mit =1 war die
+    # Helligkeit wirkungslos (Panel dauerhaft volle Luminanz, intel_backlight-
+    # Writes ohne Effekt). Kernel-Log sagt es woertlich: "Panel is missing HDR
+    # static metadata. ... If your backlight controls don't work try booting
+    # with i915.enable_dpcd_backlight=3." -> Das GU605-OLED kann nur Intels
+    # proprietaeres HDR-Backlight-AUX-Interface, auch fuer SDR-Brightness.
+    "i915.enable_dpcd_backlight=3"
     # NVIDIA Backlight-Handler deaktivieren (blockiert sonst den Intel DPCD-Pfad)
+    # HINWEIS 2026-07-21: Param existiert im aktuellen Treiber nicht mehr
+    # ("unknown parameter ... ignored" im Kernel-Log), /sys/class/backlight/
+    # nvidia_0 taucht daher wieder auf. Harmlos, aber Brightness-Tools koennen
+    # das falsche Device erwischen -> ggf. explizit intel_backlight ansteuern.
     "nvidia.NVreg_EnableBacklightHandler=0"
     "nvidia.NVreg_RegistryDwords=EnableBrightnessControl=0"
     # PSR-Freeze-Fix (2026-06-21): internes OLED-eDP-1 Panel bleibt bei Idle/DPMS
@@ -138,6 +183,10 @@
     SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="df11", TAG+="uaccess"
     # Keychron Link Dongle
     SUBSYSTEM=="usb", ATTRS{idVendor}=="3434", TAG+="uaccess"
+    # Akku-Ladelimit 80% (2026-07-21): Akku ist bereits auf 80.5% Design-Kapazitaet
+    # (72.5/90 Wh) degradiert. Limit bremst weitere Alterung; asus-wmi setzt das
+    # Attribut beim Boot auf 100 zurueck, daher per udev bei jedem BAT1-Event neu.
+    ACTION=="add|change", SUBSYSTEM=="power_supply", KERNEL=="BAT1", ATTR{charge_control_end_threshold}="80"
   '';
 
   # MODIFIED 2026-06-12: hypridle ist als pkgs.hypridle über einen flake-input

@@ -10,6 +10,7 @@
     ./pdf-tools.nix
     ./cad-tools.nix
     ./nvim-yazi-tweaks.nix
+    ./micropython.nix
     ./bun.nix
     ./cli-modern.nix
   ];
