@@ -151,14 +151,16 @@
   # NVIDIAs empfohlener Pfad auf Treiber 555+ und hat die modernere Wayland-
   # Explicit-Sync-Implementierung):  hardware.nvidia.open = lib.mkForce true;
   hardware.nvidia.powerManagement.finegrained = lib.mkForce false;
-  # Schritt 2 AKTIVIERT (2026-07-22, Akku-Session): open kernel module —
-  # NVIDIAs empfohlener Pfad fuer Ada (RTX 4080), modernere Explicit-Sync-
-  # Implementierung, anderer Codepfad um den semsurf-Fence-Bug herum.
-  # Testplan: einige Tage Suspend/Resume beobachten (journalctl -b -1 nach
-  # "semsurf"/"Failed to register" greppen). Wenn stabil -> Schritt 3:
-  # finegrained (RTD3) oben wieder aktivieren, damit die dGPU in D3cold darf
-  # (-2.8W Idle). Rollback: diese Zeile entfernen.
-  hardware.nvidia.open = lib.mkForce true;
+  # Schritt 2 GESCHEITERT (2026-07-22): open kernel module (595.84) getestet,
+  # Suspend haengte sich beim ZWEITEN Zyklus auf — anderes Muster als der alte
+  # semsurf-Bug (1. Suspend/Resume ok; 2. Versuch hing VOR dem Userspace-Freeze,
+  # System lief blind weiter, Hard-Reset noetig; journal des Boots: 09:42:31
+  # "Starting System Suspend..." ohne jede Folgezeile). Verdacht: GPU-Prozess
+  # nach Resume #1 in unkillbarem Wait, evtl. weil open+595 automatisch auf
+  # powerManagement.kernelSuspendNotifier umschaltet (nvidia-suspend/resume-
+  # Units mit VRAM-Preservation entfallen). Falls je nochmal probiert:
+  # open=true + kernelSuspendNotifier=false waere die naechste Variante.
+  # Bis dahin: proprietaeres Modul = known-good.
 
 
   services.pipewire = {
