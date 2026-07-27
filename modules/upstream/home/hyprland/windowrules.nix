@@ -284,6 +284,23 @@ _: {
         float = on
       }
 
+      # MODIFIED 2026-07-27: Vivaldi rendert Extension-Popups (z.B. Bitwarden)
+      # unter Wayland als normales xdg_toplevel ohne Parent-/Modal-Hint. Ohne
+      # Float-Regel tiled Hyprland das Popup: Buffer wird auf Tile-Größe
+      # gestreckt (Verzerrung) + Resize-Kampf (Ruckeln). Gleiches Symptom wie
+      # beim Affinity-float-Fix. Heuristik: Hauptfenster tragen IMMER das
+      # Suffix " - Vivaldi" (verifiziert: sogar initialTitle ist
+      # "Vivaldi - Vivaldi") — alles ohne Suffix ist ein Popup und darf
+      # floaten. DevTools ausgenommen (sollen tiled bleiben). Klasse bewusst
+      # exakt vivaldi-stable, damit PWAs (Klasse vivaldi-<appid>) nicht
+      # mitfloaten.
+      windowrule {
+        name = Vivaldi-popups
+        match:class = ^(vivaldi-stable)$
+        match:title = negative:^((.* - Vivaldi)|(DevTools.*))$
+        float = on
+      }
+
       windowrule {
         name = Add-Folder
         match:initial_title = (Add Folder to Workspace)
