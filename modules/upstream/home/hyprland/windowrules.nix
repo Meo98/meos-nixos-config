@@ -301,6 +301,22 @@ _: {
         float = on
       }
 
+      # MODIFIED 2026-07-27: Das Bitwarden-Extension-Fenster ist KEIN suffix-
+      # loses Popup, sondern ein volles Vivaldi-Fenster (verifiziert per
+      # hyprctl: title UND initialTitle = "Bitwarden - Vivaldi") — die
+      # Negativ-Suffix-Regel oben greift daher nicht. Exakter Titel-Match,
+      # float + feste Popup-Größe statt halbem Bildschirm. Ein echter
+      # Web-Vault-Tab heißt "Bitwarden Web-Tresor - Vivaldi" o.ä. und matcht
+      # den exakten Titel nicht.
+      windowrule {
+        name = Vivaldi-Bitwarden
+        match:class = ^(vivaldi-stable)$
+        match:title = ^(Bitwarden - Vivaldi)$
+        float = on
+        center = on
+        size = 420 640
+      }
+
       windowrule {
         name = Add-Folder
         match:initial_title = (Add Folder to Workspace)

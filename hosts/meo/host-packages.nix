@@ -38,7 +38,13 @@
     bambu-studio              # Offizieller BambuLab-Slicer (AppImage via modules/meo/bambu.nix overlay)
 
     # --- Webbrowser ---
-    vivaldi                   # Feature-reicher Browser mit Fokus auf Tab-Management und Privatsphäre
+    # MODIFIED 2026-07-28: WaylandPerWindowScaling gegen falsch skalierte /
+    # fragmentierte erste Frames beim Fensteröffnen (fractional scale 1.6 auf
+    # eDP-1): Chromium rendert sonst initial mit Scale 1/2 und der Compositor
+    # skaliert die Frames hoch, bis der korrekte Faktor ankommt.
+    (vivaldi.override {       # Feature-reicher Browser mit Fokus auf Tab-Management und Privatsphäre
+      commandLineArgs = [ "--enable-features=WaylandPerWindowScaling" ];
+    })
     google-chrome             # Standard-Browser von Google (oft nötig für DRM/Netflix-Stabilität)
     firefox                   # Der klassische, privatsphäre-orientierte Open-Source Browser
 
