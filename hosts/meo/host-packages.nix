@@ -2,6 +2,7 @@
   {
   nixpkgs.overlays = [
     (import ../../modules/meo/bambu.nix)
+    (import ../../modules/meo/zoo.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
   ];
@@ -53,6 +54,8 @@
     onlyoffice-desktopeditors # Office-Suite mit sehr hoher Kompatibilität zu MS Office-Formaten
     insync                    # Synchronisations-Client für Google Drive und OneDrive
     kicad                     # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
+    plasticity                # CAD-Modeler (Direct Modeling, Parasolid-Kernel); Test als Fusion-Alternative
+    zoo-design-studio         # Zoo.dev CAD (Text-to-CAD/KCL, AppImage via modules/meo/zoo.nix overlay)
     obsidian                  # Markdown-Note-Editor + Vault für obsidian-stack Projekt
 
     # --- Entwicklung & System-Tools ---
