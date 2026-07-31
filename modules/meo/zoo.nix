@@ -17,6 +17,20 @@ self: super: {
       export SSL_CERT_FILE="${super.cacert}/etc/ssl/certs/ca-bundle.crt"
     '';
 
+    # wrapType2 liefert nur das Binary — Desktop-Eintrag + Icon aus dem
+    # AppImage extrahieren, damit die App im Launcher auftaucht.
+    extraInstallCommands =
+      let
+        appimageContents = super.appimageTools.extract { inherit pname version src; };
+      in ''
+        install -Dm444 ${appimageContents}/zoo-modeling-app.desktop \
+          $out/share/applications/zoo-design-studio.desktop
+        install -Dm444 ${appimageContents}/usr/share/icons/hicolor/1024x1024/apps/zoo-modeling-app.png \
+          $out/share/icons/hicolor/1024x1024/apps/zoo-modeling-app.png
+        substituteInPlace $out/share/applications/zoo-design-studio.desktop \
+          --replace-fail 'Exec=AppRun --no-sandbox %U' 'Exec=zoo-design-studio %U'
+      '';
+
     extraPkgs = pkgs: with pkgs; [
       cacert
     ];
