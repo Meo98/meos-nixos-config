@@ -4,6 +4,13 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Separater Pin nur fuer FreeCAD: auf dem Haupt-Pin (20260715) ist die
+    # Kette pdal->vtk->freecad kaputt (GCC15/GDAL-Buildfehler, nicht in Hydra
+    # gecached). Neueres unstable hat den Fix + Binary-Cache. Kann beim
+    # naechsten grossen nixpkgs-Bump wieder entfernt werden (dann freecad
+    # regulaer aus pkgs beziehen).
+    nixpkgs-freecad.url = "github:nixos/nixpkgs/nixos-unstable";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
