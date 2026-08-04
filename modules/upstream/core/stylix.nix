@@ -39,13 +39,19 @@ in {
         package = pkgs.nerd-fonts.jetbrains-mono;
         name = "JetBrains Mono";
       };
+      # MODIFIED 2026-08-04: Montserrat -> Noto. Montserrats breite Metriken
+      # sprengten App-Layouts (FreeCAD-Wizard, Bambu-Dialoge liefen rechts aus
+      # dem Screen) — Qt/GTK-Apps dimensionieren Dialoge fuer Noto/DejaVu.
+      # Per-App-Fontconfig-Workarounds (bambu.nix, freecadFontFix) damit obsolet
+      # und entfernt. Montserrat bleibt via fonts.packages unten fuer Dokumente
+      # installiert, ist nur nicht mehr UI-Standard.
       sansSerif = {
-        package = pkgs.montserrat;
-        name = "Montserrat";
+        package = pkgs.noto-fonts;
+        name = "Noto Sans";
       };
       serif = {
-        package = pkgs.montserrat;
-        name = "Montserrat";
+        package = pkgs.noto-fonts;
+        name = "Noto Serif";
       };
       sizes = {
         applications = 12;
@@ -55,4 +61,8 @@ in {
       };
     };
   };
+
+  # MODIFIED 2026-08-04: Montserrat weiterhin installieren (Dokumente/Design,
+  # z.B. Affinity), obwohl es oben nicht mehr System-UI-Font ist.
+  fonts.packages = [ pkgs.montserrat ];
 }

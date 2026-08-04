@@ -22,6 +22,9 @@ self: super: {
       sha256 = "sha256-JGy2ua2TtLSmX2MTJN1/CYvyEZiiw5g36RqmoDk+TdQ=";
     };
   
+    # HINWEIS 2026-08-04: Per-App-FONTCONFIG_FILE (Noto-Sans-Umbiegung gegen
+    # abgeschnittene Dialoge) entfernt — System-Sans ist jetzt global Noto Sans
+    # (modules/upstream/core/stylix.nix), Workaround damit obsolet.
     profile = ''
       export SSL_CERT_FILE="${super.cacert}/etc/ssl/certs/ca-bundle.crt"
       export GIO_MODULE_DIR="${super.glib-networking}/lib/gio/modules/"
