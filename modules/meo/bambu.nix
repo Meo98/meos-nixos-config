@@ -1,4 +1,23 @@
-self: super: {
+self: super: let
+  # ADDED 2026-08-06: Rest-Clipping im Send-Print-Dialog (Toggle-Spalte rechts)
+  # besteht auch mit globalem Noto Sans weiter — Noto ist minimal breiter als
+  # Bambus Referenzfont "Ubuntu" (Ubuntu 24.04 = deren Test-Plattform, dort
+  # werden die hartkodierten Dialogbreiten kalibriert). Per-App-Fontconfig NUR
+  # fuer Bambu: sans-serif -> Ubuntu. Das ubuntu-classic-Paket wird nur ueber
+  # das <dir> hier eingeblendet, landet NICHT im System-fontconfig.
+  # prepend_first noetig, sonst gewinnt der Stylix-Prepend (Noto Sans) aus der
+  # includeten fonts.conf.
+  bambuFontConf = super.writeText "bambu-fontconfig.conf" ''
+    <fontconfig>
+      <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
+      <dir>${super.ubuntu-classic}/share/fonts</dir>
+      <match target="pattern">
+        <test qual="any" name="family"><string>sans-serif</string></test>
+        <edit name="family" mode="prepend_first" binding="strong"><string>Ubuntu</string></edit>
+      </match>
+    </fontconfig>
+  '';
+in {
   bambu-studio = super.appimageTools.wrapType2 rec {
     name = "BambuStudio";
     pname = "bambu-studio";
@@ -22,12 +41,13 @@ self: super: {
       sha256 = "sha256-JGy2ua2TtLSmX2MTJN1/CYvyEZiiw5g36RqmoDk+TdQ=";
     };
   
-    # HINWEIS 2026-08-04: Per-App-FONTCONFIG_FILE (Noto-Sans-Umbiegung gegen
-    # abgeschnittene Dialoge) entfernt — System-Sans ist jetzt global Noto Sans
-    # (modules/upstream/core/stylix.nix), Workaround damit obsolet.
+    # HINWEIS 2026-08-04: Per-App-FONTCONFIG_FILE (Noto-Sans-Umbiegung) damals
+    # entfernt, weil System-Sans global Noto Sans wurde. 2026-08-06 in neuer
+    # Form wieder noetig (Ubuntu statt Noto), siehe bambuFontConf oben.
     profile = ''
       export SSL_CERT_FILE="${super.cacert}/etc/ssl/certs/ca-bundle.crt"
       export GIO_MODULE_DIR="${super.glib-networking}/lib/gio/modules/"
+      export FONTCONFIG_FILE="${bambuFontConf}"
     '';
     
     extraPkgs = pkgs: with pkgs; [
