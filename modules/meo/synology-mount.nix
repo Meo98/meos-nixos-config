@@ -23,6 +23,10 @@ let
   # Anlegen mit: sudo install -m 600 /dev/null /etc/nixos/smb-secrets && sudoedit /etc/nixos/smb-secrets
   credentials = "/etc/nixos/smb-secrets";
 
+  # systemd-Unit-Namen zu den Mountpoints (/mnt/edisrv/<share> → mnt-edisrv-<share>).
+  automountUnits = map (share: "mnt-edisrv-${share}.automount") shares;
+  mountUnits = map (share: "mnt-edisrv-${share}.mount") shares;
+
   mkShare = share: {
     name = "/mnt/edisrv/${share}";
     value = {
@@ -53,4 +57,32 @@ in
 {
   fileSystems = builtins.listToAttrs (map mkShare shares);
   environment.systemPackages = [ pkgs.cifs-utils ];
+
+  # Ist die NAS nicht erreichbar (anderes Netz, NAS aus), lassen fehlgeschlagene
+  # Mount-Versuche die autofs-Punkte in einem Zustand zurück, an dem bwrap beim
+  # rekursiven Bind-Mount von /mnt hart scheitert ("No such device") — sandboxed
+  # Apps (FHS-Wrapper wie Bambu Studio, Flatpaks) starten dann nicht mehr, und
+  # nh-Aktivierungen enden wegen der failed Units mit Exit 4. Deshalb schaltet
+  # dieser Dispatcher die Automounts bei jedem Netzwechsel passend: SMB-Port der
+  # NAS erreichbar → Automounts an, sonst alles stoppen + failed-State resetten.
+  networking.networkmanager.dispatcherScripts = [
+    {
+      type = "basic";
+      source = pkgs.writeShellScript "edisrv-automounts" ''
+        case "$2" in
+          up | down | connectivity-change | vpn-up | vpn-down) ;;
+          *) exit 0 ;;
+        esac
+
+        systemctl=/run/current-system/sw/bin/systemctl
+        if ${pkgs.coreutils}/bin/timeout 2 ${pkgs.bash}/bin/bash \
+          -c ': < /dev/tcp/${nas}/445' 2> /dev/null; then
+          $systemctl start ${lib.escapeShellArgs automountUnits}
+        else
+          $systemctl stop ${lib.escapeShellArgs (automountUnits ++ mountUnits)}
+          $systemctl reset-failed ${lib.escapeShellArgs (automountUnits ++ mountUnits)} 2> /dev/null || true
+        fi
+      '';
+    }
+  ];
 }
