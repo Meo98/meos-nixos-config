@@ -51,8 +51,16 @@ in {
     settings = {
       "$mod" = "SUPER";
 
+      # MODIFIED 2026-08-06: force_zero_scaling true -> false. Mit true rendern
+      # XWayland-Apps (Bambu Studio, Wine/Affinity) in 1x und wirken auf dem
+      # 1.6-skalierten OLED winzig — uneinheitlich zu Wayland-Apps (Vivaldi).
+      # Bambus eigener HiDPI-Code (GDK_SCALE=2) ist kaputt (App stirbt nach
+      # ~20s, Fenster skalieren nicht), daher muss Hyprland hochskalieren:
+      # einheitliche 1.6x-Groesse fuer alle Apps, Kompromiss = leichte
+      # Unschaerfe bei X11-Apps. GDK_SCALE=1 in env.nix bleibt (verhindert
+      # Doppel-Skalierung).
       xwayland = {
-        force_zero_scaling = true;
+        force_zero_scaling = false;
       };
 
       exec-once = [
