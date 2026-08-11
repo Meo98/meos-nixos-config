@@ -48,6 +48,13 @@ in {
       export SSL_CERT_FILE="${super.cacert}/etc/ssl/certs/ca-bundle.crt"
       export GIO_MODULE_DIR="${super.glib-networking}/lib/gio/modules/"
       export FONTCONFIG_FILE="${bambuFontConf}"
+      # ADDED 2026-08-10: Bambu leitet seine UI-Groesse (em-Skalierung) von der
+      # GTK-Systemschrift ab — Stylix setzt Noto Sans 12 statt der ueblichen 10,
+      # dadurch wirkt Bambu ~20% groesser als Wayland-Apps (multipliziert sich
+      # mit dem 1.6x-Monitor-Scale). 0.83 ≈ 10/12 rechnet das raus, NUR fuer
+      # Bambu. 0.75 per Screenshot-Vergleich auf Vivaldi-UI-Textgroesse
+      # kalibriert. Zum Testen anderer Werte: GDK_DPI_SCALE=0.9 bambu-studio
+      export GDK_DPI_SCALE="''${GDK_DPI_SCALE:-0.75}"
     '';
     
     extraPkgs = pkgs: with pkgs; [

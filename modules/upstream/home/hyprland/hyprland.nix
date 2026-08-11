@@ -61,6 +61,10 @@ in {
       # Doppel-Skalierung).
       xwayland = {
         force_zero_scaling = false;
+        # MODIFIED 2026-08-10: bilinear statt Nearest-Neighbor beim 1.6x-Upscale —
+        # Nearest verdoppelt bei krummen Faktoren einzelne Pixelreihen (Klötzchen-
+        # Look), bilinear ist gleichmäßig weich.
+        use_nearest_neighbor = false;
       };
 
       exec-once = [

@@ -54,6 +54,7 @@
     insync                    # Synchronisations-Client für Google Drive und OneDrive
     kicad                     # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
     plasticity                # CAD-Modeler (Direct Modeling, Parasolid-Kernel)
+    blender                   # 3D-Suite für Modeling, Sculpting, Animation und Rendering
     # Open-Source Parametrik-CAD (Feature-Tree, STEP); Wayland-Build für Hyprland.
     # Aus separatem Pin nixpkgs-freecad (pdal/vtk auf Haupt-Pin kaputt, s. flake.nix).
     inputs.nixpkgs-freecad.legacyPackages.${pkgs.system}.freecad-wayland
