@@ -46,6 +46,16 @@ let
         "_netdev"
         "vers=3.1.1"
         "iocharset=utf8"
+        # CIFS ist per Default "hard": I/O und Unmount hängen UNBEGRENZT in
+        # D-State, wenn die NAS wegfällt (z.B. WLAN stirbt beim Suspend).
+        # Solche Prozesse kann der cgroup-Freezer weder einfrieren noch
+        # auftauen — Folge war 2026-08-14 zweimal "Failed to thaw unit
+        # 'user.slice'" nach Resume: komplette Session eingefroren, nur noch
+        # blinkender VT-Cursor, Hard-Reboot nötig. "soft" lässt Requests nach
+        # den Reconnect-Versuchen fehlschlagen statt ewig zu blockieren;
+        # echo_interval=15 erkennt den Serververlust nach ~30s statt ~120s.
+        "soft"
+        "echo_interval=15"
         # Byte-Range-Locks nicht zum SMB-Server durchreichen (nur lokal).
         # Ohne das halten OnlyOffice/LibreOffice Dateien auf dem Mount für
         # gesperrt und erlauben nur "Speichern unter" statt Ctrl+S in-place.
@@ -65,6 +75,45 @@ in
   # nh-Aktivierungen enden wegen der failed Units mit Exit 4. Deshalb schaltet
   # dieser Dispatcher die Automounts bei jedem Netzwechsel passend: SMB-Port der
   # NAS erreichbar → Automounts an, sonst alles stoppen + failed-State resetten.
+  # Suspend darf nie mit aktivem CIFS-Mount passieren: insync pollt
+  # /mnt/edisrv/* im Sekundentakt und hält die Mounts damit praktisch immer
+  # aktiv. Klappte der Deckel zu, starb das WLAN unter dem aktiven Mount und
+  # die hängenden Unmount-Jobs verklemmten PID 1 so, dass user.slice nach dem
+  # Resume nicht mehr aufgetaut wurde (Journal 2026-08-14: "Failed to thaw
+  # unit 'user.slice': Connection timed out" → Session eingefroren,
+  # Hard-Reboot). Deshalb: vor sleep.target aushängen, solange das Netz noch
+  # steht. Nach dem Resume schaltet der NM-Dispatcher unten die Automounts
+  # beim Netz-up-Event wieder ein.
+  systemd.services.edisrv-unmount-before-sleep = {
+    description = "edisrv-CIFS-Shares vor dem Suspend aushängen";
+    wantedBy = [ "sleep.target" ];
+    before = [ "sleep.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      # Falls doch etwas hängt: Suspend nach 15s trotzdem zulassen.
+      TimeoutStartSec = 15;
+      ExecStart = pkgs.writeShellScript "edisrv-unmount-before-sleep" ''
+        systemctl=/run/current-system/sw/bin/systemctl
+        ${pkgs.coreutils}/bin/timeout 10 $systemctl stop \
+          ${lib.escapeShellArgs (automountUnits ++ mountUnits)} || true
+        # Hängengebliebene Mounts notfalls lazy+force austragen.
+        for share in ${lib.escapeShellArgs shares}; do
+          if ${pkgs.util-linux}/bin/findmnt -t cifs "/mnt/edisrv/$share" > /dev/null; then
+            ${pkgs.util-linux}/bin/umount -l -f "/mnt/edisrv/$share" || true
+          fi
+        done
+        $systemctl reset-failed 'mnt-edisrv-*' 2> /dev/null || true
+      '';
+    };
+  };
+
+  # Sicherheitsnetz hinter den beiden Fixes oben: systemd (seit v254) friert
+  # user.slice über Suspend ein; genau dieses Auftauen ist am 2026-08-14
+  # zweimal fehlgeschlagen. Ohne Einfrieren laufen User-Prozesse über den
+  # Suspend einfach weiter (Verhalten wie vor systemd 254) — selbst wenn ein
+  # Mount doch mal hängt, bleibt die Session dann bedienbar.
+  systemd.services.systemd-suspend.environment.SYSTEMD_SLEEP_FREEZE_USER_SESSIONS = "false";
+
   networking.networkmanager.dispatcherScripts = [
     {
       type = "basic";
