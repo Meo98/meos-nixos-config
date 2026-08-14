@@ -245,6 +245,20 @@
     ];
   }];
 
+  # --- DISK-SWAP als Überlauf hinter zram (Notnetz gegen OOM-Kills) ---
+  # Gleiches Muster wie auf meo-work: zram (50% ≈ 15 GB, Prio 5) füllt sich
+  # zuerst, kalte Seiten laufen danach in die Swap-Datei über (Prio negativ).
+  # Anlass 2026-08-14: Blender in 3 der letzten 4 Boots per OOM-Killer
+  # abgeschossen (bis 24 GB RSS, Mondlampen-Szene), Bambu Studio 2× beim
+  # Slicen (18-23 GB RSS) — 30 GB RAM + zram allein reichen für die Peaks
+  # nicht. 32 GiB Puffer; Root (ext4, NVMe) hat >600 GB frei.
+  swapDevices = [{
+    device = "/swapfile";
+    size = 32 * 1024;   # 32 GiB
+  }];
+  # zram mag Einzelseiten (kein Read-ahead beim Swap-In) — wie auf meo-work.
+  boot.kernel.sysctl."vm.page-cluster" = 0;
+
   # --- BENUTZER & GRUPPEN ---
   users.users."meo".extraGroups = [ "dialout" "input" "uinput" ];
 
