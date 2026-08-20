@@ -41,6 +41,9 @@ in {
       # Gleicher em-Skalierungs-Fix wie bambu.nix: Stylix' 12pt-Systemfont
       # macht die UI sonst ~20% zu gross (siehe Kommentar dort).
       export GDK_DPI_SCALE="''${GDK_DPI_SCALE:-0.75}"
+      # ADDED 2026-08-20: wxGTK ueber xdg-desktop-portal leiten, damit der
+      # yazi-Datei-Picker (termfilechooser) beim Importieren/Speichern greift.
+      export GTK_USE_PORTAL=1
     '';
 
     extraPkgs = pkgs: with pkgs; [

@@ -344,6 +344,11 @@
           name = "*.{md,markdown}";
           run = "glow";
         }
+        # ADDED 2026-08-20: Archiv-Inhalt als Preview (ouch-Plugin).
+        {
+          mime = "application/{*zip,tar,bzip2,7z*,rar,xz,zstd,java-archive}";
+          run = "ouch";
+        }
       ];
       prepend_fetchers = [
         {

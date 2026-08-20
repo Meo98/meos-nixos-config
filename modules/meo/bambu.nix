@@ -55,6 +55,9 @@ in {
       # Bambu. 0.75 per Screenshot-Vergleich auf Vivaldi-UI-Textgroesse
       # kalibriert. Zum Testen anderer Werte: GDK_DPI_SCALE=0.9 bambu-studio
       export GDK_DPI_SCALE="''${GDK_DPI_SCALE:-0.75}"
+      # ADDED 2026-08-20: wxGTK ueber xdg-desktop-portal leiten, damit der
+      # yazi-Datei-Picker (termfilechooser) beim Importieren/Speichern greift.
+      export GTK_USE_PORTAL=1
     '';
     
     extraPkgs = pkgs: with pkgs; [

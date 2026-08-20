@@ -18,6 +18,15 @@ in {
       git = pkgs.yaziPlugins.git;
       smart-enter = pkgs.yaziPlugins.smart-enter;
       glow = pkgs.yaziPlugins.glow;
+      # ADDED 2026-08-20: kuratierte Plugin-Erweiterung (Keybinds in keymap.nix,
+      # ouch-Previewer in yazi.nix). Alle aus pkgs.yaziPlugins (reproduzierbar).
+      jump-to-char = pkgs.yaziPlugins.jump-to-char;
+      smart-filter = pkgs.yaziPlugins.smart-filter;
+      mount = pkgs.yaziPlugins.mount;
+      chmod = pkgs.yaziPlugins.chmod;
+      ouch = pkgs.yaziPlugins.ouch;
+      bookmarks = pkgs.yaziPlugins.bookmarks;
+      yatline = pkgs.yaziPlugins.yatline;
     };
 
     initLua = ''
@@ -26,6 +35,9 @@ in {
       require("smart-enter"):setup {
         open_multi = true,
       }
+      -- ADDED 2026-08-20: yatline (Lualine-artige Status/Header-Line). Ohne
+      -- config-Argument nutzt setup() die eingebauten Defaults (safe).
+      require("yatline"):setup()
 
       function Linemode:mtime_ch()
         local time = math.floor(self._file.cha.mtime or 0)
@@ -40,4 +52,15 @@ in {
       end
     '';
   };
+
+  # ADDED 2026-08-20: CLI-Tools, die die yazi-Plugins/Previews brauchen.
+  # ouch = Archiv-Handling (ouch-Plugin), chafa = Bild-Preview-Fallback,
+  # imagemagick/fd/p7zip = Previews & Suche.
+  home.packages = with pkgs; [
+    ouch
+    imagemagick
+    chafa
+    fd
+    p7zip
+  ];
 }

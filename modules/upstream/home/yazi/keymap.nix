@@ -548,6 +548,48 @@
       }
     ];
     prepend_keymap = [
+      # ADDED 2026-08-20: Keybinds für die neuen Plugins. `f` wird bewusst von
+      # einfachem Filter auf smart-filter (live) hochgezogen.
+      {
+        on = "F";
+        run = "plugin jump-to-char";
+        desc = "Zu Zeichen springen (jump-to-char)";
+      }
+      {
+        on = "f";
+        run = "plugin smart-filter";
+        desc = "Smart-Filter (live tippen)";
+      }
+      {
+        on = "M";
+        run = "plugin mount";
+        desc = "Laufwerke mounten/unmounten";
+      }
+      {
+        on = "C";
+        run = "plugin chmod";
+        desc = "Rechte ändern (chmod)";
+      }
+      {
+        on = "A";
+        run = "plugin ouch";
+        desc = "Auswahl als Archiv packen (ouch)";
+      }
+      {
+        on = "m";
+        run = "plugin bookmarks save";
+        desc = "Bookmark setzen";
+      }
+      {
+        on = "'";
+        run = "plugin bookmarks jump";
+        desc = "Zu Bookmark springen";
+      }
+      {
+        on = "<A-m>";
+        run = "plugin bookmarks delete";
+        desc = "Bookmark löschen";
+      }
       {
         on = "<C-p>";
         # MODIFIED: was $HOME/.local/bin/yazi-print (lp direct print, no dialog).
