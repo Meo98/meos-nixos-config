@@ -2,6 +2,7 @@
   {
   nixpkgs.overlays = [
     (import ../../modules/meo/bambu.nix)
+    (import ../../modules/meo/orcastudio.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
   ];
@@ -31,11 +32,13 @@
     # --- Multimedia & Kommunikation ---
     audacity                  # Open-Source Audio-Editor für Aufnahme und Bearbeitung
     discord                   # Chat- und Voice-Plattform für Communities/Gaming (hier statt core)
+    signal-desktop            # Signal Messenger (kein Web-Wrapper möglich, braucht native App)
     vlc                       # Universeller Medienplayer, spielt fast jedes Videoformat ab
     tidal-hifi                # Desktop-Client für den High-Fidelity Musik-Streamingdienst Tidal
     morgen                    # All-in-one Calendars, Tasks and Scheduler
     orca-slicer               # Open-Source Slicer (Bambu-Studio-Fork), native from-source
     bambu-studio              # Offizieller BambuLab-Slicer (AppImage via modules/meo/bambu.nix overlay)
+    orca-studio               # Community-Fork: Bambu Studio + Orca-Features + Cloud-Senden (AppImage via modules/meo/orcastudio.nix overlay)
 
     # --- Webbrowser ---
     # MODIFIED 2026-07-28: WaylandPerWindowScaling gegen falsch skalierte /

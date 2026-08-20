@@ -14,6 +14,9 @@
     extraModulePackages = [config.boot.kernelPackages.v4l2loopback];
     kernel.sysctl = {"vm.max_map_count" = 2147483642;};
     loader.systemd-boot.enable = true;
+    # MODIFIED 2026-08-20: Boot-Einträge begrenzen, damit /boot (vfat) nicht
+    # langfristig volläuft. 10 Generationen im Bootmenü reichen für Rollback.
+    loader.systemd-boot.configurationLimit = 10;
     loader.efi.canTouchEfiVariables = true;
     # Appimage Support
     binfmt.registrations.appimage = {

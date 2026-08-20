@@ -23,8 +23,11 @@
 
     nix-flatpak.url = "github:gmodena/nix-flatpak?ref=latest";
 
-    nvf = {
-      url = "github:notashelf/nvf";
+    # Vorgebaute nix-index-DB (woechentlich) fuer "command not found"-Vorschlaege
+    # + comma (`, <tool>` startet ein Paket ephemer). Spart das teure lokale
+    # nix-index-Generieren.
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -52,14 +55,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # quickshell input retained — other modules may still want it, but Noctalia
-    # v5 itself does not. Safe to remove if nothing else depends on it after the
-    # v5 cutover.
-    quickshell = {
-      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     antigravity-nix = {
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -73,6 +68,10 @@
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake/beta";
       inputs.nixpkgs.follows = "nixpkgs";
+      # MODIFIED 2026-08-20: home-manager auf unser nixpkgs-following HM gepinnt,
+      # sonst zog zen-browser einen zweiten home-manager-Baum (lock-node
+      # home-manager_2). Spart einen redundanten Input.
+      inputs.home-manager.follows = "home-manager";
     };
 
     # Fork of mrshmllow/affinity-nix mit fixes für Intel Iris Xe (meo-work):
@@ -83,11 +82,6 @@
     #   Fallback der CPU sättigt)
     affinity-nix = {
       url = "github:Meo98/affinity-nix-fork";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    alejandra = {
-      url = "github:kamadorueda/alejandra";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -161,6 +155,9 @@
       '';
     };
 
-    formatter.x86_64-linux = inputs.alejandra.packages.x86_64-linux.default;
+    # MODIFIED 2026-08-20: alejandra-Flake-Input entfernt; pkgs.alejandra ist
+    # bereits in core/packages.nix. Spart die Input-Kette (fenix_2,
+    # rust-analyzer-src_2, flakeCompat). `nix fmt` läuft unverändert.
+    formatter.x86_64-linux = pkgs.alejandra;
   };
 }

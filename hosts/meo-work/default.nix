@@ -2,7 +2,7 @@
   imports = [
     ./hardware.nix
     ./host-packages.nix
-    ./kanata.nix
+    ../../modules/meo/kanata.nix
     ../meo/affinity.nix
   ];
 

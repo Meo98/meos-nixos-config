@@ -3,11 +3,12 @@
   consoleKeyMap = vars.consoleKeyMap or "us";
 in {
   nix = {
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 14d";
-    };
+    # MODIFIED 2026-08-20: nix.gc deaktiviert. GC macht jetzt allein
+    # programs.nh.clean (core/nh.nix, generationsbewusst: --keep 5
+    # --keep-since 7d). Vorher liefen ZWEI GC-Timer mit widersprüchlicher
+    # Retention (14d zeitbasiert vs. keep-5 zählbasiert). auto-optimise-store
+    # (unten) bleibt aktiv — orthogonal zum GC.
+    gc.automatic = false;
     settings = {
       download-buffer-size = 200000000;
       auto-optimise-store = true;
@@ -19,6 +20,12 @@ in {
       trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
     };
   };
+  # MODIFIED 2026-08-20: flake-basiertes command-not-found funktioniert ohne
+  # Nix-Channel nicht; stattdessen uebernimmt nix-index (modules/meo/dev-tools.nix)
+  # die "command not found"-Vorschlaege. Deaktivieren, damit sich beide nicht
+  # in die Quere kommen.
+  programs.command-not-found.enable = false;
+
   time.timeZone = "Europe/Zurich";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {

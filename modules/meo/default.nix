@@ -13,5 +13,8 @@
     ./micropython.nix
     ./bun.nix
     ./cli-modern.nix
+    ./automation-health.nix
+    ./update-prewarm.nix
+    ./dev-tools.nix
   ];
 }

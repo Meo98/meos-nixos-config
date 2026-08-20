@@ -85,6 +85,11 @@
 
   enableAffinity = true;
 
+  # restic-Backups (modules/meo/backups.nix). Bleibt AUS bis der einmalige
+  # Bootstrap gemacht ist (rclone config + /etc/nixos/restic-password) — siehe
+  # Kommentarblock in backups.nix. Danach auf true setzen.
+  enableBackups = false;
+
   # Enable NFS
   enableNFS = true;
 

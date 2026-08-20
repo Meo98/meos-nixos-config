@@ -42,7 +42,6 @@ in {
       ./terminals/kitty.nix
       ./cli/lazygit.nix
       ./obs-studio.nix
-      #./editors/nvf.nix
       ./editors/nixvim.nix
       ./editors/nano.nix
       ./rofi
