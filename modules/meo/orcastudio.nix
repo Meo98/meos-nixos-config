@@ -51,6 +51,11 @@ in {
       gst_all_1.gst-plugins-base
       gst_all_1.gst-plugins-good
       webkitgtk_4_1
+      # ADDED 2026-08-20: libsoup_3 explizit — das AppImage-Binary linkt
+      # libsoup-3.0.so.0 direkt; wrapType2 legt nur explizit gelistete Pkgs in
+      # den LD-Pfad, die transitive libsoup aus webkitgtk_4_1 reicht nicht.
+      # (Symptom: "error while loading shared libraries: libsoup-3.0.so.0")
+      libsoup_3
     ];
 
     # Desktop-Datei + Icon stecken im AppImage-Root (wrapType2 installiert nur
