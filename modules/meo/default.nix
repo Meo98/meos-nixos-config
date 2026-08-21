@@ -16,6 +16,5 @@
     ./automation-health.nix
     ./update-prewarm.nix
     ./dev-tools.nix
-    ./termfilechooser.nix
   ];
 }

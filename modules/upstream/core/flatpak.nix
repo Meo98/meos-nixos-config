@@ -1,16 +1,8 @@
 {pkgs, ...}: {
   xdg.portal = {
     enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-hyprland
-      # MODIFIED 2026-08-20: yazi-Datei-Picker (termfilechooser). User-Config
-      # (welcher Dateimanager) in modules/meo/termfilechooser.nix.
-      pkgs.xdg-desktop-portal-termfilechooser
-    ];
+    extraPortals = [pkgs.xdg-desktop-portal-hyprland];
     configPackages = [pkgs.hyprland];
-    # MODIFIED 2026-08-20: Datei-Picker global auf termfilechooser umbiegen
-    # (oeffnet yazi im Terminal statt des grafischen Dialogs).
-    config.common."org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
   };
   services = {
     flatpak = {
