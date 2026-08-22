@@ -12,42 +12,60 @@ FLAKE="$HOME/nixos-config"
 STYLIX="$FLAKE/modules/upstream/core/stylix.nix"
 BACKUP=""
 
-# ── Vorschau: Farbschema als echte Farbblöcke rendern ────────────────────
+# ── Farb-Helfer für die Themed-Vorschau (globale Arrays C=r;g;b, H=hex) ───
+declare -A C H
+W=50; VIS=0
+_bg()  { printf '\033[48;2;%sm' "${C[$1]}"; }
+_fg()  { printf '\033[38;2;%sm' "${C[$1]}"; }
+_rst() { printf '\033[0m'; }
+_row() { _bg "$1"; VIS=0; }                       # Zeile starten: bg = base$1
+_seg() { _fg "$1"; printf '%s' "$2"; VIS=$((VIS + ${#2})); }  # fg $1 + ASCII-Text
+_end() { local p=$((W - VIS)); [ "$p" -gt 0 ] && printf '%*s' "$p" ''; _rst; printf '\n'; }
+_swatch() { printf '\033[48;2;%sm  \033[0m' "${C[$1]}"; }
+
+# ── Vorschau: Scheme als echte Editor-Simulation rendern ─────────────────
+# base16-Rollen (Standard): 00 Hintergrund · 01 Bar/Zeile · 02 Selektion
+# 03 Kommentar · 05 Text · 08 rot/Variable · 09 orange/Zahl · 0A gelb/Klasse
+# 0B grün/String · 0C cyan · 0D blau/Funktion · 0E lila/Keyword
 scheme_preview() {
-  local name="$1" f="$SCHEMES_DIR/$1.yaml"
+  local name="$1" f="$SCHEMES_DIR/$1.yaml" i hex
   [ -f "$f" ] || { echo "  (kein Scheme: $1)"; return; }
+  for i in 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F; do
+    hex=$(grep -iE "base$i:" "$f" | grep -oiE '[0-9a-f]{6}' | head -1)
+    [ -n "$hex" ] || hex=000000
+    H[$i]="$hex"
+    C[$i]="$((16#${hex:0:2}));$((16#${hex:2:2}));$((16#${hex:4:2}))"
+  done
+  W=$(( ${FZF_PREVIEW_COLUMNS:-52} - 2 ))
+  [ "$W" -gt 54 ] && W=54; [ "$W" -lt 22 ] && W=22
+
   local disp var auth
   disp=$(sed -n 's/^name:[[:space:]]*"\(.*\)"/\1/p' "$f" | head -1)
   var=$(sed -n 's/^variant:[[:space:]]*"\(.*\)"/\1/p' "$f" | head -1)
   auth=$(sed -n 's/^author:[[:space:]]*"\(.*\)"/\1/p' "$f" | head -1)
-  printf '  \033[1m%s\033[0m  (%s)\n  von %s\n\n' "$disp" "${var:-?}" "${auth:-?}"
-  local i hex r g b role
-  for i in 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F; do
-    hex=$(grep -iE "base$i:" "$f" | grep -oiE '[0-9a-f]{6}' | head -1)
-    [ -n "$hex" ] || continue
-    r=$((16#${hex:0:2})); g=$((16#${hex:2:2})); b=$((16#${hex:4:2}))
-    case "$i" in
-      00) role="Hintergrund" ;; 03) role="Kommentar" ;; 05) role="Text" ;;
-      08) role="rot / Fehler" ;; 09) role="orange" ;; 0A) role="gelb" ;;
-      0B) role="grün" ;; 0C) role="cyan" ;; 0D) role="blau / Akzent" ;;
-      0E) role="lila" ;; *) role="" ;;
-    esac
-    printf '  \033[48;2;%d;%d;%dm       \033[0m  base%s  #%s  %s\n' \
-      "$r" "$g" "$b" "$i" "$hex" "$role"
-  done
-  local bg fg ac
-  bg=$(grep -iE 'base00:' "$f" | grep -oiE '[0-9a-f]{6}' | head -1)
-  fg=$(grep -iE 'base05:' "$f" | grep -oiE '[0-9a-f]{6}' | head -1)
-  ac=$(grep -iE 'base0D:' "$f" | grep -oiE '[0-9a-f]{6}' | head -1)
-  ac=${ac:-$fg}
-  if [ -n "$bg" ] && [ -n "$fg" ]; then
-    printf '\n  Terminal-Simulation:\n  '
-    printf '\033[48;2;%d;%d;%dm\033[38;2;%d;%d;%dm  ~ \033[38;2;%d;%d;%dm❯\033[38;2;%d;%d;%dm theme-picker    \033[0m\n' \
-      $((16#${bg:0:2})) $((16#${bg:2:2})) $((16#${bg:4:2})) \
-      $((16#${fg:0:2})) $((16#${fg:2:2})) $((16#${fg:4:2})) \
-      $((16#${ac:0:2})) $((16#${ac:2:2})) $((16#${ac:4:2})) \
-      $((16#${fg:0:2})) $((16#${fg:2:2})) $((16#${fg:4:2}))
-  fi
+  printf '  \033[1m%s\033[0m  (%s)  -  %s\n\n' "$disp" "${var:-?}" "${auth:-?}"
+
+  # Fenster-Titelleiste (bg base01)
+  _row 01; _seg 05 " o o o   editor  -  theme.nix"; _end
+  # Code mit Syntax-Highlighting (bg base00)
+  _row 00; _seg 03 " 1  "; _seg 03 "# colorscheme preview";                 _end
+  _row 00; _seg 03 " 2  "; _seg 0E "let"; _seg 05 " accent "; _seg 05 "= "; _seg 0B "\"#${H[0D]}\""; _end
+  _row 00; _seg 03 " 3  "; _seg 0E "fn "; _seg 0D "greet"; _seg 05 "("; _seg 08 "name"; _seg 05 ") {"; _end
+  # markierte/aktive Zeile (bg base02 = Selektionsfarbe)
+  _row 02; _seg 05 " 4    "; _seg 0E "return "; _seg 08 "name"; _seg 05 " + "; _seg 09 "42"; _end
+  _row 00; _seg 03 " 5  "; _seg 05 "}";                                     _end
+  _row 00; _seg 0B " +  added line";                                        _end
+  _row 00; _seg 08 " -  removed line";                                      _end
+  # Statusleiste (bg base01)
+  _row 01; _seg 0B " NORMAL "; _seg 0A " main* "; _seg 04 "  utf-8  ln 4:12"; _end
+  printf '\n'
+
+  # ANSI-Terminalfarben + Basistöne als kleine Referenz
+  printf '  Terminal '; for i in 08 09 0A 0B 0C 0D 0E 0F; do _swatch "$i"; done; printf '\n'
+  printf '  Basis    '; for i in 00 01 02 03 04 05 06 07; do _swatch "$i"; done; printf '\n\n'
+  printf '  \033[38;2;%smKeyword\033[0m  \033[38;2;%smFunktion\033[0m  ' "${C[0E]}" "${C[0D]}"
+  printf '\033[38;2;%smString\033[0m  \033[38;2;%smZahl\033[0m  \033[38;2;%smrot\033[0m\n' \
+    "${C[0B]}" "${C[09]}" "${C[08]}"
 }
 
 # ── Vorschau: Font-Metadaten ─────────────────────────────────────────────
