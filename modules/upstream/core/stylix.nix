@@ -9,24 +9,13 @@ in {
   stylix = {
     enable = true;
     image = stylixImage;
-    # base16Scheme = {
-    #   base00 = "282936";
-    #   base01 = "3a3c4e";
-    #   base02 = "4d4f68";
-    #   base03 = "626483";
-    #   base04 = "62d6e8";
-    #   base05 = "e9e9f4";
-    #   base06 = "f1f2f8";
-    #   base07 = "f7f7fb";
-    #   base08 = "ea51b2";
-    #   base09 = "b45bcf";
-    #   base0A = "00f769";
-    #   base0B = "ebff87";
-    #   base0C = "a1efe4";
-    #   base0D = "62d6e8";
-    #   base0E = "b45bcf";
-    #   base0F = "00f769";
-    # };
+    # ── theme-picker verwaltet die Zeile zwischen den Markern ──────────────
+    # Steht dort eine `base16Scheme = …;`-Zeile, gilt dieses feste Schema;
+    # ist der Bereich leer, generiert Stylix die Palette aus dem Wallpaper
+    # (stylix.image). Komfortabel umschalten via `theme-picker` (fzf-TUI,
+    # modules/meo/scripts/theme-picker.nix). Nicht von Hand editieren.
+    # THEME_PICKER_SCHEME_BEGIN
+    # THEME_PICKER_SCHEME_END
     polarity = "dark";
     opacity.terminal = 1.0;
     cursor = {
@@ -35,20 +24,19 @@ in {
       size = 24;
     };
     fonts = {
-      monospace = {
-        package = pkgs.nerd-fonts.jetbrains-mono;
-        name = "JetBrains Mono";
-      };
+      # THEME_PICKER_MONO_BEGIN  (Zeile via `theme-picker` austauschbar)
+      monospace = { package = pkgs.nerd-fonts.jetbrains-mono; name = "JetBrains Mono"; };
+      # THEME_PICKER_MONO_END
       # MODIFIED 2026-08-04: Montserrat -> Noto. Montserrats breite Metriken
       # sprengten App-Layouts (FreeCAD-Wizard, Bambu-Dialoge liefen rechts aus
       # dem Screen) — Qt/GTK-Apps dimensionieren Dialoge fuer Noto/DejaVu.
       # Per-App-Fontconfig-Workarounds (bambu.nix, freecadFontFix) damit obsolet
       # und entfernt. Montserrat bleibt via fonts.packages unten fuer Dokumente
       # installiert, ist nur nicht mehr UI-Standard.
-      sansSerif = {
-        package = pkgs.noto-fonts;
-        name = "Noto Sans";
-      };
+      # THEME_PICKER_SANS_BEGIN  (Zeile via `theme-picker` austauschbar; nur
+      # metrik-sichere Fonts anbieten — breite Fonts sprengen Dialoge, s.o.)
+      sansSerif = { package = pkgs.noto-fonts; name = "Noto Sans"; };
+      # THEME_PICKER_SANS_END
       serif = {
         package = pkgs.noto-fonts;
         name = "Noto Serif";
