@@ -68,26 +68,52 @@ scheme_preview() {
     "${C[0B]}" "${C[09]}" "${C[08]}"
 }
 
-# ── Vorschau: Font-Metadaten ─────────────────────────────────────────────
+# ── Vorschau: Schrift als BILD in ihrer echten Gestalt rendern ───────────
+# Zeile = Display|nixAttr|fontconfigFamily|regulaereDatei . Die reguläre
+# Schnittdatei wird in $THEME_PICKER_FONTS_DIR (symlinkJoin aller Fonts)
+# gesucht, mit magick in den echten Glyphen gesetzt und via chafa als
+# Terminalblöcke gezeigt. Fallback = Text, falls magick/chafa/Datei fehlt.
 font_preview() {
-  local row="$1" disp attr fname
+  local row="$1" disp attr fam base file MG cols sample
   disp=$(printf '%s' "$row" | awk -F'|' '{print $1}')
   attr=$(printf '%s' "$row" | awk -F'|' '{print $2}')
-  fname=$(printf '%s' "$row" | awk -F'|' '{print $3}')
-  printf '  \033[1m%s\033[0m\n\n' "$disp"
-  printf '  Nix-Paket:   pkgs.%s\n  Fontconfig:  "%s"\n\n' "$attr" "$fname"
-  printf '  Echte Glyphen erscheinen erst nach dem Rebuild\n'
-  printf '  (der Font wird dann erst installiert).\n\n'
-  printf '  Pangram:  The quick brown fox jumps over the lazy dog\n'
-  printf '  Ziffern:  0123456789   Zeichen:  {}[]()<>/\\|=+-*_\n'
-  printf '  Ligaturen (Mono): != == === => -> <=  :::\n'
+  fam=$(printf  '%s' "$row" | awk -F'|' '{print $3}')
+  base=$(printf '%s' "$row" | awk -F'|' '{print $4}')
+  printf '  \033[1m%s\033[0m\n  pkgs.%s   ("%s")\n\n' "$disp" "$attr" "$fam"
+
+  file=""
+  [ -n "${THEME_PICKER_FONTS_DIR:-}" ] && [ -n "$base" ] && \
+    file=$(find "$THEME_PICKER_FONTS_DIR" -name "$base" 2>/dev/null | head -1)
+  MG=""
+  command -v magick  >/dev/null 2>&1 && MG=magick
+  [ -z "$MG" ] && command -v convert >/dev/null 2>&1 && MG=convert
+
+  if [ -n "$file" ] && [ -n "$MG" ] && command -v chafa >/dev/null 2>&1; then
+    cols=${FZF_PREVIEW_COLUMNS:-56}; [ "$cols" -gt 74 ] && cols=74
+    case "$attr" in
+      nerd-fonts.*) sample=$'AaBbCcDdEeFf 0123456789\nfn main() { x != y => ok }\n== != >= <= -> => :: |> </>' ;;
+      *)            sample=$'The quick brown fox jumps\nover the lazy dog  0123456789\nAa Bb Cc Dd Ee Ff Gg Hh Ii' ;;
+    esac
+    # IM v7: label: muss VOR -border stehen (border ist eine Bild-Operation).
+    "$MG" -background "#12141c" -fill "#e6e6e6" -font "$file" -pointsize 40 \
+        label:"$sample" -bordercolor "#12141c" -border 12 png:- 2>/dev/null \
+      | chafa --size "${cols}x16" --format symbols - 2>/dev/null \
+      || printf '  (Bild-Render fehlgeschlagen — Auswahl wird trotzdem gesetzt)\n'
+  else
+    printf '  Pangram: The quick brown fox jumps over the lazy dog\n'
+    printf '  0123456789  {}[]()<>/=+-*_   != == => ->\n\n'
+    printf '  (Bild-Vorschau nicht verfügbar — magick/chafa/Datei fehlt)\n'
+  fi
 }
 
 # ── stylix.nix: Zeile zwischen zwei Markern ersetzen ─────────────────────
 replace_block() {
-  local b="$1" e="$2" repl="$3"
-  awk -v b="$b" -v e="$e" -v repl="$repl" '
-    index($0,b){print; if(repl!="") print repl; inb=1; next}
+  # $1 Begin-Marker, $2 End-Marker, $3 Ersatztext (mehrzeilig erlaubt, muss
+  # eigene \n enthalten; leer = Bereich leeren). Ersatz über ENVIRON statt
+  # awk -v, damit Zeilenumbrüche & Sonderzeichen unverändert durchlaufen.
+  local b="$1" e="$2"
+  REPL="$3" awk -v b="$b" -v e="$e" '
+    index($0,b){print; printf "%s", ENVIRON["REPL"]; inb=1; next}
     index($0,e){inb=0; print; next}
     inb{next}
     {print}
@@ -95,31 +121,37 @@ replace_block() {
 }
 
 set_scheme() {
-  # Achtung: bewusst die Nix-Expression ${pkgs.base16-schemes} schreiben
-  # (nicht den Store-Pfad) -> bleibt über nixpkgs-Bumps reproduzierbar.
-  local line='    base16Scheme = "${pkgs.base16-schemes}/share/themes/'"$1"'.yaml";'
-  replace_block "THEME_PICKER_SCHEME_BEGIN" "THEME_PICKER_SCHEME_END" "$line"
+  # WICHTIG: als base16-Attrset schreiben (base00..base0F), NICHT als Pfad!
+  # zaneyos-Module (rofi/waybar) lesen config.stylix.base16Scheme.baseXX direkt
+  # -> muss ein Set sein, sonst "expected a set but found a string".
+  # Scheme-Name als Kommentar davor, damit current_scheme() ihn wiederfindet.
+  local sel="$1" f="$SCHEMES_DIR/$1.yaml" i hex block
+  block="    # theme-picker: $sel"$'\n'"    base16Scheme = {"$'\n'
+  for i in 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F; do
+    hex=$(grep -iE "base$i:" "$f" | grep -oiE '[0-9a-f]{6}' | head -1 | tr 'A-F' 'a-f')
+    block="$block      base$i = \"$hex\";"$'\n'
+  done
+  block="$block    };"$'\n'
+  replace_block "THEME_PICKER_SCHEME_BEGIN" "THEME_PICKER_SCHEME_END" "$block"
 }
 set_wallpaper() {
   replace_block "THEME_PICKER_SCHEME_BEGIN" "THEME_PICKER_SCHEME_END" ""
 }
 set_mono() {
-  local line='      monospace = { package = pkgs.'"$1"'; name = "'"$2"'"; };'
-  replace_block "THEME_PICKER_MONO_BEGIN" "THEME_PICKER_MONO_END" "$line"
+  replace_block "THEME_PICKER_MONO_BEGIN" "THEME_PICKER_MONO_END" \
+    "      monospace = { package = pkgs.$1; name = \"$2\"; };"$'\n'
 }
 set_sans() {
-  local line='      sansSerif = { package = pkgs.'"$1"'; name = "'"$2"'"; };'
-  replace_block "THEME_PICKER_SANS_BEGIN" "THEME_PICKER_SANS_END" "$line"
+  replace_block "THEME_PICKER_SANS_BEGIN" "THEME_PICKER_SANS_END" \
+    "      sansSerif = { package = pkgs.$1; name = \"$2\"; };"$'\n'
 }
 
 # ── aktuellen Stand aus der Datei lesen (für die Menü-Anzeige) ───────────
 current_scheme() {
   local l
   l=$(awk '/THEME_PICKER_SCHEME_BEGIN/{f=1;next} /THEME_PICKER_SCHEME_END/{f=0} f' \
-        "$STYLIX" | grep -i base16Scheme)
-  if [ -z "$l" ]; then echo "Wallpaper-Palette"; else
-    printf '%s' "$l" | grep -oE '[^/"]+\.yaml' | sed 's/\.yaml$//'
-  fi
+        "$STYLIX" | sed -n 's/^[[:space:]]*# theme-picker: //p' | head -1)
+  if [ -z "$l" ]; then echo "Wallpaper-Palette"; else printf '%s\n' "$l"; fi
 }
 current_font() { # $1 = MONO|SANS
   awk -v b="THEME_PICKER_$1_BEGIN" -v e="THEME_PICKER_$1_END" \
@@ -128,31 +160,34 @@ current_font() { # $1 = MONO|SANS
 }
 
 # ── Font-Kataloge (Display|nixAttr|fontconfigName) ───────────────────────
+# Format: Display|nixAttr|fontconfigFamily|regulaereSchnittdatei
+# (Family + Datei autoritativ per fc-scan ermittelt; Family = das, was
+# fontconfig nach dem Rebuild kennt, Datei = für die Bild-Vorschau.)
 mono_list() {
   printf '%s\n' \
-    'JetBrains Mono|nerd-fonts.jetbrains-mono|JetBrains Mono' \
-    'FiraCode|nerd-fonts.fira-code|FiraCode Nerd Font' \
-    'Hack|nerd-fonts.hack|Hack Nerd Font' \
-    'Iosevka|nerd-fonts.iosevka|Iosevka Nerd Font' \
-    'MesloLGS|nerd-fonts.meslo-lg|MesloLGS Nerd Font' \
-    'CaskaydiaCove (Cascadia)|nerd-fonts.caskaydia-cove|CaskaydiaCove Nerd Font' \
-    'SauceCodePro (Source)|nerd-fonts.sauce-code-pro|SauceCodePro Nerd Font' \
-    'CommitMono|nerd-fonts.commit-mono|CommitMono Nerd Font' \
-    'GeistMono|nerd-fonts.geist-mono|GeistMono Nerd Font'
+    'JetBrains Mono|nerd-fonts.jetbrains-mono|JetBrainsMono Nerd Font Mono|JetBrainsMonoNerdFontMono-Regular.ttf' \
+    'FiraCode|nerd-fonts.fira-code|FiraCode Nerd Font Mono|FiraCodeNerdFontMono-Regular.ttf' \
+    'Hack|nerd-fonts.hack|Hack Nerd Font Mono|HackNerdFontMono-Regular.ttf' \
+    'Iosevka|nerd-fonts.iosevka|Iosevka Nerd Font|IosevkaNerdFont-Regular.ttf' \
+    'MesloLGS|nerd-fonts.meslo-lg|MesloLGSDZ Nerd Font Mono|MesloLGSDZNerdFontMono-Regular.ttf' \
+    'CaskaydiaCove (Cascadia)|nerd-fonts.caskaydia-cove|CaskaydiaCove Nerd Font Mono|CaskaydiaCoveNerdFontMono-Regular.ttf' \
+    'SauceCodePro (Source)|nerd-fonts.sauce-code-pro|SauceCodePro Nerd Font|SauceCodeProNerdFont-Regular.ttf' \
+    'CommitMono|nerd-fonts.commit-mono|CommitMono Nerd Font Mono|CommitMonoNerdFontMono-Regular.otf' \
+    'GeistMono|nerd-fonts.geist-mono|GeistMono Nerd Font Mono|GeistMonoNerdFontMono-Regular.otf'
 }
 sans_list() {
   # Nur metrik-sichere Fonts: breite Fonts (z.B. Montserrat) sprengen
   # hartkodierte Qt/GTK-Dialogbreiten (siehe Kommentar in stylix.nix).
   printf '%s\n' \
-    'Noto Sans (Standard)|noto-fonts|Noto Sans' \
-    'Inter|inter|Inter' \
-    'DejaVu Sans|dejavu_fonts|DejaVu Sans' \
-    'Cantarell|cantarell-fonts|Cantarell' \
-    'Fira Sans|fira|Fira Sans' \
-    'Roboto|roboto|Roboto' \
-    'Work Sans|work-sans|Work Sans' \
-    'Ubuntu|ubuntu-classic|Ubuntu' \
-    'Source Sans|source-sans|Source Sans 3'
+    'Noto Sans (Standard)|noto-fonts|Noto Sans|NotoSans.ttf' \
+    'Inter|inter|Inter Variable|InterVariable.ttf' \
+    'DejaVu Sans|dejavu_fonts|DejaVu Sans|DejaVuSans.ttf' \
+    'Cantarell|cantarell-fonts|Cantarell|Cantarell-VF.otf' \
+    'Fira Sans|fira|Fira Sans|FiraSans-Regular.ttf' \
+    'Roboto|roboto|Roboto|Roboto-Regular.ttf' \
+    'Work Sans|work-sans|Work Sans|WorkSans-Regular.ttf' \
+    'Ubuntu|ubuntu-classic|Ubuntu|Ubuntu-R.ttf' \
+    'Source Sans|source-sans|Source Sans 3|SourceSans3-Regular.ttf'
 }
 
 # ── interaktive Auswahl ──────────────────────────────────────────────────
