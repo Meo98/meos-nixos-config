@@ -143,14 +143,14 @@ pick_scheme() {
   sel=$( ( cd "$SCHEMES_DIR" && ls ./*.yaml ) | sed 's#.*/##; s/\.yaml$//' | sort \
     | fzf --ansi --prompt='Farbschema> ' --no-sort \
           --preview='theme-picker --scheme-preview {}' \
-          --preview-window='right:58%:wrap' \
+          --preview-window='right,58%,wrap,<90(down,55%)' \
           --header="Enter=übernehmen · ESC=zurück · aktuell: $(current_scheme)")
   [ -n "$sel" ] && { set_scheme "$sel"; echo "→ Schema: $sel  (noch nicht angewandt)"; }
 }
 pick_mono() {
   local row attr name
   row=$(mono_list | fzf -d'|' --with-nth=1 --prompt='Mono-Font> ' \
-          --preview='theme-picker --font-preview {}' --preview-window='right:58%:wrap' \
+          --preview='theme-picker --font-preview {}' --preview-window='right,58%,wrap,<90(down,55%)' \
           --header="Enter=übernehmen · ESC=zurück · aktuell: $(current_font MONO)")
   [ -n "$row" ] || return
   attr=$(printf '%s' "$row" | awk -F'|' '{print $2}')
@@ -160,7 +160,7 @@ pick_mono() {
 pick_sans() {
   local row attr name
   row=$(sans_list | fzf -d'|' --with-nth=1 --prompt='Sans-Font (UI)> ' \
-          --preview='theme-picker --font-preview {}' --preview-window='right:58%:wrap' \
+          --preview='theme-picker --font-preview {}' --preview-window='right,58%,wrap,<90(down,55%)' \
           --header="Enter=übernehmen · ESC=zurück · aktuell: $(current_font SANS) · nur metrik-sichere Fonts")
   [ -n "$row" ] || return
   attr=$(printf '%s' "$row" | awk -F'|' '{print $2}')

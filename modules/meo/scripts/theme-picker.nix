@@ -12,6 +12,10 @@
 
 pkgs.writeShellScriptBin "theme-picker" ''
   export THEME_PICKER_SCHEMES_DIR="${pkgs.base16-schemes}/share/themes"
+  # Globale FZF_DEFAULT_OPTS des Users neutralisieren und deterministisches
+  # Vollbild-Layout erzwingen — sonst kann ein globales --height/--preview
+  # die Liste/Vorschau des Pickers "leer" wirken lassen.
+  export FZF_DEFAULT_OPTS="--height=100% --layout=reverse --border --info=inline"
   export PATH="${pkgs.lib.makeBinPath [
     pkgs.fzf
     pkgs.gnused

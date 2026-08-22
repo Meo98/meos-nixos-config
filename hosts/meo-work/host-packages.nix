@@ -4,6 +4,7 @@
     (import ../../modules/meo/bambu.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
+    (import ../../modules/meo/masterpdfeditor-fix.nix)  # 5.9.98->5.9.99 (Upstream-404)
   ];
 
   services.flatpak.enable = true; # Ermöglicht die Installation von Flatpaks (GUI-Apps außerhalb des Nix-Stores)
