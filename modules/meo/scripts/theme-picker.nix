@@ -17,8 +17,10 @@ let
     nerd-fonts.jetbrains-mono nerd-fonts.fira-code nerd-fonts.hack
     nerd-fonts.iosevka nerd-fonts.meslo-lg nerd-fonts.caskaydia-cove
     nerd-fonts.sauce-code-pro nerd-fonts.commit-mono nerd-fonts.geist-mono
+    nerd-fonts.blex-mono nerd-fonts.roboto-mono nerd-fonts.ubuntu-mono
+    nerd-fonts.inconsolata nerd-fonts.space-mono nerd-fonts.zed-mono
     noto-fonts inter dejavu_fonts cantarell-fonts fira roboto work-sans
-    ubuntu-classic source-sans
+    ubuntu-classic source-sans ibm-plex lato open-sans rubik
   ];
   fontsDir = pkgs.symlinkJoin {
     name = "theme-picker-fonts";

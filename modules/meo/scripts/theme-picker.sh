@@ -174,7 +174,13 @@ mono_list() {
     'CaskaydiaCove (Cascadia)|nerd-fonts.caskaydia-cove|CaskaydiaCove Nerd Font Mono|CaskaydiaCoveNerdFontMono-Regular.ttf' \
     'SauceCodePro (Source)|nerd-fonts.sauce-code-pro|SauceCodePro Nerd Font|SauceCodeProNerdFont-Regular.ttf' \
     'CommitMono|nerd-fonts.commit-mono|CommitMono Nerd Font Mono|CommitMonoNerdFontMono-Regular.otf' \
-    'GeistMono|nerd-fonts.geist-mono|GeistMono Nerd Font Mono|GeistMonoNerdFontMono-Regular.otf'
+    'GeistMono|nerd-fonts.geist-mono|GeistMono Nerd Font Mono|GeistMonoNerdFontMono-Regular.otf' \
+    'IBM Plex Mono|nerd-fonts.blex-mono|BlexMono Nerd Font Mono|BlexMonoNerdFontMono-Regular.ttf' \
+    'Roboto Mono|nerd-fonts.roboto-mono|RobotoMono Nerd Font Mono|RobotoMonoNerdFontMono-Regular.ttf' \
+    'Ubuntu Mono|nerd-fonts.ubuntu-mono|UbuntuMono Nerd Font Mono|UbuntuMonoNerdFontMono-Regular.ttf' \
+    'Inconsolata|nerd-fonts.inconsolata|Inconsolata Nerd Font Mono|InconsolataNerdFontMono-Regular.ttf' \
+    'Space Mono|nerd-fonts.space-mono|SpaceMono Nerd Font Mono|SpaceMonoNerdFontMono-Regular.ttf' \
+    'Zed Mono|nerd-fonts.zed-mono|ZedMono Nerd Font Mono|ZedMonoNerdFontMono-Regular.ttf'
 }
 sans_list() {
   # Nur metrik-sichere Fonts: breite Fonts (z.B. Montserrat) sprengen
@@ -188,7 +194,11 @@ sans_list() {
     'Roboto|roboto|Roboto|Roboto-Regular.ttf' \
     'Work Sans|work-sans|Work Sans|WorkSans-Regular.ttf' \
     'Ubuntu|ubuntu-classic|Ubuntu|Ubuntu-R.ttf' \
-    'Source Sans|source-sans|Source Sans 3|SourceSans3-Regular.ttf'
+    'Source Sans|source-sans|Source Sans 3|SourceSans3-Regular.ttf' \
+    'IBM Plex Sans|ibm-plex|IBM Plex Sans|IBMPlexSans-Regular.ttf' \
+    'Lato|lato|Lato|Lato-Regular.ttf' \
+    'Open Sans|open-sans|Open Sans|OpenSans-Regular.ttf' \
+    'Rubik|rubik|Rubik|Rubik-Regular.ttf'
 }
 
 # ── interaktive Auswahl ──────────────────────────────────────────────────
@@ -198,14 +208,14 @@ pick_scheme() {
     | fzf --ansi --prompt='Farbschema> ' --no-sort \
           --preview='theme-picker --scheme-preview {}' \
           --preview-window='right,58%,wrap,<90(down,55%)' \
-          --header="Enter=übernehmen · ESC=zurück · aktuell: $(current_scheme)")
+          --header="Tippen=filtern · Enter=übernehmen · ESC=zurück · aktuell: $(current_scheme)")
   [ -n "$sel" ] && { set_scheme "$sel"; echo "→ Schema: $sel  (noch nicht angewandt)"; }
 }
 pick_mono() {
   local row attr name
   row=$(mono_list | fzf -d'|' --with-nth=1 --prompt='Mono-Font> ' \
           --preview='theme-picker --font-preview {}' --preview-window='right,58%,wrap,<90(down,55%)' \
-          --header="Enter=übernehmen · ESC=zurück · aktuell: $(current_font MONO)")
+          --header="Tippen=filtern · Enter=übernehmen · ESC=zurück · aktuell: $(current_font MONO)")
   [ -n "$row" ] || return
   attr=$(printf '%s' "$row" | awk -F'|' '{print $2}')
   name=$(printf '%s' "$row" | awk -F'|' '{print $3}')
@@ -215,7 +225,7 @@ pick_sans() {
   local row attr name
   row=$(sans_list | fzf -d'|' --with-nth=1 --prompt='Sans-Font (UI)> ' \
           --preview='theme-picker --font-preview {}' --preview-window='right,58%,wrap,<90(down,55%)' \
-          --header="Enter=übernehmen · ESC=zurück · aktuell: $(current_font SANS) · nur metrik-sichere Fonts")
+          --header="Tippen=filtern · Enter=übernehmen · ESC=zurück · aktuell: $(current_font SANS) · nur metrik-sichere")
   [ -n "$row" ] || return
   attr=$(printf '%s' "$row" | awk -F'|' '{print $2}')
   name=$(printf '%s' "$row" | awk -F'|' '{print $3}')
