@@ -112,14 +112,29 @@ font_preview() {
         *) gfx=blocks ;;
       esac
     fi
-    # IM v7: label: steht in _render_png VOR -border (border ist Bild-Operation).
-    if [ "$gfx" = kitty ]; then
-      _render_png "$MG" "$file" "$sample" | chafa -f kitty -s "${cols}x${rows}" - 2>/dev/null \
-        || _render_png "$MG" "$file" "$sample" | chafa -f symbols -s "${cols}x${rows}" --dither none --work 9 - 2>/dev/null \
+    # Block-Renderer (überall zuverlässig) als Funktion für Fallbacks.
+    _blocks() {
+      _render_png "$MG" "$file" "$sample" \
+        | chafa -f symbols -s "${cols}x${rows}" --dither none --work 9 - 2>/dev/null \
         || printf '  (Render fehlgeschlagen — Auswahl wird trotzdem gesetzt)\n'
+    }
+    if [ "$gfx" = kitty ] && command -v kitty >/dev/null 2>&1 \
+       && [ -n "${FZF_PREVIEW_COLUMNS:-}" ] && [ -n "${FZF_PREVIEW_LINES:-}" ]; then
+      # Scharfes echtes Bild: kitty icat mit Unicode-Platzhaltern, exakt in die
+      # Preview-Box platziert (die funktionierende fzf+kitty-Methode). Bei
+      # Fehlschlag -> Blöcke.
+      _png=$(mktemp --suffix=.png 2>/dev/null || echo /tmp/theme-picker-font.png)
+      _render_png "$MG" "$file" "$sample" > "$_png"
+      if [ -s "$_png" ] && kitty +kitten icat --clear --transfer-mode=memory \
+           --unicode-placeholder --stdin=no \
+           --place="${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0" "$_png" 2>/dev/null; then
+        :
+      else
+        _blocks
+      fi
+      rm -f "$_png"
     else
-      _render_png "$MG" "$file" "$sample" | chafa -f symbols -s "${cols}x${rows}" --dither none --work 9 - 2>/dev/null \
-        || printf '  (Render fehlgeschlagen — Auswahl wird trotzdem gesetzt)\n'
+      _blocks
     fi
   else
     printf '  Pangram: The quick brown fox jumps over the lazy dog\n'
