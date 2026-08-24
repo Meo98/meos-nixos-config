@@ -105,10 +105,12 @@ font_preview() {
     esac
     # Grafik-Modus: in kitty ein echtes Bild (kitty-Grafikprotokoll), sonst
     # Terminalblöcke. Override: THEME_PICKER_FONT_GFX=blocks|kitty (Default auto).
+    # "kitty" = Grafik-Protokoll-Pfad (funktioniert in kitty UND ghostty, beide
+    # sprechen das kitty-Graphics-Protocol). Override via THEME_PICKER_FONT_GFX.
     gfx="${THEME_PICKER_FONT_GFX:-auto}"
     if [ "$gfx" = auto ]; then
-      case "${TERM:-}:${KITTY_WINDOW_ID:-}" in
-        *kitty*|*:?*) gfx=kitty ;;
+      case "${TERM:-}${TERM_PROGRAM:-}${KITTY_WINDOW_ID:+kitty}" in
+        *kitty*|*ghostty*) gfx=kitty ;;
         *) gfx=blocks ;;
       esac
     fi

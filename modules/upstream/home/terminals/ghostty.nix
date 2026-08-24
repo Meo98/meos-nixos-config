@@ -38,8 +38,10 @@ in {
       window-theme = "dark";
       window-height = "32";
       window-width = "110";
-      background-opacity = "1.00";
-      background-blur-radius = "0";
+      # MODIFIED: dezente Transparenz + Blur (moderner Glas-Look; Hyprland
+      # blurrt dahinter). Zurueck auf undurchsichtig: opacity "1.00".
+      background-opacity = "0.95";
+      background-blur-radius = "20";
       selection-background = "#2d3f76";
       selection-foreground = "#c8d3f5";
       cursor-style = "bar";
@@ -60,6 +62,13 @@ in {
       focus-follows-mouse = "true";
       # never show the size popups
       resize-overlay = "never";
+      # MODIFIED: Optik-Politur (Einsteiger/modern) — Innenabstand rundum,
+      # Cursor-Blinken, sichtbare Tab-Leiste oben.
+      window-padding-x = "12";
+      window-padding-y = "12";
+      window-padding-balance = "true";
+      cursor-style-blink = "true";
+      gtk-tabs-location = "top";
       keybind = [
         # Copy/Paste
         "ctrl+shift+c=copy_to_clipboard"
@@ -69,6 +78,15 @@ in {
         "ctrl+shift+plus=increase_font_size:1"
         "ctrl+shift+minus=decrease_font_size:1"
         "ctrl+shift+zero=reset_font_size"
+
+        # MODIFIED: einsteigerfreundliche Standard-Kürzel (zusätzlich zu den
+        # Alt+S-Leader-Kürzeln unten). Direkt & aus anderen Programmen bekannt.
+        "ctrl+shift+t=new_tab"
+        "ctrl+tab=next_tab"
+        "ctrl+shift+tab=previous_tab"
+        "ctrl+shift+w=close_surface"
+        "ctrl+shift+e=new_split:right"
+        "ctrl+shift+o=new_split:down"
 
         "alt+s>r=reload_config"
         "alt+s>x=close_surface"

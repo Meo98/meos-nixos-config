@@ -32,7 +32,15 @@
     # MODIFIED 2026-06-16: dropped powerlevel10k in favor of Starship
     # (see modules/meo/cli-modern.nix). p10k-config/ directory left in place
     # as orphan and can be cleaned up later.
-    plugins = [];
+    # MODIFIED: fzf-tab — die Tab-Taste öffnet ein durchsuchbares Menü mit
+    # Live-Vorschau statt einer kryptischen Liste (Config im initContent).
+    plugins = [
+      {
+        name = "fzf-tab";
+        src = pkgs.zsh-fzf-tab;
+        file = "share/fzf-tab/fzf-tab.plugin.zsh";
+      }
+    ];
 
     initContent = ''
       bindkey "\eh" backward-word
@@ -116,6 +124,26 @@
         _zpush || return 1
         nh os switch --hostname ${nixosTarget}
       }
+
+      # MODIFIED: mkcd — Ordner anlegen und direkt hineinwechseln.
+      mkcd() { mkdir -p "$1" && cd "$1"; }
+
+      # MODIFIED: fzf-tab-Feinschliff — Menü statt Liste, mit Vorschau (eza für
+      # Ordner, bat für Dateien) und komfortabler Höhe.
+      zstyle ':completion:*' menu no
+      zstyle ':fzf-tab:*' switch-group '[' ']'
+      zstyle ':fzf-tab:*' fzf-flags --height=55% --border --info=inline
+      zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --icons --color=always $realpath 2>/dev/null'
+      zstyle ':fzf-tab:complete:*:*' fzf-preview \
+        'eza -1 --icons --color=always $realpath 2>/dev/null || bat --color=always --style=plain $realpath 2>/dev/null || echo $realpath'
+
+      # MODIFIED: Begrüßung nur bei neuen Terminals (SHLVL 1, nicht in Subshells).
+      # Zeigt kompakte System-Info + Hinweis auf den `hilfe`-Spickzettel.
+      if [[ -o interactive && $SHLVL -eq 1 && -z ''${THEME_GREETED:-} ]]; then
+        export THEME_GREETED=1
+        command -v fastfetch >/dev/null && fastfetch
+        printf '  \033[2mTipp:\033[0m \033[38;2;250;179;135m\033[1mhilfe\033[0m\033[2m zeigt alle Befehle & Tastenkürzel.\033[0m\n'
+      fi
     '';
 
     shellAliases = {
@@ -130,6 +158,11 @@
       ncg = "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
       cat = "bat";
       man = "batman";
+      # MODIFIED: additive Navigations-Aliase. ls/ll/la/lt/tree kommen bereits
+      # aus modules/upstream/home/eza.nix (nicht hier doppeln -> Konflikt).
+      ".." = "cd ..";
+      "..." = "cd ../..";
+      update = "fr";
     };
   };
 }

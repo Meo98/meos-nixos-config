@@ -9,5 +9,7 @@
     (import ./scripts/travel-mode.nix      { inherit pkgs; })
     (import ./scripts/yazi-print.nix       { inherit pkgs; })
     (import ./scripts/theme-picker.nix     { inherit pkgs; })
+    (import ./scripts/hilfe.nix            { inherit pkgs; })
+    pkgs.fastfetch  # System-Info-Begrüßung beim Terminalstart (siehe zsh-Greeting)
   ];
 }
