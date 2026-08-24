@@ -26,7 +26,15 @@ in {
       chmod = pkgs.yaziPlugins.chmod;
       ouch = pkgs.yaziPlugins.ouch;
       bookmarks = pkgs.yaziPlugins.bookmarks;
-      yatline = pkgs.yaziPlugins.yatline;
+      # MODIFIED: Deprecation-Fix — yatline 0.5.0 ruft in main.lua noch die alte
+      # File:icon()-API auf (`hovered:icon().text`) -> Warnung beim yazi-Start.
+      # Patch auf die neue th.icon:match(file)-API, mit Leer-Fallback falls eine
+      # Datei kein Icon hat. (th ist ein yazi-Runtime-Global.)
+      yatline = pkgs.yaziPlugins.yatline.overrideAttrs (o: {
+        postInstall = (o.postInstall or "") + ''
+          sed -i 's/hovered:icon()/(th.icon:match(hovered) or { text = "" })/' "$out/main.lua"
+        '';
+      });
     };
 
     initLua = ''

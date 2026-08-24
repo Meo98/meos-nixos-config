@@ -91,13 +91,14 @@ font_preview() {
   if [ -n "$file" ] && [ -n "$MG" ] && command -v chafa >/dev/null 2>&1; then
     cols=${FZF_PREVIEW_COLUMNS:-56}; [ "$cols" -gt 74 ] && cols=74
     case "$attr" in
-      nerd-fonts.*) sample=$'AaBbCcDdEeFf 0123456789\nfn main() { x != y => ok }\n== != >= <= -> => :: |> </>' ;;
-      *)            sample=$'The quick brown fox jumps\nover the lazy dog  0123456789\nAa Bb Cc Dd Ee Ff Gg Hh Ii' ;;
+      nerd-fonts.*) sample=$'Aa Gg 0123\nfn x => y' ;;
+      *)            sample=$'Aa Gg Qq\nquick 0123' ;;
     esac
     # IM v7: label: muss VOR -border stehen (border ist eine Bild-Operation).
-    "$MG" -background "#12141c" -fill "#e6e6e6" -font "$file" -pointsize 40 \
-        label:"$sample" -bordercolor "#12141c" -border 12 png:- 2>/dev/null \
-      | chafa --size "${cols}x16" --format symbols - 2>/dev/null \
+    # Kurzer Text + großer pointsize + chafa ohne Dithering = klare, große Glyphen.
+    "$MG" -background "#12141c" -fill "#f5f5f5" -font "$file" -pointsize 72 \
+        label:"$sample" -bordercolor "#12141c" -border 16 png:- 2>/dev/null \
+      | chafa --size "${cols}x24" --format symbols --dither none --work 9 - 2>/dev/null \
       || printf '  (Bild-Render fehlgeschlagen — Auswahl wird trotzdem gesetzt)\n'
   else
     printf '  Pangram: The quick brown fox jumps over the lazy dog\n'
