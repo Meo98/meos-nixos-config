@@ -67,13 +67,18 @@
       fi
 
       # --- Check: fehlgeschlagene systemd-Units --------------------------
-      sysfailed="$(systemctl --failed --no-legend --plain 2>/dev/null | awk '{print $1}' | paste -sd, - || true)"
-      usrfailed="$(systemctl --user --failed --no-legend --plain 2>/dev/null | awk '{print $1}' | paste -sd, - || true)"
-      allfailed="$(printf '%s\n%s' "$sysfailed" "$usrfailed" | grep -v '^$' | paste -sd, - || true)"
-      if [ -n "$allfailed" ]; then
-        add_check failed-units fail "fehlgeschlagen: $allfailed" "'systemctl status <unit>' bzw. journalctl pruefen"
+      # NAS-Mounts (edisrv/Synology) sind zu Hause erwartbar offline und sollen
+      # den Gesamtstatus NICHT auf "fail" ziehen -> separat, nur informativ.
+      failed_units="$( { systemctl --failed --no-legend --plain 2>/dev/null; systemctl --user --failed --no-legend --plain 2>/dev/null; } | awk '{print $1}' | grep -v '^$' || true )"
+      nas_failed="$(printf '%s\n' "$failed_units" | grep -E 'edisrv' | paste -sd, - || true)"
+      other_failed="$(printf '%s\n' "$failed_units" | grep -Ev 'edisrv' | grep -v '^$' | paste -sd, - || true)"
+      if [ -n "$other_failed" ]; then
+        add_check failed-units fail "fehlgeschlagen: $other_failed" "'systemctl status <unit>' bzw. journalctl pruefen"
       else
-        add_check failed-units ok "0 fehlgeschlagene Units" ""
+        add_check failed-units ok "0 unerwartete fehlgeschlagene Units" ""
+      fi
+      if [ -n "$nas_failed" ]; then
+        add_check nas-mounts ok "NAS-Mounts offline (zu Hause erwartet): $nas_failed" ""
       fi
 
       # --- Check: nh-clean.timer (alleiniger GC seit 2026-08-20) ---------

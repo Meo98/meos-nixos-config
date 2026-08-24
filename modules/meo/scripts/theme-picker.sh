@@ -68,13 +68,21 @@ scheme_preview() {
     "${C[0B]}" "${C[09]}" "${C[08]}"
 }
 
+# Rendert ein Font-Specimen-PNG nach stdout ($1=magick/convert, $2=Datei,
+# $3=Text). Als Funktion, weil PNG NUL-Bytes enthält und in einer Bash-Variablen
+# zerstört würde -> muss direkt gepipet werden.
+_render_png() {
+  "$1" -background "#12141c" -fill "#f5f5f5" -font "$2" -pointsize 72 \
+       label:"$3" -bordercolor "#12141c" -border 16 png:- 2>/dev/null
+}
+
 # ── Vorschau: Schrift als BILD in ihrer echten Gestalt rendern ───────────
 # Zeile = Display|nixAttr|fontconfigFamily|regulaereDatei . Die reguläre
 # Schnittdatei wird in $THEME_PICKER_FONTS_DIR (symlinkJoin aller Fonts)
 # gesucht, mit magick in den echten Glyphen gesetzt und via chafa als
 # Terminalblöcke gezeigt. Fallback = Text, falls magick/chafa/Datei fehlt.
 font_preview() {
-  local row="$1" disp attr fam base file MG cols sample
+  local row="$1" disp attr fam base file MG cols rows sample gfx
   disp=$(printf '%s' "$row" | awk -F'|' '{print $1}')
   attr=$(printf '%s' "$row" | awk -F'|' '{print $2}')
   fam=$(printf  '%s' "$row" | awk -F'|' '{print $3}')
@@ -90,16 +98,29 @@ font_preview() {
 
   if [ -n "$file" ] && [ -n "$MG" ] && command -v chafa >/dev/null 2>&1; then
     cols=${FZF_PREVIEW_COLUMNS:-56}; [ "$cols" -gt 74 ] && cols=74
+    rows=${FZF_PREVIEW_LINES:-20}; [ "$rows" -gt 26 ] && rows=26; [ "$rows" -lt 8 ] && rows=8
     case "$attr" in
       nerd-fonts.*) sample=$'Aa Gg 0123\nfn x => y' ;;
       *)            sample=$'Aa Gg Qq\nquick 0123' ;;
     esac
-    # IM v7: label: muss VOR -border stehen (border ist eine Bild-Operation).
-    # Kurzer Text + großer pointsize + chafa ohne Dithering = klare, große Glyphen.
-    "$MG" -background "#12141c" -fill "#f5f5f5" -font "$file" -pointsize 72 \
-        label:"$sample" -bordercolor "#12141c" -border 16 png:- 2>/dev/null \
-      | chafa --size "${cols}x24" --format symbols --dither none --work 9 - 2>/dev/null \
-      || printf '  (Bild-Render fehlgeschlagen — Auswahl wird trotzdem gesetzt)\n'
+    # Grafik-Modus: in kitty ein echtes Bild (kitty-Grafikprotokoll), sonst
+    # Terminalblöcke. Override: THEME_PICKER_FONT_GFX=blocks|kitty (Default auto).
+    gfx="${THEME_PICKER_FONT_GFX:-auto}"
+    if [ "$gfx" = auto ]; then
+      case "${TERM:-}:${KITTY_WINDOW_ID:-}" in
+        *kitty*|*:?*) gfx=kitty ;;
+        *) gfx=blocks ;;
+      esac
+    fi
+    # IM v7: label: steht in _render_png VOR -border (border ist Bild-Operation).
+    if [ "$gfx" = kitty ]; then
+      _render_png "$MG" "$file" "$sample" | chafa -f kitty -s "${cols}x${rows}" - 2>/dev/null \
+        || _render_png "$MG" "$file" "$sample" | chafa -f symbols -s "${cols}x${rows}" --dither none --work 9 - 2>/dev/null \
+        || printf '  (Render fehlgeschlagen — Auswahl wird trotzdem gesetzt)\n'
+    else
+      _render_png "$MG" "$file" "$sample" | chafa -f symbols -s "${cols}x${rows}" --dither none --work 9 - 2>/dev/null \
+        || printf '  (Render fehlgeschlagen — Auswahl wird trotzdem gesetzt)\n'
+    fi
   else
     printf '  Pangram: The quick brown fox jumps over the lazy dog\n'
     printf '  0123456789  {}[]()<>/=+-*_   != == => ->\n\n'
