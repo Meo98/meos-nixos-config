@@ -14,15 +14,21 @@
     ./outputs.nix
     ./layout.nix
     ./binds-nav.nix
+    ./binds-apps.nix
   ];
 
   # Helper-Scripts, die niri-spezifische Binds brauchen (Task 7,
   # binds-apps.nix). Bewusst hier und nicht in modules/meo/scripts.nix, damit
   # meo-work (das dieses Modul nicht importiert) sie nicht mitbekommt —
   # niri-term-toggle zieht sonst z.B. pkgs.niri unnoetig in dessen Profil.
+  #
+  # wl-color-picker: Ersatz fuer hyprpicker, das Hyprland-Protokolle braucht.
+  # Setzt auf grim/slurp und damit auf zwlr_screencopy_manager_v1, das niri
+  # implementiert.
   home.packages = [
     (import ../scripts/keymap-popup.nix {inherit pkgs;})
     (import ../scripts/niri-term-toggle.nix {inherit pkgs;})
+    pkgs.wl-color-picker
   ];
 
   wayland.windowManager.niri = {
