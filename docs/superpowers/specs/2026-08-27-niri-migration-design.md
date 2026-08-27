@@ -372,15 +372,54 @@ auf dem nativen `show-hotkey-overlay` (`Mod+F1`).
    nach Bedarf nach.
 5. **Stylix** hat kein niri-Target. Farben kommen weiterhin über Noctalia, GTK
    und Qt; `focus-ring`-Farben werden aus der Stylix-Palette gesetzt.
-6. **`Mod+Shift+1..0` auf CH-Layout**: niri löst Binds über Keysyms auf. Auf
-   dem Schweizer Layout erzeugt Shift+1 ein `+`, Shift+2 ein `"` usw. Ob
-   `Mod+Shift+1` trotzdem greift (Hyprland kann das heute), ist nicht
-   verifiziert und lässt sich nur in einer laufenden Session prüfen, nicht per
-   `niri validate`. Fallback, falls nicht: die Shift-Level-Keysyms binden
-   (`Mod+plus`, `Mod+quotedbl`, `Mod+asterisk`, …). Das ist der erste Punkt,
-   den der erste Login prüfen muss.
-7. **`travel-mode`-Script** (`modules/meo/scripts/travel-mode.nix`) referenziert
-   Hyprland — beim Aufsetzen prüfen und ggf. compositor-aware machen.
+6. **`Mod+Shift+1..0` auf CH-Layout — GESCHLOSSEN, funktioniert.**
+
+   Dieser Punkt war ursprünglich als offene Frage formuliert, mit dem Fallback
+   „die Shift-Level-Keysyms binden (`Mod+plus`, `Mod+quotedbl`, …)". **Dieser
+   Fallback wäre falsch gewesen und hätte die funktionierenden Binds erst
+   gebrochen.** Wer ihn hier findet, soll ihn nicht anwenden.
+
+   niri löst Binds gegen das **rohe, unverschobene** Keysym auf, nicht gegen das
+   modifizierte. Belegt am Quelltext von niri 26.04:
+
+   ```
+   src/input/mod.rs:429   let modified = keysym.modified_sym();
+   src/input/mod.rs:430   let raw      = keysym.raw_latin_sym_or_raw_current_sym();
+   src/input/mod.rs:4439  let trigger  = Trigger::Keysym(raw?);
+   ```
+
+   `modified` wird ausschließlich für die fest verdrahteten VT-Switch- und
+   Power-Key-Handler benutzt. Jeder konfigurierte Bind geht über `raw`, der
+   Modifier-Zustand wird separat verglichen. `Mod+Shift+1` löst also gegen
+   Keysym `1` plus Shift-Modifier auf und greift auf dem Schweizer Layout
+   unverändert — ebenso `Mod+Shift+Comma`.
+
+   Dieselbe Mechanik erklärt, warum `Mod+Equal` **nicht** funktionieren konnte:
+   `equal` liegt auf CH nur auf Ebene 2 von `<AE10>` (Shift+0) und ist damit nie
+   das rohe Keysym. Ersetzt durch `Mod+Apostrophe` (Ebene 1 von `<AE11>`).
+
+7. **`travel-mode`-Script — ERLEDIGT.** `modules/meo/scripts/travel-mode.nix` ist
+   compositor-aware (Erkennung über `NIRI_SOCKET`, DPMS via
+   `power-off-monitors`/`power-on-monitors`). `niri` steht bewusst **nicht** in
+   den `runtimeInputs`, weil die Datei über `modules/meo/scripts.nix` an beiden
+   Hosts hängt und sonst einen 772-MiB-Closure auf meo-work zöge; der Aufruf
+   geht über den ambienten PATH mit `command -v`-Prüfung.
+
+8. **Resume-Recovery fehlt unter niri — OFFEN, wichtigste verbleibende Lücke.**
+   `modules/upstream/home/hyprland/hypridle.nix` liefert mit `after_sleep_cmd`
+   eine Recovery nach dem Aufwachen: DPMS-Re-Assertion plus Eskalation bei einem
+   EGL-/Mainloop-Wedge. Dieses Script ist Hyprland-spezifisch (`pkill -x Hyprland`,
+   `hyprctl version`) und hypridle selbst hängt an `hyprland-session.target`,
+   startet unter niri also gar nicht.
+
+   Angesichts der dokumentierten Freeze-Historie dieser Maschine (siehe Abschnitt 1)
+   gibt es nach einem Wedge beim Resume derzeit **keine automatische Erholung**.
+   Der Gegenpart `before_sleep_cmd` ist ersetzt (System-Unit `lock-before-sleep`
+   in `hosts/meo/default.nix`), `after_sleep_cmd` nicht.
+
+   Das war kein Ziel dieser Migration (Abschnitt 2 nennt Freeze-/Suspend-Verhalten
+   ausdrücklich als Nicht-Ziel), ist aber die relevanteste offene Flanke und
+   gehört als eigenes Vorhaben angegangen.
 
 ## 12. Verifikation
 

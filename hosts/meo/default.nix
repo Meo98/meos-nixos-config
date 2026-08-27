@@ -287,6 +287,12 @@
     wantedBy = [ "sleep.target" ];
     serviceConfig = {
       Type = "oneshot";
+      # MODIFIED 2026-08-27: TimeoutStartSec ergaenzt. `loginctl lock-sessions`
+      # kehrt normalerweise sofort zurueck, haengt aber am System-Bus. Ist der
+      # wedged, wuerde der systemd-Default (90s) den Suspend so lange blockieren,
+      # bevor `|| true` ueberhaupt erreicht wird — beim Zuklappen also 1.5 Minuten
+      # mit laufender Maschine im Rucksack. 5s reichen fuer den Normalfall.
+      TimeoutStartSec = 5;
       ExecStart = pkgs.writeShellScript "lock-before-sleep" ''
         ${config.systemd.package}/bin/loginctl lock-sessions || true
         ${pkgs.coreutils}/bin/sleep 0.5
