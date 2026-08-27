@@ -26,7 +26,8 @@
   # meo-work den niri-Code zwar im Repo hat, aber nie in seiner Session.
   # Das nixpkgs-Modul liefert Session-Datei, systemd-Units, xdg-Portals
   # (gnome + gtk) und gnome-keyring. Es setzt defaultSession selbst per
-  # mkDefault "niri" — deshalb bleibt Hyprland bis Task 11 explizit Default.
+  # mkDefault "niri" — die Zuweisung unten ueberschreibt das mit mkForce auf
+  # "niri-smart" (den GPU-Wrapper aus modules/meo/niri-gpu-smart.nix).
   programs.niri.enable = true;
 
   # MODIFIED 2026-08-27: von "hyprland-smart" auf "niri-smart" umgestellt
@@ -92,7 +93,14 @@
         # AC-Wechsel korrigiert das.
         set_rate() {
           rate="$1"
-          if [ -n "''${NIRI_SOCKET:-}" ] || [ -S "$XDG_RUNTIME_DIR/niri.wayland.1.sock" ]; then
+          # Fallback als Glob statt fixem Namen: niris Socket heisst
+          # niri.<wayland-display>.<pid>.sock (src/ipc/server.rs), ein fest
+          # notierter Name kann also nie matchen. Der Glob wurde dem Loeschen
+          # vorgezogen, weil NIRI_SOCKET nur in der importierten Session-Env
+          # steht — startet der Service je ausserhalb davon, greift der Glob.
+          # Trifft er auf einen verwaisten Socket, scheitert `niri msg` und der
+          # Hyprland-Zweig uebernimmt wie bisher.
+          if [ -n "''${NIRI_SOCKET:-}" ] || ls "$XDG_RUNTIME_DIR"/niri.*.sock >/dev/null 2>&1; then
             niri msg output eDP-1 mode "2560x1600@$rate" >/dev/null 2>&1 && return 0
           fi
           HYPRLAND_INSTANCE_SIGNATURE=$(ls -t "$XDG_RUNTIME_DIR/hypr" 2>/dev/null | head -1)
@@ -253,6 +261,37 @@
     lidSwitch = "suspend";
     lidSwitchDocked = "ignore";
     lidSwitchExternalPower = "suspend";
+  };
+
+  # --- LOCK VOR SUSPEND (2026-08-27, niri-Migration) ---
+  # Bis hierher sperrte hypridle die Session vor dem Suspend
+  # (before_sleep_cmd = "loginctl lock-session", modules/upstream/home/hyprland/
+  # hypridle.nix). hypridle haengt aber an systemdTarget =
+  # "hyprland-session.target" und startet unter niri gar nicht. Ohne diesen
+  # Hook wuerde lidSwitch = "suspend" die Maschine UNGESPERRT schlafen legen;
+  # Noctalias eigener Idle-Lock ist ein 600-s-Timer und deckt keinen
+  # Suspend-Hook ab.
+  #
+  # Bewusst SYSTEM-Ebene und compositor-neutral: greift unter niri UND unter
+  # Hyprland (Rollback-Session). Unter Hyprland sperrt hypridle zusaetzlich —
+  # doppeltes Sperren ist idempotent und harmlos, das ist KEIN Grund, den Hook
+  # wieder "wegzuoptimieren". `lock-sessions` (Plural) statt `lock-session`,
+  # weil hier root ohne eigene Session laeuft.
+  #
+  # Das kurze sleep hat denselben Grund wie beim Bind Mod+Alt+L
+  # (modules/meo/niri/binds-apps.nix): der Compositor braucht einen Moment, um
+  # das Lock-Surface zu committen, bevor die Maschine runtergeht.
+  systemd.services.lock-before-sleep = {
+    description = "Lock all sessions before suspend/hibernate";
+    before = [ "sleep.target" ];
+    wantedBy = [ "sleep.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "lock-before-sleep" ''
+        ${config.systemd.package}/bin/loginctl lock-sessions || true
+        ${pkgs.coreutils}/bin/sleep 0.5
+      '';
+    };
   };
 
   # --- LOCALE: en_GB fuer Bambu Studio (2026-07-04) ---
