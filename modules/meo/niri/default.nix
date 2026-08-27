@@ -9,7 +9,8 @@
 # Modulsystem merged Attrsets und konkateniert _children-Listen.
 {pkgs, ...}: {
   imports = [
-    # weitere Dateien werden in den folgenden Tasks ergaenzt
+    ./env.nix
+    ./input.nix
   ];
 
   wayland.windowManager.niri = {
