@@ -11,6 +11,7 @@
   imports = [
     ./env.nix
     ./input.nix
+    ./outputs.nix
   ];
 
   wayland.windowManager.niri = {
