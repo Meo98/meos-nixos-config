@@ -29,12 +29,13 @@
   # mkDefault "niri" — deshalb bleibt Hyprland bis Task 11 explizit Default.
   programs.niri.enable = true;
 
-  # defaultSession ist im Ist-Zustand null (verifiziert per nix eval); SDDM
-  # merkt sich die letzte Wahl, und das ist hier "hyprland-smart"
-  # (DESKTOP_SESSION der laufenden Sitzung). Das niri-Modul setzt defaultSession
-  # selbst per mkDefault "niri" — ohne Gegenwehr waere die Session ab diesem
-  # Commit gewechselt. mkForce haelt sie bis Task 11 auf Hyprland.
-  services.displayManager.defaultSession = lib.mkForce "hyprland-smart";
+  # MODIFIED 2026-08-27: von "hyprland-smart" auf "niri-smart" umgestellt
+  # (Ende der Migration, Task 11). Rueckweg ohne Rebuild: in SDDM unten links
+  # die Session "Hyprland (Smart GPU)" waehlen. Die Hyprland-Module bleiben
+  # vollstaendig im Repo. mkForce bleibt noetig: das niri-Modul setzt
+  # defaultSession selbst per mkDefault "niri", und Hyprland traegt ebenfalls
+  # einen Wert bei — ohne mkForce waere die Zuweisung mehrdeutig.
+  services.displayManager.defaultSession = lib.mkForce "niri-smart";
 
   # --- AUTOMOUNTING ---
   services.udisks2.enable = true;
