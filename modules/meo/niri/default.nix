@@ -15,6 +15,8 @@
     ./layout.nix
     ./binds-nav.nix
     ./binds-apps.nix
+    ./rules.nix
+    ./startup.nix
   ];
 
   # Helper-Scripts, die niri-spezifische Binds brauchen (Task 7,
