@@ -82,11 +82,22 @@
       RestartSec = 5;
       ExecStart = pkgs.writeShellScript "edp-refresh-switcher" ''
         export PATH=/run/current-system/sw/bin:$PATH
+        # MODIFIED 2026-08-27 (niri-Migration): erkennt die laufende Session und
+        # spricht entweder niri oder Hyprland an. Vorher hart auf hyprctl.
+        #
+        # Einschraenkung unveraendert: `niri msg output` ist laut --help
+        # ausdruecklich temporaer und wird bei einer Config-Aenderung vergessen —
+        # genau wie ein Hyprland-Config-Reload wieder 240Hz setzt. Der naechste
+        # AC-Wechsel korrigiert das.
         set_rate() {
+          rate="$1"
+          if [ -n "''${NIRI_SOCKET:-}" ] || [ -S "$XDG_RUNTIME_DIR/niri.wayland.1.sock" ]; then
+            niri msg output eDP-1 mode "2560x1600@$rate" >/dev/null 2>&1 && return 0
+          fi
           HYPRLAND_INSTANCE_SIGNATURE=$(ls -t "$XDG_RUNTIME_DIR/hypr" 2>/dev/null | head -1)
           export HYPRLAND_INSTANCE_SIGNATURE
           [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] || return 0
-          hyprctl keyword monitor "eDP-1,2560x1600@$1,0x0,1.6" >/dev/null
+          hyprctl keyword monitor "eDP-1,2560x1600@$rate,0x0,1.6" >/dev/null
         }
         apply() {
           if [ "$(cat /sys/class/power_supply/ACAD/online)" = "1" ]; then

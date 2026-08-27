@@ -5,13 +5,25 @@ pkgs.writeShellApplication {
   runtimeInputs = with pkgs; [
     coreutils
     hyprland
+    niri
   ];
   text = ''
     STATE_FILE="''${XDG_STATE_HOME:-$HOME/.local/state}/travel-mode-active"
 
+    # MODIFIED 2026-08-27 (niri-Migration): DPMS je nach laufender Session.
+    # Vorher hart `hyprctl dispatch dpms`, was unter niri wirkungslos war —
+    # der Bildschirm waere im Travel-Mode angeblieben.
+    dpms() {
+      if [ -n "''${NIRI_SOCKET:-}" ]; then
+        niri msg action "power-$1-monitors" 2>/dev/null || true
+      else
+        hyprctl dispatch dpms "$1" 2>/dev/null || true
+      fi
+    }
+
     activate() {
       echo ">>> Travel-Mode: Aktiviere Stromsparmodus..."
-      hyprctl dispatch dpms off 2>/dev/null || true
+      dpms off
       sudo travel-power on
       touch "$STATE_FILE"
       echo ">>> Travel-Mode AKTIV"
@@ -21,7 +33,7 @@ pkgs.writeShellApplication {
 
     deactivate() {
       echo ">>> Travel-Mode: Deaktiviere..."
-      hyprctl dispatch dpms on 2>/dev/null || true
+      dpms on
       sudo travel-power off
       rm -f "$STATE_FILE"
       echo ">>> Travel-Mode AUS — volle Leistung"
