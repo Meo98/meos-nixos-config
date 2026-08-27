@@ -24,3 +24,7 @@ result-*
 *~
 .#*
 \#*\#
+
+# Agent-Scratch (Worktrees + Subagent-Driven-Development-Ledger)
+.claude/
+.superpowers/
