@@ -15,6 +15,15 @@
     ./layout.nix
   ];
 
+  # Helper-Scripts, die niri-spezifische Binds brauchen (Task 7,
+  # binds-apps.nix). Bewusst hier und nicht in modules/meo/scripts.nix, damit
+  # meo-work (das dieses Modul nicht importiert) sie nicht mitbekommt —
+  # niri-term-toggle zieht sonst z.B. pkgs.niri unnoetig in dessen Profil.
+  home.packages = [
+    (import ../scripts/keymap-popup.nix {inherit pkgs;})
+    (import ../scripts/niri-term-toggle.nix {inherit pkgs;})
+  ];
+
   wayland.windowManager.niri = {
     enable = true;
     package = pkgs.niri;
