@@ -18,16 +18,46 @@
   # Mod+<n> fokussiert Workspace n, Mod+Shift+<n> schiebt die Spalte dorthin.
   # Taste "0" steht wie bisher fuer Workspace 10.
   wsKeys = [
-    {key = "1"; ws = 1;}
-    {key = "2"; ws = 2;}
-    {key = "3"; ws = 3;}
-    {key = "4"; ws = 4;}
-    {key = "5"; ws = 5;}
-    {key = "6"; ws = 6;}
-    {key = "7"; ws = 7;}
-    {key = "8"; ws = 8;}
-    {key = "9"; ws = 9;}
-    {key = "0"; ws = 10;}
+    {
+      key = "1";
+      ws = 1;
+    }
+    {
+      key = "2";
+      ws = 2;
+    }
+    {
+      key = "3";
+      ws = 3;
+    }
+    {
+      key = "4";
+      ws = 4;
+    }
+    {
+      key = "5";
+      ws = 5;
+    }
+    {
+      key = "6";
+      ws = 6;
+    }
+    {
+      key = "7";
+      ws = 7;
+    }
+    {
+      key = "8";
+      ws = 8;
+    }
+    {
+      key = "9";
+      ws = 9;
+    }
+    {
+      key = "0";
+      ws = 10;
+    }
   ];
 
   focusBinds = builtins.listToAttrs (map (e: {
@@ -114,7 +144,11 @@ in {
 
       "Mod+R".switch-preset-column-width = {};
       "Mod+Minus".set-column-width = "-10%";
-      "Mod+Equal".set-column-width = "+10%";
+      # niri's default ist Mod+Equal, aber auf der Schweizer Tastatur liegt "="
+      # auf LEVEL 2 von AE10 (Shift+0), also unerreichbar. Stattdessen verwendet
+      # diese Config Mod+Apostrophe (LEVEL 1 von AE11), das layoutneutral
+      # funktioniert.
+      "Mod+Apostrophe".set-column-width = "+10%";
       "Mod+Ctrl+F".maximize-column = {};
       "Mod+Ctrl+Return".center-column = {};
       "Mod+Alt+T".toggle-column-tabbed-display = {};
