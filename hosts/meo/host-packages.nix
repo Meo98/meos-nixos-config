@@ -3,6 +3,7 @@
   nixpkgs.overlays = [
     (import ../../modules/meo/bambu.nix)
     (import ../../modules/meo/orcastudio.nix)
+    (import ../../modules/meo/ghostty-scroll-fix.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
   ];
