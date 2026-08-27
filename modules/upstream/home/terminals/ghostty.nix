@@ -46,9 +46,19 @@ in {
       selection-foreground = "#c8d3f5";
       cursor-style = "bar";
       mouse-hide-while-typing = "true";
-      # MODIFIED 2026-06-23: zurueck auf 1 (Ghostty-Default-Geschwindigkeit) auf
-      # User-Wunsch. Linearer Faktor: <1=langsamer, 1=Default, >1=schneller.
-      mouse-scroll-multiplier = "1";
+      # MODIFIED 2026-08-27: discrete 1 -> 0.5, um Ghostty an die Scroll-Distanz
+      # anderer Apps (Browser) anzugleichen.
+      # Hintergrund: Ghostty multipliziert die Wheel-Deltas in
+      # ecMouseScrollVertical() mit scaledCoordinates(), also mit GTKs
+      # GANZZAHLIGEM Scale-Faktor. Auf eDP-1 (Hyprland-Scale 1.6) meldet GTK4
+      # scale_factor = 2 -> die Kette ist 1 Tick * 2 * Zellenhoehe * discrete,
+      # also 2 Textzeilen pro Rasterschritt statt der konfigurierten 1.
+      # 0.5 hebt diese Verdopplung auf: wieder 1 Zeile pro Raste.
+      # Auf einem 1x-Monitor waere 0.5 entsprechend eine halbe Zeile -- der Wert
+      # ist also displayabhaengig, nicht universell.
+      # precision (Touchpad/Kinetic) bleibt bei 1, das laeuft ueber einen
+      # anderen Zweig und ist nicht betroffen.
+      mouse-scroll-multiplier = "precision:1,discrete:0.5";
       # scrollbar=system ist bereits Ghostty-Default (1.3.1), hier nur explizit.
       scrollbar = "system";
       wait-after-command = "false";

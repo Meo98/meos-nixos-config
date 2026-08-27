@@ -96,6 +96,19 @@ in {
         follow_mouse = 1;
         float_switch_override_focus = 0;
         sensitivity = 0;
+
+        # MODIFIED 2026-08-27: Hi-Res-Scrolling nicht wieder auf ganze
+        # Rasterschritte herunterquantisieren.
+        # Hyprland (InputManager.cpp::onMouseWheel) ersetzt bei
+        # emulate_discrete_scroll >= 1 das feine `delta` durch
+        # `15.0 * discrete`, sobald ein Event nicht exakt 120 v120-Einheiten
+        # gross ist. Beim Keyball-Trackball ist das bei JEDEM Event der Fall
+        # (er sendet 2-30 Einheiten pro Sensor-Count) -> Apps ohne
+        # axis_value120-Support bekommen "erst ein Sprung, dann passiert
+        # 14 Counts lang nichts". Echte Mausraeder senden exakt 120 pro Raste
+        # und laufen unveraendert weiter.
+        emulate_discrete_scroll = 0;
+
         touchpad = {
           natural_scroll = true;
           disable_while_typing = true;
@@ -103,6 +116,22 @@ in {
           scroll_factor = 1.0;
         };
       };
+
+      # MODIFIED 2026-08-27: Keyball44-Trackball, per-Device.
+      # accel_profile = flat, weil die Beschleunigungskurve jetzt in der
+      # Firmware sitzt (maccel-Modul). libinputs Default "adaptive" wuerde
+      # eine zweite Kurve daruebermultiplizieren -- zwei verkettete Kurven
+      # lassen sich prinzipiell nicht sauber einstellen.
+      # scroll_factor ist der Live-Knopf zum Tunen ohne Neu-Flashen:
+      #   hyprctl keyword 'device[yowkees-keyball44-mouse]:scroll_factor' 0.7
+      device = [
+        {
+          name = "yowkees-keyball44-mouse";
+          accel_profile = "flat";
+          sensitivity = 0;
+          scroll_factor = 1.0;
+        }
+      ];
 
       # Hyprland 0.54+: nur "workspace" als Aktion verfügbar
       gesture = [ "3, horizontal, workspace" ];
