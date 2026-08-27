@@ -3,7 +3,13 @@
   nixpkgs.overlays = [
     (import ../../modules/meo/bambu.nix)
     (import ../../modules/meo/orcastudio.nix)
-    (import ../../modules/meo/ghostty-scroll-fix.nix)
+    # DEAKTIVIERT 2026-08-27, kurz nach dem Einbau: der Patch ist sachlich
+    # richtig, aber sein einziger spuerbarer Effekt war, dass schnelles Scrollen
+    # im Terminal ~20% weiter laeuft (der zuvor verworfene Rest kommt jetzt an).
+    # Die Zeilen-Stufigkeit, derentwegen er gebaut wurde, beseitigt er nicht --
+    # die ist prinzipbedingt. Datei + Analyse bleiben fuer einen Upstream-Report
+    # liegen; zum Reaktivieren einfach diese Zeile entkommentieren.
+    # (import ../../modules/meo/ghostty-scroll-fix.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
   ];
