@@ -13,6 +13,7 @@
     ./input.nix
     ./outputs.nix
     ./layout.nix
+    ./binds-nav.nix
   ];
 
   # Helper-Scripts, die niri-spezifische Binds brauchen (Task 7,
