@@ -74,17 +74,38 @@ let
       base="$HOME/.config/niri/config.kdl"
       generated="''${XDG_RUNTIME_DIR:-/tmp}/niri-config.kdl"
 
+      # "niri --session" ohne -c sucht selbst unter genau diesem Pfad. Fehlt
+      # die Datei, faengt niris eigener Default das ab. Existiert sie aber nur
+      # mit falschen Rechten, laeuft niri hier in denselben Lesefehler --
+      # dieser Fallback rettet also nur den "fehlt"-Fall, nicht den "kaputt"-Fall.
       if [ ! -r "$base" ]; then
-        printf '[niri-smart] %s fehlt, starte mit Default-Config\n' "$base" >&2
+        printf '[niri-smart] %s nicht lesbar, ueberlasse Config-Suche niri selbst\n' "$base" >&2
         exec niri --session "$@"
       fi
 
-      cp "$base" "$generated"
+      if ! cp "$base" "$generated"; then
+        printf '[niri-smart] Kopie von %s nach %s fehlgeschlagen, starte mit HM-Config\n' "$base" "$generated" >&2
+        exec niri --session "$@"
+      fi
+
       if [ -n "$render_node" ]; then
         {
           printf '\n// von niri-smart ergaenzt (%s)\n' "$mode"
           printf 'debug {\n    render-drm-device "%s"\n}\n' "$render_node"
         } >> "$generated"
+      fi
+
+      # Zusaetzlich zum Statuscode: "cp" haette (z.B. bei ENOSPC) auch mit
+      # Fehler durchlaufen koennen, ohne dass wir es hier abgefangen haetten,
+      # und dann haette ">>" oben die Datei aus dem Nichts angelegt -- so eine
+      # Mini-Datei aus nur dem debug-Block besteht "niri validate" (sie ist
+      # syntaktisch gueltiges KDL), waere aber eine Session ohne jegliche
+      # Binds. Deshalb: die Kopie muss mindestens so gross sein wie die Basis.
+      base_size=$(wc -c < "$base")
+      generated_size=$(wc -c < "$generated")
+      if [ "$generated_size" -lt "$base_size" ]; then
+        printf '[niri-smart] generierte Config (%s Bytes) kleiner als Basis (%s Bytes), starte mit HM-Config\n' "$generated_size" "$base_size" >&2
+        exec niri --session "$@"
       fi
 
       # Bricht lieber hier ab als in einer schwarzen Session.
