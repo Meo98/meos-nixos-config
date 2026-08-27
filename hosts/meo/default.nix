@@ -5,6 +5,7 @@
     ../../modules/meo/kanata.nix
     ./affinity.nix
     ../../modules/meo/hyprland-gpu-smart.nix
+    ../../modules/meo/niri-gpu-smart.nix
     ../../modules/meo/android-dev.nix
     ../../modules/meo/dns-override.nix
     ../../modules/meo/synology-mount.nix
