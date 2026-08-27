@@ -12,6 +12,7 @@
     ./env.nix
     ./input.nix
     ./outputs.nix
+    ./layout.nix
   ];
 
   wayland.windowManager.niri = {
