@@ -23,9 +23,6 @@
           x = 0;
           y = 0;
         };
-        # on-demand: VRR nur, wenn eine App es anfordert. Dauerhaftes VRR auf
-        # dem OLED ist bei statischem Bild unnoetig.
-        variable-refresh-rate._props.on-demand = true;
       };
     }
     {

@@ -7,7 +7,9 @@ pkgs.writeShellApplication {
     #
     # niri hat kein Scratchpad und pyprland ist Hyprland-only. Stattdessen ein
     # benannter Workspace "term" (deklariert in modules/meo/niri/rules.nix),
-    # auf dem per spawn-at-startup ein Ghostty mit eigener app-id liegt.
+    # auf dem per spawn-at-startup ein `kitty --class=kitty-dropterm` liegt
+    # (kitty statt ghostty, weil ghostty seine app-id nicht per Flag setzen
+    # laesst — siehe rules.nix und startup.nix).
     #
     # Ein einzelner Bind kann nicht bedingt zurueckspringen, daher entscheidet
     # dieses Script anhand des gerade fokussierten Workspace.
