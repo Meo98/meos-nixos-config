@@ -13,9 +13,27 @@
 
   # Add our custom home-manager modules on top of modules/upstream/home/.
   # This merges with `imports = [./../home]` set in modules/upstream/core/user.nix.
-  home-manager.users.${username}.imports = [ ../../modules/meo ];
+  # niri wird host-lokal (nicht über modules/meo/default.nix) importiert, damit
+  # meo-work (das modules/meo genauso importiert) die niri-Session NICHT bekommt.
+  home-manager.users.${username}.imports = [ ../../modules/meo ../../modules/meo/niri ];
 
   programs.kdeconnect.enable = true;
+
+  # --- niri (Migration 2026-08-27) ---
+  # Spec: docs/superpowers/specs/2026-08-27-niri-migration-design.md
+  # Bewusst host-lokal statt in modules/upstream/core/packages.nix, damit
+  # meo-work den niri-Code zwar im Repo hat, aber nie in seiner Session.
+  # Das nixpkgs-Modul liefert Session-Datei, systemd-Units, xdg-Portals
+  # (gnome + gtk) und gnome-keyring. Es setzt defaultSession selbst per
+  # mkDefault "niri" — deshalb bleibt Hyprland bis Task 11 explizit Default.
+  programs.niri.enable = true;
+
+  # defaultSession ist im Ist-Zustand null (verifiziert per nix eval); SDDM
+  # merkt sich die letzte Wahl, und das ist hier "hyprland-smart"
+  # (DESKTOP_SESSION der laufenden Sitzung). Das niri-Modul setzt defaultSession
+  # selbst per mkDefault "niri" — ohne Gegenwehr waere die Session ab diesem
+  # Commit gewechselt. mkForce haelt sie bis Task 11 auf Hyprland.
+  services.displayManager.defaultSession = lib.mkForce "hyprland-smart";
 
   # --- AUTOMOUNTING ---
   services.udisks2.enable = true;
