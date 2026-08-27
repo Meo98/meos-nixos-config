@@ -15,6 +15,35 @@
 #
 # WICHTIG: In modules/meo/niri/ darf deshalb KEIN debug-Block stehen, sonst
 # entsteht er hier doppelt.
+#
+# ---------------------------------------------------------------------------
+# WARUM JEDER PFAD IN `exec niri-session` ENDET — NICHT IN `exec niri --session`
+# ---------------------------------------------------------------------------
+# Das niri-Package liefert share/systemd/user/niri.service mit:
+#     BindsTo=graphical-session.target
+#     Before=graphical-session.target
+# Erst das STARTEN dieser Unit zieht graphical-session.target hoch (BindsTo
+# impliziert Requires). `niri --session` startet ueberhaupt keine Unit — das
+# Target bliebe inaktiv und JEDE User-Unit mit
+# `WantedBy=graphical-session.target` waere tot: Noctalia (Bar, Dock, Launcher,
+# Control-Center, Clipboard, Notifications, Wallpaper UND Lockscreen), udiskie,
+# edp-refresh-switcher, bt-audio-monitor, vol-smart-watch. Mod+Alt+L wuerde die
+# Maschine dann UNGESPERRT suspendieren.
+#
+# `niri-session` (gleiches Package) macht genau die richtige Reihenfolge:
+# `systemctl --user import-environment` -> `systemctl --user --wait start
+# niri.service` -> beim Ende `niri-shutdown.target`.
+#
+# Folge fuer die generierte Config: die Unit ruft `niri --session` ohne
+# Argumente auf, ein `-c` kaeme also nie an. Stattdessen NIRI_CONFIG (siehe
+# `niri --help`: "This can also be set with the `NIRI_CONFIG` environment
+# variable"). Das bare `systemctl --user import-environment` in niri-session
+# importiert die KOMPLETTE Umgebung in den User-Manager, also erbt niri.service
+# unser NIRI_CONFIG.
+#
+# Das Schwestermodul modules/meo/hyprland-gpu-smart.nix DARF `exec Hyprland`
+# direkt machen: Hyprland aktiviert sein Session-Target aus der eigenen Config
+# heraus. Hier waere dieselbe "Vereinfachung" ein stiller Desktop-Totalausfall.
 let
   nvidiaPci = "0000:01:00.0";
   intelPci = "0000:00:02.0";
@@ -23,7 +52,8 @@ let
     name = "niri-smart";
     runtimeInputs = with pkgs; [coreutils findutils gnugrep niri];
     text = ''
-      set -u
+      # Kein eigenes `set` noetig: writeShellApplication setzt bereits
+      # `set -o errexit -o nounset -o pipefail`.
 
       resolve_render_node() {
         local pci="$1" node
@@ -74,25 +104,32 @@ let
       base="$HOME/.config/niri/config.kdl"
       generated="''${XDG_RUNTIME_DIR:-/tmp}/niri-config.kdl"
 
-      # "niri --session" ohne -c sucht selbst unter genau diesem Pfad. Fehlt
-      # die Datei, faengt niris eigener Default das ab. Existiert sie aber nur
-      # mit falschen Rechten, laeuft niri hier in denselben Lesefehler --
+      # Ohne NIRI_CONFIG sucht niri selbst unter genau diesem Pfad. Fehlt die
+      # Datei, faengt niris eigener Default das ab. Existiert sie aber nur mit
+      # falschen Rechten, laeuft niri hier in denselben Lesefehler --
       # dieser Fallback rettet also nur den "fehlt"-Fall, nicht den "kaputt"-Fall.
       if [ ! -r "$base" ]; then
         printf '[niri-smart] %s nicht lesbar, ueberlasse Config-Suche niri selbst\n' "$base" >&2
-        exec niri --session "$@"
+        exec niri-session "$@"
       fi
 
       if ! cp "$base" "$generated"; then
         printf '[niri-smart] Kopie von %s nach %s fehlgeschlagen, starte mit HM-Config\n' "$base" "$generated" >&2
-        exec niri --session "$@"
+        exec niri-session "$@"
       fi
 
+      # Das Anhaengen ist bewusst abgesichert: unter errexit wuerde ein
+      # Schreibfehler (praktisch nur ENOSPC auf dem tmpfs) das Script sonst
+      # VOR jedem exec beenden und den Benutzer zurueck in den Greeter werfen.
+      # So endet wirklich jeder Pfad in einem exec.
       if [ -n "$render_node" ]; then
-        {
+        if ! {
           printf '\n// von niri-smart ergaenzt (%s)\n' "$mode"
           printf 'debug {\n    render-drm-device "%s"\n}\n' "$render_node"
-        } >> "$generated"
+        } >> "$generated"; then
+          printf '[niri-smart] debug-Block liess sich nicht anhaengen, starte mit HM-Config\n' >&2
+          exec niri-session "$@"
+        fi
       fi
 
       # Zusaetzlich zum Statuscode: "cp" haette (z.B. bei ENOSPC) auch mit
@@ -105,16 +142,19 @@ let
       generated_size=$(wc -c < "$generated")
       if [ "$generated_size" -lt "$base_size" ]; then
         printf '[niri-smart] generierte Config (%s Bytes) kleiner als Basis (%s Bytes), starte mit HM-Config\n' "$generated_size" "$base_size" >&2
-        exec niri --session "$@"
+        exec niri-session "$@"
       fi
 
       # Bricht lieber hier ab als in einer schwarzen Session.
       if ! niri validate --config "$generated"; then
         printf '[niri-smart] generierte Config ungueltig, starte mit HM-Config\n' >&2
-        exec niri --session "$@"
+        exec niri-session "$@"
       fi
 
-      exec niri --session -c "$generated" "$@"
+      # Siehe Kopf der Datei: NIRI_CONFIG statt -c, weil niri.service das
+      # Kommando selbst zusammensetzt.
+      export NIRI_CONFIG="$generated"
+      exec niri-session "$@"
     '';
   };
 
