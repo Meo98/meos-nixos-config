@@ -133,7 +133,16 @@ let
         exec niri-session "$@"
       fi
 
-      if ! cp "$base" "$generated"; then
+      # NICHT `cp`. Die Quelle ist ein Symlink in den Nix-Store, und dort ist
+      # alles 444. `cp` uebernimmt beim NEU ANLEGEN die Rechte der Quelle --
+      # die Kopie waere also schreibgeschuetzt, und das Anhaengen des
+      # debug-Blocks unten scheiterte an der eigenen Datei. Die Absicherung
+      # dort faengt das zwar ab, aber sie startet dann OHNE GPU-Bindung, und
+      # zwar still: die Meldung geht nach stderr, das SDDM verwirft. Genau
+      # dieser Fehler kostete am 2026-08-28 einen Abend Fehlersuche.
+      # `install -m` setzt die Rechte explizit und ist gegen die Store-Rechte
+      # der Quelle immun.
+      if ! install -m 0644 "$base" "$generated"; then
         printf '[niri-smart] Kopie von %s nach %s fehlgeschlagen, starte mit HM-Config\n' "$base" "$generated" >&2
         exec niri-session "$@"
       fi
@@ -203,7 +212,11 @@ let
       # Erst vollstaendig danebenbauen, pruefen, dann atomar ersetzen. Ein
       # halb geschriebenes Ziel wuerde der Dateiwaechter sofort einlesen.
       tmp="$generated.new"
-      cp "$base" "$tmp"
+      # rm zuerst: bleibt von einem abgebrochenen Lauf eine schreibgeschuetzte
+      # Datei liegen, scheitert sonst jeder weitere Versuch an ihr. Und
+      # install -m statt cp aus demselben Grund wie oben in niri-smart.
+      rm -f "$tmp"
+      install -m 0644 "$base" "$tmp"
       if [ -n "$render_node" ]; then
         {
           printf '\n// von niri-smart ergaenzt (%s)\n' "$mode"
