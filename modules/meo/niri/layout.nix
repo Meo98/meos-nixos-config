@@ -11,11 +11,16 @@ in {
     layout = {
       gaps = 8;
 
-      # "never": die fokussierte Spalte wird nicht automatisch zentriert.
-      # Beim Einstieg ins scrollable tiling ist ein stabiler Viewport leichter
-      # zu lesen als einer, der bei jedem Fokuswechsel nachrueckt.
-      # Wenn sich das nach ein paar Tagen falsch anfuehlt: "always" probieren.
-      center-focused-column = "never";
+      # MODIFIED 2026-08-28: "never" -> "always". Die fokussierte Spalte sitzt
+      # jetzt immer mittig, links und rechts bleibt symmetrisch (1 - 5/6) / 2
+      # = 1/12 des Schirms fuer die Nachbarspalten sichtbar. Das war beim
+      # Einstieg bewusst aus ("stabiler Viewport ist leichter zu lesen"), hat
+      # sich aber nach einem Tag als das Falsche herausgestellt.
+      #
+      # Alternativen, falls das Nachruecken bei jedem Fokuswechsel stoert:
+      # "on-overflow" zentriert nur, wenn die neue Spalte nicht zusammen mit
+      # der vorherigen auf den Schirm passt.
+      center-focused-column = "always";
 
       # Mod+R zykliert vorwaerts, Mod+Shift+R rueckwaerts.
       #
