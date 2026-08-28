@@ -19,10 +19,12 @@ in {
 
       # Mod+R zykliert vorwaerts, Mod+Shift+R rueckwaerts.
       #
-      # 0.75 und 0.8 sind bewusst dabei: auf dem eDP (1600 logische px) bleibt
-      # damit ein 400 bzw. 320 px breiter Streifen der Nachbarspalte sichtbar.
-      # Das ist der Punkt am Scroll-Layout — man sieht, dass rechts noch etwas
-      # kommt, statt eine Spalte fuer den ganzen Schirm zu halten.
+      # 5/6 ist die Arbeitsbreite: auf dem eDP (1600 logische px) bleibt damit
+      # ein ~265 px schmaler Streifen der Nachbarspalte stehen. Genau der Punkt
+      # am Scroll-Layout — man sieht, dass rechts noch etwas kommt, ohne dass
+      # der Streifen als zweites Fenster mitliest. 3/4 und 4/5 waren am
+      # 2026-08-28 kurz zum Vergleich drin und sind wieder raus, weil 5/6
+      # gewonnen hat.
       #
       # "proportion" rechnet die gaps schon mit ein: vier Fenster mit 0.25
       # passen exakt nebeneinander, unabhaengig vom gaps-Wert oben.
@@ -30,11 +32,11 @@ in {
         {proportion = 0.33333;}
         {proportion = 0.5;}
         {proportion = 0.66667;}
-        {proportion = 0.75;}
-        {proportion = 0.8;}
+        {proportion = 0.83333;}
       ];
 
-      default-column-width.proportion = 0.5;
+      # Neue Fenster starten gleich in der Arbeitsbreite.
+      default-column-width.proportion = 0.83333;
 
       focus-ring = {
         width = 2;
