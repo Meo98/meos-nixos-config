@@ -18,6 +18,7 @@
     ./rules.nix
     ./startup.nix
     ./hyprland-compat.nix
+    ./dashboard.nix
   ];
 
   # Helper-Scripts, die niri-spezifische Binds brauchen (Task 7,

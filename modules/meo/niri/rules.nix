@@ -37,6 +37,24 @@
       ];
     }
 
+    # Dashboard-Spalte (modules/meo/niri/dashboard.nix). Breite = 1/12, damit
+    # sie bei 5/6 Arbeitsbreite exakt in die Luecke links passt: die
+    # fokussierte Spalte ist zentriert, links und rechts bleiben (1 - 5/6)/2
+    # = 1/12 uebrig. Waere sie breiter, ragte ihr linker Teil aus dem Bild.
+    #
+    # Kein open-focused false: move-column-to-index wirkt nur auf die
+    # FOKUSSIERTE Spalte. Geht das Dashboard normal fokussiert auf, braucht
+    # der Daemon zwei Aufrufe (schieben, Fokus zurueck) statt drei.
+    #
+    # Auch hier kitty statt ghostty — dieselbe gtk-single-instance-Falle wie
+    # bei kitty-dropterm oben.
+    {
+      window-rule._children = [
+        {match._props.app-id = "^niri-dashboard$";}
+        {default-column-width.proportion = 0.08333;}
+      ];
+    }
+
     # Kleine Dialoge sollen nicht das Spaltenlayout aufreissen.
     {
       window-rule._children = [
