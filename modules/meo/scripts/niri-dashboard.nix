@@ -1,8 +1,9 @@
 # Die schmale Anzeige, die im Dashboard-Terminal laeuft.
 #
-# Breite: auf 1/12 des eDP ausgelegt (~133 px, bei Stylix-12pt rund 16 Spalten).
-# Alles darf hoechstens 16 Zeichen breit sein, sonst bricht kitty um und das
-# Layout zerfaellt.
+# Breite: die Spalte ist 1/12 des eDP (~133 px). Wie viele ZEICHEN das sind,
+# haengt an der Schrift und wird deshalb nicht geraten, sondern bei jedem
+# Durchgang per `tput cols` erfragt. Bricht eine Zeile um, verrutscht das
+# ganze Layout — alles muss auf COLS passen.
 #
 # Datenquellen bewusst nur /proc und /sys — keine Fremdprogramme, damit die
 # Anzeige nicht an einem Paket haengt, das bei einem nixpkgs-Bump wegwandert.
@@ -25,8 +26,18 @@ pkgs.writeShellApplication {
   name = "niri-dashboard";
   runtimeInputs = with pkgs; [coreutils gnugrep gnused];
   text = ''
-    # Breite der Anzeige in Zeichen. Die Balken sind WIDTH-2 lang.
-    WIDTH=14
+    # Breite NICHT festnageln. Der erste Versuch stand auf 14 Zeichen und
+    # brach am 2026-08-28 sichtbar um: 133 px fassen bei der Stylix-Schrift
+    # nur rund 10 Zellen. Die echte Breite kennt das Terminal selbst — so
+    # stimmt die Anzeige auch, wenn die Spalte per Mod+R die Breite wechselt
+    # oder die Schriftgroesse sich aendert.
+    COLS=10
+    read_cols() {
+      local c
+      c=$(tput cols 2>/dev/null || echo "")
+      if [ -n "$c" ] && [ "$c" -ge 6 ] 2>/dev/null; then COLS="$c"; fi
+    }
+    read_cols
 
     intel_pci="0000:00:02.0"
     nvidia_pci="0000:01:00.0"
@@ -66,7 +77,7 @@ pkgs.writeShellApplication {
 
     # Balken aus Vollblock und leichtem Schatten. $1 = Prozent 0..100
     bar() {
-      local pct="$1" len=$((WIDTH - 2)) filled i out=""
+      local pct="$1" len="$COLS" filled i out=""
       [ "$pct" -lt 0 ] && pct=0
       [ "$pct" -gt 100 ] && pct=100
       filled=$(( (pct * len + 50) / 100 ))
@@ -163,16 +174,37 @@ pkgs.writeShellApplication {
     cat_frame() {
       local f="$1"
       case "$f" in
-        0) printf '  /\\_/\\\n ( o.o )\n  > ^ <  \n' ;;
-        1) printf '  /\\_/\\\n ( o.o )\n  > ^ <~ \n' ;;
-        2) printf '  /\\_/\\\n ( -.- )\n  > ^ <  \n' ;;
-        *) printf '  /\\_/\\\n ( o.o )\n ~> ^ <  \n' ;;
+        0) printf ' /\\_/\\\e[K\n ( o.o )\e[K\n  > ^ <\e[K\n' ;;
+        1) printf ' /\\_/\\\e[K\n ( o.o )\e[K\n  > ^ <~\e[K\n' ;;
+        2) printf ' /\\_/\\\e[K\n ( -.- )\e[K\n  > ^ <\e[K\n' ;;
+        *) printf ' /\\_/\\\e[K\n ( o.o )\e[K\n ~> ^ <\e[K\n' ;;
       esac
     }
 
     # --- Zeichnen -----------------------------------------------------------
-    # \e[?25l blendet den Cursor aus, \e[H setzt nach links oben. Neu
-    # gezeichnet wird ueber die alte Ausgabe, ohne clear — sonst flackert es.
+    # \e[?25l blendet den Cursor aus, \e[H setzt nach links oben, \e[K loescht
+    # den Rest der Zeile. Neu gezeichnet wird ueber die alte Ausgabe statt mit
+    # clear — sonst flackert es bei jedem Durchgang.
+
+    # Label links, Wert rechtsbuendig auf COLS. Kein Emoji als Ladeanzeige:
+    # ''${#var} zaehlt ZEICHEN, das Terminal rendert aber ZELLEN, und ein
+    # Blitz-Emoji belegt deren zwei. Die Rechtsbuendigkeit waere dann um eine
+    # Stelle daneben und die Zeile bei knapper Breite umgebrochen. "+" ist
+    # eindeutig eine Zelle breit.
+    kv() {
+      local label="$1" value="$2" pad
+      # Abstand als LEERZEICHEN erzeugen, nicht den Wert auffuellen.
+      # ''${#value} zaehlt Zeichen, bash' printf fuellt %*s aber nach BYTES —
+      # bei "60°C" (4 Zeichen, 5 Bytes) geriete die Zeile sonst eine Spalte
+      # zu kurz und stuende nicht mehr buendig unter den anderen.
+      pad=$((COLS - ''${#label} - ''${#value}))
+      [ "$pad" -lt 1 ] && pad=1
+      printf '%s%*s%s\e[K\n' "$label" "$pad" "" "$value"
+    }
+
+    blank() { printf '\e[K\n'; }
+    barline() { printf '%s\e[K\n' "$(bar "$1")"; }
+
     cleanup() { printf '\e[?25h\e[2J\e[H'; }
     trap cleanup EXIT INT TERM
 
@@ -185,6 +217,7 @@ pkgs.writeShellApplication {
     while :; do
       # Werte alle 4 Ticks (= 2 s) neu holen, die Katze laeuft mit jedem Tick.
       if [ $((tick % 4)) -eq 0 ]; then
+        read_cols          # Spaltenbreite kann sich per Mod+R aendern
         cpu=$(cpu_pct)
         mem=$(mem_pct)
         igpu=$(igpu_pct)
@@ -200,44 +233,36 @@ pkgs.writeShellApplication {
 
       {
         printf '\e[H'
-        printf '\e[1m %s\e[0m       \n' "$(date '+%H:%M:%S')"
-        printf ' %-14s\n' "$(date '+%a %d.%m.')"
-        printf '               \n'
+        printf '\e[1m%s\e[0m\e[K\n' "$(date '+%H:%M:%S')"
+        printf '%s\e[K\n' "$(date '+%a %d.%m.')"
+        blank
 
-        printf ' CPU %10s\n' "''${cpu}%"
-        printf ' %s\n' "$(bar "$cpu")"
-        printf ' RAM %10s\n' "''${mem}%"
-        printf ' %s\n' "$(bar "$mem")"
+        kv CPU "''${cpu}%"
+        barline "$cpu"
+        kv RAM "''${mem}%"
+        barline "$mem"
 
         if [ -n "$igpu" ]; then
-          printf ' iGPU %9s\n' "''${igpu}%"
-          printf ' %s\n' "$(bar "$igpu")"
-        else
-          printf '               \n               \n'
+          kv iGPU "''${igpu}%"
+          barline "$igpu"
         fi
 
-        printf ' dGPU %9s\n' "$dgpu"
-        printf '               \n'
+        kv dGPU "$dgpu"
+        blank
 
-        if [ -n "$tmp" ]; then
-          printf ' TMP %10s\n' "''${tmp}°C"
-        else
-          printf '               \n'
-        fi
+        [ -n "$tmp" ] && kv TMP "''${tmp}°C"
 
         if [ -n "$bat" ]; then
-          if bat_charging; then
-            printf ' AKK %10s\n' "⚡''${bat}%"
-          else
-            printf ' AKK %10s\n' "''${bat}%"
-          fi
-          printf ' %s\n' "$(bar "$bat")"
-        else
-          printf '               \n               \n'
+          if bat_charging; then kv AKK "+''${bat}%"; else kv AKK "''${bat}%"; fi
+          barline "$bat"
         fi
 
-        printf '               \n'
+        blank
         cat_frame "$frame"
+
+        # Alles unterhalb wegwischen. Faellt eine Zeile weg (etwa weil die
+        # iGPU nicht auslesbar ist), bleibt sonst der alte Text stehen.
+        printf '\e[J'
       } 2>/dev/null
 
       tick=$((tick + 1))
