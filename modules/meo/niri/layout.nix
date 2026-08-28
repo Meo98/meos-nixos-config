@@ -17,11 +17,21 @@ in {
       # Wenn sich das nach ein paar Tagen falsch anfuehlt: "always" probieren.
       center-focused-column = "never";
 
-      # Mod+R zykliert durch diese Breiten.
+      # Mod+R zykliert vorwaerts, Mod+Shift+R rueckwaerts.
+      #
+      # 0.75 und 0.8 sind bewusst dabei: auf dem eDP (1600 logische px) bleibt
+      # damit ein 400 bzw. 320 px breiter Streifen der Nachbarspalte sichtbar.
+      # Das ist der Punkt am Scroll-Layout — man sieht, dass rechts noch etwas
+      # kommt, statt eine Spalte fuer den ganzen Schirm zu halten.
+      #
+      # "proportion" rechnet die gaps schon mit ein: vier Fenster mit 0.25
+      # passen exakt nebeneinander, unabhaengig vom gaps-Wert oben.
       preset-column-widths._children = [
         {proportion = 0.33333;}
         {proportion = 0.5;}
         {proportion = 0.66667;}
+        {proportion = 0.75;}
+        {proportion = 0.8;}
       ];
 
       default-column-width.proportion = 0.5;
