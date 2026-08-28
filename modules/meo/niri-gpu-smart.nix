@@ -48,13 +48,10 @@ let
   nvidiaPci = "0000:01:00.0";
   intelPci = "0000:00:02.0";
 
-  niriSmart = pkgs.writeShellApplication {
-    name = "niri-smart";
-    runtimeInputs = with pkgs; [coreutils findutils gnugrep niri];
-    text = ''
-      # Kein eigenes `set` noetig: writeShellApplication setzt bereits
-      # `set -o errexit -o nounset -o pipefail`.
-
+  # Ermittelt render_node und mode aus den PCI-Adressen. Wird von niri-smart
+  # (beim Login) UND von niri-reload (im Betrieb) gebraucht — deshalb hier
+  # einmal definiert, statt in zwei Skripten auseinanderzudriften.
+  gpuDecision = ''
       resolve_render_node() {
         local pci="$1" node
         node=$(find "/sys/bus/pci/devices/$pci/drm" -maxdepth 1 -name 'renderD*' -printf '%f\n' 2>/dev/null | head -n1) || true
@@ -99,7 +96,30 @@ let
         mode="fallback: keine GPU-Bindung (Nodes nicht aufloesbar)"
       fi
 
+  '';
+
+  niriSmart = pkgs.writeShellApplication {
+    name = "niri-smart";
+    runtimeInputs = with pkgs; [coreutils findutils gnugrep niri];
+    text = ''
+      # Kein eigenes `set` noetig: writeShellApplication setzt bereits
+      # `set -o errexit -o nounset -o pipefail`.
+
+      ${gpuDecision}
+
       printf '[niri-smart] %s -- render-drm-device=%s\n' "$mode" "''${render_node:-unset}" >&2
+
+      # Dieses stderr landet bei SDDM im Nichts: die Session wird ueber
+      # sddm-helper gestartet, dessen Ausgabe nirgends aufgezeichnet wird.
+      # Nach dem Login ist damit NICHT mehr feststellbar, welchen Modus der
+      # Wrapper gewaehlt hat -- genau die Frage, die am 2026-08-28 offen blieb,
+      # als der debug-Block in der Runtime-Config fehlte. Deshalb zusaetzlich
+      # eine Statuszeile neben die generierte Config. Bewusst mit "|| true":
+      # unter errexit duerfte ein volles tmpfs den Login nicht verhindern.
+      status_file="''${XDG_RUNTIME_DIR:-/tmp}/niri-smart.status"
+      printf '%s\nmode=%s\nrender_node=%s\n' \
+        "$(date -Is 2>/dev/null || echo unbekannt)" \
+        "$mode" "''${render_node:-unset}" > "$status_file" 2>/dev/null || true
 
       base="$HOME/.config/niri/config.kdl"
       generated="''${XDG_RUNTIME_DIR:-/tmp}/niri-config.kdl"
@@ -158,6 +178,50 @@ let
     '';
   };
 
+  # niri liest die Config, auf die NIRI_CONFIG zeigt -- also die Kopie, die
+  # niri-smart beim Login angelegt hat. Ein `fr` aktualisiert nur die
+  # HM-Config und wirkt deshalb erst beim naechsten Login. niri-reload baut
+  # die Kopie neu und laesst niri sie per Dateiwaechter uebernehmen.
+  #
+  # Nebeneffekt, der Absicht ist: die GPU-Entscheidung wird dabei NEU
+  # getroffen. Nach dem An- oder Abdocken zieht das den render-drm-device
+  # also mit, ohne Abmelden.
+  niriReload = pkgs.writeShellApplication {
+    name = "niri-reload";
+    runtimeInputs = with pkgs; [coreutils findutils gnugrep niri];
+    text = ''
+      ${gpuDecision}
+
+      base="$HOME/.config/niri/config.kdl"
+      generated="''${XDG_RUNTIME_DIR:-/tmp}/niri-config.kdl"
+
+      if [ ! -r "$base" ]; then
+        printf 'niri-reload: %s nicht lesbar\n' "$base" >&2
+        exit 1
+      fi
+
+      # Erst vollstaendig danebenbauen, pruefen, dann atomar ersetzen. Ein
+      # halb geschriebenes Ziel wuerde der Dateiwaechter sofort einlesen.
+      tmp="$generated.new"
+      cp "$base" "$tmp"
+      if [ -n "$render_node" ]; then
+        {
+          printf '\n// von niri-smart ergaenzt (%s)\n' "$mode"
+          printf 'debug {\n    render-drm-device "%s"\n}\n' "$render_node"
+        } >> "$tmp"
+      fi
+
+      if ! niri validate --config "$tmp" >/dev/null 2>&1; then
+        rm -f "$tmp"
+        printf 'niri-reload: erzeugte Config ist ungueltig, nichts geaendert\n' >&2
+        exit 1
+      fi
+
+      mv "$tmp" "$generated"
+      printf 'niri-reload: %s -- render-drm-device=%s\n' "$mode" "''${render_node:-unset}"
+    '';
+  };
+
   niriSmartSession =
     pkgs.runCommand "niri-smart-session" {
       passthru.providedSessions = ["niri-smart"];
@@ -172,6 +236,6 @@ let
       EOF
     '';
 in {
-  environment.systemPackages = [niriSmart];
+  environment.systemPackages = [niriSmart niriReload];
   services.displayManager.sessionPackages = [niriSmartSession];
 }
