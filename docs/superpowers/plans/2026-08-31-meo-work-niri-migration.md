@@ -147,13 +147,17 @@ Der Pfad aus Schritt 4 muss **identisch** mit dem aus Schritt 1 sein.
 
 Bei Abweichung: die erzeugte KDL beider Stände vergleichen, statt zu raten.
 
+Der erzeugte Eintrag hat **`.source`** (einen Store-Pfad), **nicht** `.text` —
+verifiziert am 2026-08-31. Die Datei wird deshalb über den Store-Pfad gelesen:
+
 ```bash
 cd /home/meo/nixos-config
-nix eval --raw '.#nixosConfigurations.meo.config.home-manager.users.meo.xdg.configFile."niri/config.kdl".text' > /tmp/claude-1000/-home-meo/90fa53bf-bf51-4a6d-8b74-fdd6a02a882a/scratchpad/niri-neu.kdl
+kdl() { cat "$(nix eval --raw ".#nixosConfigurations.$1.config.home-manager.users.meo.xdg.configFile.\"niri/config.kdl\".source")"; }
+kdl meo > /tmp/niri-neu.kdl
 git stash
-nix eval --raw '.#nixosConfigurations.meo.config.home-manager.users.meo.xdg.configFile."niri/config.kdl".text' > /tmp/claude-1000/-home-meo/90fa53bf-bf51-4a6d-8b74-fdd6a02a882a/scratchpad/niri-alt.kdl
+kdl meo > /tmp/niri-alt.kdl
 git stash pop
-diff /tmp/claude-1000/-home-meo/90fa53bf-bf51-4a6d-8b74-fdd6a02a882a/scratchpad/niri-alt.kdl /tmp/claude-1000/-home-meo/90fa53bf-bf51-4a6d-8b74-fdd6a02a882a/scratchpad/niri-neu.kdl
+diff /tmp/niri-alt.kdl /tmp/niri-neu.kdl
 ```
 
 Erwartet: `diff` gibt nichts aus.
@@ -339,9 +343,12 @@ das passiert automatisch in der `checkPhase` des home-manager-Moduls.
 
 - [ ] **Schritt 4: Die erzeugte Config auf die drei Monitore prüfen**
 
+Der Eintrag hat **`.source`** (einen Store-Pfad), **nicht** `.text` — verifiziert
+am 2026-08-31.
+
 ```bash
 cd /home/meo/nixos-config
-nix eval --raw '.#nixosConfigurations.meo-work.config.home-manager.users.meo.xdg.configFile."niri/config.kdl".text' | grep -A4 '^output'
+cat "$(nix eval --raw '.#nixosConfigurations.meo-work.config.home-manager.users.meo.xdg.configFile."niri/config.kdl".source')" | grep -A4 '^output'
 ```
 
 Erwartet: drei `output`-Blöcke mit den Namen `DP-1`, `DP-2`, `eDP-1` und den
@@ -351,7 +358,7 @@ Positionen `0,0`, `1920,0` und `2280,1080`.
 
 ```bash
 cd /home/meo/nixos-config
-nix eval --raw '.#nixosConfigurations.meo-work.config.home-manager.users.meo.xdg.configFile."niri/config.kdl".text' | grep -A3 'xkb'
+cat "$(nix eval --raw '.#nixosConfigurations.meo-work.config.home-manager.users.meo.xdg.configFile."niri/config.kdl".source')" | grep -A3 'xkb'
 ```
 
 Erwartet: `layout "ch"` — `input.nix` liest das aus `variables.nix`, meo-work
@@ -380,7 +387,11 @@ Unter niri ist sie gegenstandslos, weil `outputs.nix` die Ausgänge deklarativ
 setzt — sie würde nur scheitern und als `failed` stehen bleiben.
 
 **Dateien:**
-- Ändern: `hosts/meo-work/default.nix:104-110` (`serviceConfig` der Unit)
+- Ändern: `hosts/meo-work/default.nix`, Block `systemd.services.hyprland-monitor-restore`
+
+**Die Stelle über den Inhalt suchen, nicht über eine Zeilennummer.** Aufgabe 3
+fügt weiter oben in derselben Datei einen Block ein und verschiebt damit alles
+darunter. Der unten zitierte `serviceConfig`-Block ist eindeutig.
 
 - [ ] **Schritt 1: `ExecCondition` ergänzen**
 
