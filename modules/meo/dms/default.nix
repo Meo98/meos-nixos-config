@@ -6,6 +6,7 @@
   imports = [
     inputs.dank-material-shell.homeModules.dank-material-shell
     ./settings.nix
+    ./niri.nix
   ];
 
   programs.dank-material-shell = {
