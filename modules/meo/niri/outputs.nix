@@ -1,39 +1,38 @@
 # Monitor-Konfiguration.
 #
-# Uebernommen aus hosts/meo/variables.nix extraMonitorSettings:
-#   monitor = eDP-1,2560x1600@240,0x0,1.6
-#   monitor = DP-1,preferred,1600x141,1.2
+# Die Werte stehen in hosts/<host>/variables.nix unter niriOutputs; diese Datei
+# uebersetzt sie nur in die _children/_args-Form, die der KDL-Generator
+# erwartet. Gleiche Aufteilung wie input.nix (keyboardLayout) und
+# binds-apps.nix (terminal, browser).
 #
-# niri rechnet Positionen in LOGISCHEN Koordinaten. 2560 / 1.6 = 1600, deshalb
-# liegt DP-1 bei x=1600 — dieselbe Zahl wie in der Hyprland-Zeile.
+# MODIFIED 2026-08-31: von fest verdrahteten meo-Werten auf variables.nix
+# umgestellt, damit meo-work dasselbe Modul benutzen kann, statt eine zweite
+# Kopie zu pflegen, die auseinanderlaeuft.
 #
-# DP-1 bekommt bewusst kein mode: ohne Angabe waehlt niri den bevorzugten Modus
-# ("preferred" in der Hyprland-Notation).
+# niri rechnet Positionen in LOGISCHEN Koordinaten. `mode` ist optional: fehlt
+# es, waehlt niri den bevorzugten Modus.
 #
 # Reihenfolge der output-Bloecke ist bedeutungslos, deshalb duerfen sie in einer
 # eigenen Datei liegen (anders als window-rule, siehe rules.nix).
-{...}: {
-  wayland.windowManager.niri.settings._children = [
-    {
-      output = {
-        _args = ["eDP-1"];
-        mode = "2560x1600@240.000";
-        scale = 1.6;
+{
+  host,
+  lib,
+  ...
+}: let
+  vars = import ../../../hosts/${host}/variables.nix;
+  outputs = vars.niriOutputs or [];
+
+  toOutput = o: {
+    output =
+      {
+        _args = [o.name];
+        scale = o.scale;
         position._props = {
-          x = 0;
-          y = 0;
+          inherit (o) x y;
         };
-      };
-    }
-    {
-      output = {
-        _args = ["DP-1"];
-        scale = 1.2;
-        position._props = {
-          x = 1600;
-          y = 141;
-        };
-      };
-    }
-  ];
+      }
+      // lib.optionalAttrs (o ? mode) {inherit (o) mode;};
+  };
+in {
+  wayland.windowManager.niri.settings._children = map toOutput outputs;
 }

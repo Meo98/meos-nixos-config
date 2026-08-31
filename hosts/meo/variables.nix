@@ -49,6 +49,30 @@
 
   '';
 
+  # niri-Monitore. Ersetzt fuer die niri-Session das, was
+  # extraMonitorSettings oben fuer Hyprland tut.
+  #
+  # niri rechnet in LOGISCHEN Koordinaten: 2560 / 1.6 = 1600, deshalb liegt
+  # DP-1 bei x=1600 — dieselbe Zahl wie in der Hyprland-Zeile.
+  #
+  # `mode` ist optional. Fehlt es, waehlt niri den bevorzugten Modus; das
+  # entspricht "preferred" in der Hyprland-Notation.
+  niriOutputs = [
+    {
+      name = "eDP-1";
+      mode = "2560x1600@240.000";
+      scale = 1.6;
+      x = 0;
+      y = 0;
+    }
+    {
+      name = "DP-1";
+      scale = 1.2;
+      x = 1600;
+      y = 141;
+    }
+  ];
+
   # Bar/Shell Settings
   # Choose between noctalia or waybar
   barChoice = "noctalia";
