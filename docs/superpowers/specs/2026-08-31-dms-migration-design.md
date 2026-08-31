@@ -121,11 +121,28 @@ Ein neues `modules/meo/dms/default.nix` aktiviert sich nur bei diesem Wert;
 `modules/upstream/home/noctalia.nix` wird umgekehrt übersprungen. Die
 Umschaltung ist damit ein Wort.
 
-**Wichtig:** `noctalia.nix` enthält zwei Dienste, die mit dem Shell nichts zu
-tun haben und in **beiden** Fällen laufen müssen —
-`hyprland-monitor-hotplug` und `bt-audio-monitor` (Bluetooth-Audio-Umschaltung).
-Sie wandern vor dem Gate in ein eigenes Modul, sonst verschwinden sie beim
-Umschalten still mit.
+`noctalia.nix` enthält zwei Dienste, die mit dem Shell nichts zu tun haben und
+beim Umschalten mit verschwinden würden. Beide brauchen **keine** Behandlung —
+aus unterschiedlichen Gründen, beide am 2026-08-31 auf der Maschine gemessen:
+
+**`hyprland-monitor-hotplug`** läuft unter niri ohnehin nicht:
+
+```
+Active: inactive (dead) (Result: exec-condition)
+Process: ExecCondition=…/hotplug-only-without-niri (code=exited, status=1/FAILURE)
+```
+
+Der Wächter aus `modules/meo/niri/hyprland-compat.nix` hält ihn seit der
+niri-Migration ab. Seine Aufgabe — das Monitorlayout nach einem Hotplug
+wiederherstellen — ist eine Hyprland-Krücke; niri setzt die Ausgänge
+deklarativ über `modules/meo/niri/outputs.nix` und braucht sie nicht. Es geht
+also nichts verloren, was nicht schon stillsteht.
+
+**`bt-audio-monitor`** läuft zwar (`active (running)`), hat aber laut Nutzer nie
+zuverlässig funktioniert und wird bewusst **fallengelassen**. Er verschwindet
+mit dem Gate. Die Derivation `modules/meo/scripts/bt-audio-monitor.nix` bleibt
+zunächst ungenutzt im Repo liegen; ihr Entfernen ist ein eigener, optionaler
+Aufräumschritt und keine Voraussetzung.
 
 ### 5.2 Die Einstellungsdatei
 
@@ -238,7 +255,7 @@ nach dem ersten Start über `dms plugins search`; der Spec legt sich nicht fest.
 | 2 | Struktur der `customThemeFile` für Stylix | aus dem DMS-Quelltext ableiten; sonst `enableDynamicTheming` als Rückfall |
 | 3 | IPC-Name für das Wallpaper-Panel (`Mod+Shift+W`) | `dms ipc call` gegen das Paket abfragen |
 | 4 | Kollidiert DMS' Dock mit der Dashboard-Spalte? | erst im Betrieb entscheidbar |
-| 5 | Wird `modules/meo/niri/hyprland-compat.nix` zum toten Verweis? | sein Wächter schützt `hyprland-monitor-hotplug`, das aus `noctalia.nix` stammt; nach 5.1 wandert der Dienst in ein eigenes Modul und bleibt bestehen — dann bleibt der Wächter gültig |
+| 5 | `modules/meo/niri/hyprland-compat.nix` wird zum toten Code | **Entschieden: ja.** Seine einzige Aufgabe ist, `hyprland-monitor-hotplug` unter niri zu überspringen. Wird Noctalia stillgelegt, existiert dieser Dienst gar nicht mehr — der Wächter bewacht dann nichts. Die Datei wird im Zuge der Umsetzung entfernt und aus `modules/meo/niri/default.nix` ausgetragen. Konsequenz für den Rückweg: schaltet man auf `barChoice = "noctalia"` zurück, kommt der Hotplug-Dienst ungewächtert wieder und würde unter niri als `failed` parken. Das ist hinnehmbar (kosmetisch, kein Funktionsverlust), muss aber im Plan als Nebenwirkung stehen |
 
 Punkt 1 ist der einzige, der die Architektur umwerfen könnte: verlangt DMS eine
 vollständige Datei, wird `settings.nix` deutlich grösser und muss bei jedem
