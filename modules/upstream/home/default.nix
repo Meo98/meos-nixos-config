@@ -14,9 +14,16 @@
     antigravityEnable
     ;
   # Select bar module based on barChoice
+  #
+  # MODIFIED 2026-08-31: dritter Wert "dms" (DankMaterialShell). Vorher war
+  # die Weiche zweiwertig und fiel bei JEDEM anderen Wert auf waybar zurueck —
+  # ein barChoice = "dms" haette also stillschweigend waybar geladen.
+  # Spec: docs/superpowers/specs/2026-08-31-dms-migration-design.md
   barModule =
     if barChoice == "noctalia"
     then ./noctalia.nix
+    else if barChoice == "dms"
+    then ../../meo/dms
     else waybarChoice;
 in {
   imports =
