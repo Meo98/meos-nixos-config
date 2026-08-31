@@ -1,7 +1,7 @@
 # niri-Migration (Host `meo-work`) — Design-Spec
 
 Datum: 2026-08-31
-Status: entworfen, nicht umgesetzt
+Status: umgesetzt (Commits `5ff1d1c..42c820a`)
 Vorgänger: `2026-08-27-niri-migration-design.md` (Host `meo`)
 
 Dies ist **Teilprojekt A** eines dreiteiligen Umbaus. B (Noctalia → DankMaterialShell
@@ -60,7 +60,7 @@ importiert) enthalten gar keine:
 |---|---|
 | `outputs.nix` | **ja** — eDP-1 / DP-1 fest verdrahtet |
 | `input.nix` | nein — `keyboardLayout` aus `variables.nix` |
-| `binds-apps.nix` | nein — `terminal`, `browser` aus `variables.nix` |
+| `binds-apps.nix` | **ja** — `terminal`/`browser` kommen aus `variables.nix`, aber die `bright-smart`-Binds (Zeilen ~123/127) verdrahten `card0-HDMI-A-1` als Zielausgang fest; siehe „Bekannte Nebenwirkungen" im Plan |
 | `env.nix`, `layout.nix`, `binds-nav.nix`, `rules.nix`, `startup.nix`, `dashboard.nix`, `hyprland-compat.nix` | nein |
 
 **niri benennt Ausgänge auf zwei Arten.** Gemessen auf `meo`:
@@ -154,23 +154,28 @@ Die System-Unit in `hosts/meo-work/default.nix` stellt nach dem Aufwachen das
 Hyprland-Monitorlayout wieder her. Unter niri ist sie gegenstandslos, weil
 `outputs.nix` die Ausgänge deklarativ setzt.
 
-Sie wird **nicht gelöscht**, sondern bekommt denselben `ExecCondition`-Wächter,
-den `hyprland-compat.nix` bereits für `hyprland-monitor-hotplug` verwendet:
+Sie wird **nicht gelöscht**, sondern bekommt einen `ExecCondition`-Wächter.
+
+**Umgesetzt wurde die Socket-Glob-Variante, nicht `NIRI_SOCKET`.** Der
+ursprünglich hier skizzierte Ansatz (`[ -z "''${NIRI_SOCKET:-}" ]`, wie
+`hyprland-compat.nix` es für `hyprland-monitor-hotplug` verwendet) geht nicht:
+das hier ist eine **System**-Unit, keine User-Unit, und `NIRI_SOCKET` wird von
+niri nur in den *User*-Manager importiert — im System-Kontext ist die Variable
+nicht sichtbar (Abschnitt 7, Punkt 2 war offen, jetzt geklärt). Stattdessen
+prüft die Unit direkt auf den Socket selbst:
 
 ```nix
-serviceConfig.ExecCondition = pkgs.writeShellScript "restore-only-without-niri" ''
-  [ -z "''${NIRI_SOCKET:-}" ]
-'';
+ExecCondition = "/bin/sh -c '! ls /run/user/1000/niri.wayland-*.sock >/dev/null 2>&1'";
 ```
+
+Der Socketname ist `niri.<wayland-display>.<pid>.sock` (niri-Quelle,
+`src/ipc/server.rs`) — er enthält die PID des laufenden niri-Prozesses, ein
+fest notierter Name kann also nie treffen. Daher der Glob statt eines
+Literalpfads.
 
 systemd überspringt eine Unit sauber (`inactive`, **nicht** `failed`), wenn
 `ExecCondition` mit 1..254 endet. Unter der Hyprland-Rückfallsession läuft sie
 unverändert weiter.
-
-**Unterschied zum Hotplug-Wächter:** das hier ist eine **System**-Unit, keine
-User-Unit. `NIRI_SOCKET` wird von niri nur in den *User*-Manager importiert. Ob
-die Variable im System-Kontext sichtbar ist, ist **offen** und muss vor der
-Umsetzung geklärt werden — siehe Abschnitt 7.
 
 ## 6. Was unverändert bleibt
 
@@ -184,12 +189,13 @@ Umsetzung geklärt werden — siehe Abschnitt 7.
 
 | # | Punkt | Klärung |
 |---|---|---|
-| 1 | Anschlussnamen der drei Monitore auf meo-work | `niri msg outputs` in einer niri-Session, oder vorab `ls /sys/class/drm/` |
-| 2 | Ist `NIRI_SOCKET` in einer System-Unit sichtbar? | Falls nein: stattdessen auf den Socket-Pfad unter `/run/user/1000/` prüfen |
+| 1 | Anschlussnamen der drei Monitore auf meo-work | `niri msg outputs` in einer niri-Session, oder vorab `ls /sys/class/drm/` — Abnahme am Gerät steht noch aus |
+| 2 | Ist `NIRI_SOCKET` in einer System-Unit sichtbar? | **Entschieden: nein.** `NIRI_SOCKET` wird nur in den User-Manager importiert, im System-Kontext (`hyprland-monitor-restore` ist eine System-Unit) nicht sichtbar. Umgesetzt: `ExecCondition` grept direkt nach dem Socket-Glob `/run/user/1000/niri.wayland-*.sock`, siehe Abschnitt 5.4. |
 | 3 | Drei Monitore + Noctalia waren laut Kommentar in `host-packages.nix` ein GPU-Engpass | unter niri neu bewerten; kein Blocker |
+| 4 | **Beim Abschluss-Review entdeckt:** hypridle haengt an `hyprland-session.target` und startet unter niri nicht — damit fehlt sein `before_sleep_cmd` (`loginctl lock-session`), der die Session vor dem Suspend sperrt. Ohne Hook wuerde `services.logind.lidSwitch = "suspend"` (Default, `hosts/meo-work/` setzt nichts Eigenes) die Maschine beim Zuklappen **ungesperrt** suspendieren. Noctalias Idle-Lock ist ein 600-s-Timer, kein Suspend-Hook. | **Geloest:** geteiltes NixOS-Modul `modules/meo/lock-before-sleep.nix` (System-Unit `lock-before-sleep`, `before`/`wantedBy = sleep.target`, ruft `loginctl lock-sessions`). Importiert aus `hosts/meo/default.nix` UND `hosts/meo-work/default.nix`, nicht kopiert — verhindert das erneute Auseinanderlaufen. Store-Pfad von `meo` bleibt dabei nachweislich unveraendert (Unit war dort vorher bereits inline vorhanden, nur ausgelagert). |
 
-Punkt 1 und 2 blockieren die Umsetzung nicht — beide haben einen sicheren
-Startwert (Anschlussnamen; Wächter notfalls über den Socket-Pfad).
+Punkt 1 blockiert die Umsetzung nicht — er hat einen sicheren Startwert
+(Anschlussnamen). Punkt 2 und 4 sind entschieden bzw. gelöst.
 
 ## 8. Verifikation
 

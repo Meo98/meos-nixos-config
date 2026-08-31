@@ -479,7 +479,7 @@ User-Manager."
 ### Aufgabe 5: Abnahme am Gerät
 
 Diese Aufgabe enthält **keine Codeänderung**. Sie ist die Liste dessen, was nur
-auf der Maschine selbst prüfbar ist. Die Schritte 2 bis 7 führt der Nutzer aus.
+auf der Maschine selbst prüfbar ist. Die Schritte 2 bis 9 führt der Nutzer aus.
 
 - [ ] **Schritt 1: Zusammenfassung an den Nutzer**
 
@@ -500,22 +500,37 @@ Werte in `hosts/meo-work/variables.nix` eintragen. Bei Monitoren, die beim
 Umstecken die Nummer wechseln, stattdessen den EDID-Namen aus der Ausgabe
 verwenden — **wortgetreu**, samt doppeltem Leerzeichen und `Unknown`.
 
-- [ ] **Schritt 4: Monitorlayout prüfen**
+- [ ] **Schritt 4: Modus-Strings prüfen**
+
+Nicht nur die Anschlussnamen sind eine Annahme, auch die `mode`-Werte
+(`1920x1200@60.000` usw. in `hosts/meo-work/variables.nix`) wurden aus der
+Hyprland-Config abgeleitet, nicht gemessen. `niri msg outputs` zeigt die
+tatsächlich verfügbaren Modi pro Ausgang. Stimmt eine Bildwiederholrate nicht
+exakt mit der DRM-Liste überein (z. B. real 59.95 Hz statt 60.000 Hz), fällt
+der Ausgang auf den bevorzugten Modus zurück statt auf den eingetragenen Wert.
+
+- [ ] **Schritt 5: Monitorlayout prüfen**
 
 Drei Bildschirme, LG-Panel unterhalb des rechten Monitors, Fenster wandern beim
 Ziehen an den erwarteten Kanten über.
 
-- [ ] **Schritt 5: Eingabe prüfen**
+- [ ] **Schritt 6: Eingabe prüfen**
 
 Schweizer Layout in einem Terminal, `kanata`-Umbelegungen aktiv,
 Fokus-folgt-Maus über Monitorgrenzen hinweg.
 
-- [ ] **Schritt 6: Shell und Dashboard prüfen**
+- [ ] **Schritt 7: Shell und Dashboard prüfen**
 
 Noctalia-Leiste ist da; beim Öffnen des ersten Fensters auf einem Workspace
 erscheint links die Dashboard-Spalte.
 
-- [ ] **Schritt 7: Resume prüfen**
+- [ ] **Schritt 8: Screen-off prüfen**
+
+`meo-work` hat `idleScreenOff = true`, `meo` hat `false` — die Kombination
+niri + Noctalia-DPMS wurde nie erprobt. Nach 660 s Untätigkeit sollte der
+Bildschirm abschalten und bei Eingabe (Maus/Tastatur) wiederkommen.
+
+- [ ] **Schritt 9: Resume prüfen**
 
 Suspend und Aufwachen. Danach:
 
@@ -526,7 +541,12 @@ systemctl status hyprland-monitor-restore
 Erwartet: `inactive (dead)`, **nicht** `failed` — der Wächter aus Aufgabe 4 hat
 gegriffen.
 
-- [ ] **Schritt 8: Den GPU-Engpass neu bewerten**
+Zusätzlich: mit hypridle entfällt auf meo-work auch dessen `after_sleep_cmd`
+(DPMS-on und eine Hyprland-spezifische Resume-Recovery). Nach dem Aufwachen
+prüfen, ob alle drei Bildschirme von selbst zurückkommen, ohne manuelles
+Eingreifen (Tastendruck, DPMS-Toggle).
+
+- [ ] **Schritt 10: Den GPU-Engpass neu bewerten**
 
 `hosts/meo-work/host-packages.nix:37` hält fest, dass drei Monitore plus das
 Noctalia-Overlay den Compositing-Pfad der iGPU zum Flaschenhals machen. niri und
