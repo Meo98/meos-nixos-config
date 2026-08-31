@@ -352,6 +352,11 @@ in {
     # Sperr-Zeiten in Sekunden, wie bisher unter Noctalia (600).
     acLockTimeout = 600;
     batteryLockTimeout = 600;
+
+    # DMS' Dock ist per Default AUS (showDock = false, belegt in
+    # quickshell/Common/SettingsData.qml). Ohne diese Zeile waere das Dock
+    # nach dem Wechsel kommentarlos verschwunden — Noctalia hatte eines.
+    showDock = true;
   };
 }
 ```
@@ -478,11 +483,12 @@ Erwartet: enthält `"niri/config.kdl"`. Das ist der Eintrag, den der Nachbau umb
   xdg.configFile."niri/config-dms" = {
     target = "niri/config.kdl";
     text = ''
-      include optional=true "dms/alttab.kdl"
-      include optional=true "dms/binds.kdl"
       include optional=true "dms/colors.kdl"
-      include optional=true "dms/input.kdl"
       include optional=true "dms/layout.kdl"
+      include optional=true "dms/alttab.kdl"
+      include optional=true "dms/outputs.kdl"
+      include optional=true "dms/cursor.kdl"
+      include optional=true "dms/windowrules.kdl"
       include optional=true "dms/wpblur.kdl"
       include optional=true "hm.kdl"
     '';
@@ -490,13 +496,23 @@ Erwartet: enthält `"niri/config.kdl"`. Das ist der Eintrag, den der Nachbau umb
 }
 ```
 
-**Die Dateinamen unter `dms/` sind aus den Vorlagennamen im DMS-Repo abgeleitet** (`niri-alttab.kdl` → vermutlich `dms/alttab.kdl`). Stimmen sie nicht, greift `optional=true` und es passiert schlicht nichts — die Abnahme (Aufgabe 8) prüft, ob die Dateien tatsächlich entstehen:
+**Die Dateinamen sind belegt, nicht geraten** (Recherche 2026-08-31, Bericht `research-niri-files.md`). Zwei Korrekturen gegenüber dem ersten Entwurf:
+
+- **`input.kdl` existiert nicht.** Der Name war aus einer Vorlage erfunden.
+- **`binds.kdl` wird bewusst NICHT eingebunden.** Es ist praktisch der volle niri-Standard-Keymap (`Mod+H/J/K/L`, `Mod+1-9`, `Mod+Q/F`, Pfeiltasten), nicht bloss die DMS-Extras. Die eigene Belegung gewinnt zwar, weil sie zuletzt eingebunden wird — aber eine vollständige zweite Tastaturbelegung darunter ist das Gegenteil des Wunsches „die Keybinds so behalten wie sie sind". Die drei DMS-eigenen Extras (Notepad, Nachtmodus, Prozessliste) kommen bei Bedarf einzeln in Aufgabe 6.
+
+**`layout.kdl` setzt fix `gaps 4`, `border width 2`, `focus-ring width 2`.** Das ist gewollt: Werte, die die eigene `layout.nix` nicht setzt — also genau der DMS-Default, den der Nutzer behalten möchte. Spaltenbreiten, Zentrierung und die Dashboard-Regel gewinnen weiterhin, weil `hm.kdl` zuletzt kommt.
+
+- [ ] **Schritt 2b: Die Dateinamen am Paket gegenprüfen**
+
+DMS kann die Dateien erzeugen, **ohne** den Shell zu starten:
 
 ```bash
-ls ~/.config/niri/dms/
+dms=$(nix build --no-link --print-out-paths 'github:AvengeMedia/DankMaterialShell/v1.5.3#dms-shell' 2>/dev/null | tail -1)
+"$dms"/bin/dms setup --help
 ```
 
-Weichen die Namen ab, hier nachziehen. Ein falscher Name kostet nur eine Log-Warnung, keinen Ausfall.
+Erwartet: `setup` kennt Unterbefehle für `alttab`, `binds`, `colors`, `cursor`, `layout`, `outputs`, `windowrules`. Weicht die Liste ab, gilt sie — die `include`-Zeilen entsprechend anpassen. `wpblur.kdl` hat keinen CLI-Befehl und entsteht erst zur Laufzeit des Shells; `optional=true` fängt das ab.
 
 - [ ] **Schritt 3: Import ergänzen**
 
@@ -541,7 +557,9 @@ dms=$(nix build --no-link --print-out-paths 'github:AvengeMedia/DankMaterialShel
 "$dms"/bin/dms ipc 2>&1 | head -40
 ```
 
-Gesucht sind die tatsächlichen Ziele für Launcher, Zwischenablage, Notifications, Control Center, Power-Menü, Einstellungen und **Wallpaper** (offener Punkt 3 des Specs). Die Ausgabe in den Bericht aufnehmen.
+**Die Ziele sind bereits belegt** (Recherche 2026-08-31 gegen den Quelltext von v1.5.3, Bericht `research-ipc.md`): `spotlight toggle`, `clipboard toggle`, `notifications toggle`, `control-center toggle`, `powermenu toggle`, `settings toggle`, `lock lock`. Für Wallpaper gibt es **kein** eigenständiges Panel — `dankdash wallpaper` öffnet das Dashboard auf dem Wallpaper-Reiter.
+
+Dieser Schritt ist deshalb eine Gegenprobe, keine Suche. Er kann nur gelingen, wenn eine DMS-Instanz läuft (`dms ipc list` braucht sie); ohne Instanz meldet der Befehl „Could not retrieve IPC targets". Das ist **kein** Fehlschlag — dann gelten die belegten Namen oben, und die Live-Gegenprobe wandert in die Abnahme (Aufgabe 9).
 
 - [ ] **Schritt 2: Die Binds umstellen**
 
@@ -564,7 +582,10 @@ Gesucht sind die tatsächlichen Ziele für Launcher, Zwischenablage, Notificatio
       "Mod+X".spawn = ["dms" "ipc" "call" "powermenu" "toggle"];
       "Mod+Alt+P".spawn = ["dms" "ipc" "call" "settings" "toggle"];
       "Mod+Shift+Comma".spawn = ["dms" "ipc" "call" "settings" "toggle"];
-      "Mod+Shift+W".spawn = ["dms" "ipc" "call" "wallpaper" "toggle"];
+      # DMS hat KEIN eigenstaendiges Wallpaper-Panel wie Noctalia. Am
+      # naechsten kommt das Dashboard mit seinem Wallpaper-Reiter.
+      # Belegt gegen den Quelltext v1.5.3, Bericht research-ipc.md.
+      "Mod+Shift+W".spawn = ["dms" "ipc" "call" "dankdash" "wallpaper"];
     }
     else {
       "Mod+D".spawn = ["noctalia" "msg" "panel-toggle" "launcher"];
@@ -658,6 +679,36 @@ Dann den Eintrag `./hyprland-compat.nix` aus der `imports`-Liste in `modules/meo
     # ungewaechtert wieder und wuerde unter niri als failed parken —
     # kosmetisch, kein Funktionsverlust.
 ```
+
+- [ ] **Schritt 1b: Doppelte Dienste in `startup.nix` am Gate abhängen**
+
+DMS bringt eigene Zwischenablage und einen eigenen Polkit-Agenten mit (belegt in `research-ersetzt.md`: `core/internal/clipboard/` mit eigenem Go-Daemon, `quickshell/Services/PolkitAgentInstance.qml`, Letzterer per Default aktiv). Der Polkit-Punkt ist **zwingend** — heute streiten sich bereits zwei Agenten, im Journal steht `polkit agent disabled: An authentication agent already exists`.
+
+In `modules/meo/niri/startup.nix` die drei betroffenen Einträge vom Gate abhängig machen. Die Datei liest `vars` noch nicht — Kopf entsprechend erweitern:
+
+```nix
+{host, ...}: let
+  vars = import ../../../hosts/${host}/variables.nix;
+  inherit (vars) barChoice;
+
+  # cliphist und hyprpolkitagent NUR ohne DMS. DMS bringt beides selbst mit
+  # (eigener Clipboard-Daemon, eigener Polkit-Agent, Letzterer per Default an).
+  # Nicht geloescht, sondern abgehaengt: der Rueckweg auf barChoice="noctalia"
+  # braucht sie unveraendert.
+  shellHelpers =
+    if barChoice == "dms"
+    then []
+    else [
+      {spawn-at-startup._args = ["wl-paste" "--type" "text" "--watch" "cliphist" "store"];}
+      {spawn-at-startup._args = ["wl-paste" "--type" "image" "--watch" "cliphist" "store"];}
+      {spawn-at-startup._args = ["systemctl" "--user" "start" "hyprpolkitagent"];}
+    ];
+in {
+```
+
+Die drei bisherigen Zeilen aus der `_children`-Liste entfernen und stattdessen `shellHelpers` einmischen (`_children = shellHelpers ++ [ … ];`).
+
+**`qs-wallpapers-restore`** (in `spawn-sh-at-startup`) bleibt vorerst unverändert. Die Recherche hält es für vermutlich schon toten Code — es sucht Zustand von swww/hyprpaper aus der Zeit vor Noctalia v5 —, aber das ist **unbestätigt** und gehört nicht in diese Aufgabe.
 
 - [ ] **Schritt 2: Umschalten**
 
@@ -795,6 +846,85 @@ Den Hash liefert ein erster Build mit `hash = lib.fakeHash;` — die Fehlermeldu
 Das ist der Unterschied zu Noctalia, der den Wechsel mitbegründet hat: dort zieht der Shell seine Plugins **zur Laufzeit per git** (am 2026-08-31 im Journal beobachtet), der Stand hängt also davon ab, wann zuletzt gefetcht wurde. Hier steht er im Flake.
 
 - [ ] **Schritt 3: Bauen, `meo-work` muss unverändert bleiben, dann Commit**
+
+---
+
+---
+
+### Aufgabe 10: `vol-smart` entfernen (eigene Aufgabe, nach der Migration)
+
+Bewusst **nach** dem Shell-Wechsel und in eigenen Commits: `vol-smart` hängt an `modules/meo/hyprland.nix`, das über `modules/meo/default.nix` von **beiden** Hosts geladen wird — und `meo-work` läuft noch auf Hyprland mit Noctalia. Die Entfernung mitten in der Umschaltung würde zwei unabhängige Änderungen vermischen und meo-works Lautstärketasten mitreissen.
+
+**Anlass:** Der Nutzer hat den Razer-Kopfhörer nicht mehr, für den das Skript gebaut wurde. Gemessen am 2026-08-31: `vol-smart-watch.service` läuft seit zwei Tagen und synchronisiert gegen Hardware, die es nicht gibt.
+
+**Dateien:**
+- Löschen: `modules/meo/hyprland/vol-smart.nix`
+- Ändern: `modules/meo/hyprland.nix` (Import austragen)
+- Ändern: `modules/meo/niri/binds-apps.nix` (drei Tasten)
+- Ändern: `modules/upstream/home/hyprland/binds.nix` (drei Zeilen, mit `# MODIFIED`)
+
+**`modules/meo/default.nix` bleibt unangetastet** — es ist tabu, und der Import wird eine Ebene tiefer in `hyprland.nix` entfernt.
+
+- [ ] **Schritt 1: Ersatz für die drei Tasten festlegen**
+
+Unter DMS: `dms ipc call audio increment 5`, `… decrement 5`, `… mute`.
+Unter Noctalia/Hyprland (meo-work): direkt `wpctl`, das reicht — Noctalia zeigt sein OSD ohnehin bei Lautstärkeänderungen:
+
+```
+wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+
+wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%-
+wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+```
+
+- [ ] **Schritt 2: `modules/meo/niri/binds-apps.nix` umstellen**
+
+Die drei `vol-smart`-Aufrufe durch die obigen ersetzen, am selben `barChoice`-Gate wie die neun Panel-Binds.
+
+- [ ] **Schritt 3: `modules/upstream/home/hyprland/binds.nix` umstellen**
+
+Die drei Zeilen um 180–182 auf `wpctl` umstellen, mit `# MODIFIED 2026-08-31`-Kommentar und Begründung (Razer-Hardware entfallen).
+
+- [ ] **Schritt 4: Skript und Import entfernen**
+
+```bash
+cd /home/meo/nixos-config
+git rm modules/meo/hyprland/vol-smart.nix
+```
+
+Dann `./hyprland/vol-smart.nix` aus der `imports`-Liste in `modules/meo/hyprland.nix` streichen.
+
+- [ ] **Schritt 5: Bauen**
+
+```bash
+cd /home/meo/nixos-config
+for h in meo meo-work; do printf '%-10s ' "$h"; nix build --no-link --print-out-paths ".#nixosConfigurations.$h.config.system.build.toplevel"; done
+```
+
+Erwartet: **beide** Pfade ändern sich — anders als in allen vorherigen Aufgaben. `vol-smart` war auf beiden Hosts installiert, seine Entfernung betrifft beide.
+
+- [ ] **Schritt 6: Prüfen, dass der Dienst wirklich weg ist**
+
+```bash
+cd /home/meo/nixos-config
+out=$(nix build --no-link --print-out-paths '.#nixosConfigurations.meo-work.config.system.build.toplevel')
+grep -rl "vol-smart" "$out" 2>/dev/null | head
+```
+
+Erwartet: keine Treffer.
+
+- [ ] **Schritt 7: Commit**
+
+```bash
+cd /home/meo/nixos-config
+git add -A modules/meo/hyprland.nix modules/meo/hyprland/ modules/meo/niri/binds-apps.nix modules/upstream/home/hyprland/binds.nix
+git commit -m "vol-smart entfernen: Razer-Hardware existiert nicht mehr
+
+Der Dienst vol-smart-watch lief noch und synchronisierte App-Lautstaerken
+gegen einen Kopfhoerer, den es nicht mehr gibt. Die drei Lautstaerketasten
+gehen jetzt direkt an wpctl bzw. unter DMS an dessen Audio-IPC.
+
+Betrifft beide Hosts — vol-smart hing an modules/meo/hyprland.nix."
+```
 
 ---
 
