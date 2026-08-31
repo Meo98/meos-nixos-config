@@ -123,6 +123,26 @@
       Type = "oneshot";
       User = "meo";
       Environment = "HYPRLAND_INSTANCE_SIGNATURE=%t/hypr";
+
+      # MODIFIED 2026-08-31 (niri-Migration): unter niri ueberspringen.
+      #
+      # Die Unit ist dort gegenstandslos, weil modules/meo/niri/outputs.nix die
+      # Ausgaenge deklarativ setzt. Ohne Waechter liefe sie nach jedem Resume
+      # ins Leere und parkte als "failed".
+      #
+      # Sie wird NICHT geloescht: Hyprland bleibt Rueckfall-Session und braucht
+      # sie dort unveraendert.
+      #
+      # Anders als der Waechter in modules/meo/niri/hyprland-compat.nix kann
+      # der hier NICHT auf $NIRI_SOCKET pruefen — das ist eine SYSTEM-Unit, und
+      # niri importiert die Variable nur in den User-Manager. Stattdessen wird
+      # direkt nach dem Socket gesucht. Der Dateiname enthaelt die PID
+      # (niri.wayland-1.2351.sock), deshalb ein Glob.
+      #
+      # systemd ueberspringt eine Unit sauber (inactive, NICHT failed), wenn
+      # ExecCondition mit 1..254 endet.
+      ExecCondition = "/bin/sh -c '! ls /run/user/1000/niri.wayland-*.sock >/dev/null 2>&1'";
+
       ExecStart = "/bin/sh -c 'sleep 2 && HYPRLAND_INSTANCE_SIGNATURE=$(ls /run/user/1000/hypr/ 2>/dev/null | head -1) hyprctl reload'";
     };
   };
