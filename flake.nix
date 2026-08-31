@@ -51,7 +51,22 @@
       # screen eingefroren, nur Reboot half). beta.3 fixt das Resume-Redraw
       # (Commits 918f0549 "redraw active lockscreen after resume" + b6d8447e
       # "defer surface redraws on resume and unlock").
-      url = "github:noctalia-dev/noctalia/v5.0.0-beta.3";
+      #
+      # MODIFIED 2026-08-31: beta.3 -> beta.10. Der Pin war sechs Wochen und
+      # sieben Betas alt; v5 ist eine laufende Neuentwicklung, und die Betas
+      # dazwischen tragen echte Fixes. Vor dem Bump alle Release-Notes von
+      # beta.4 bis beta.10 auf Breaking Changes geprueft: es gibt genau EINE
+      # (beta.9, Plugin-Manifeste brauchen jetzt eine kanonische version).
+      # Am Konfigurations-Schema hat sich nichts geaendert, die deklarativen
+      # settings in modules/upstream/home/noctalia.nix bleiben also gueltig.
+      #
+      # Kontext: Anlass war die Ueberlegung, den Shell ganz zu wechseln
+      # (DankMaterialShell). Beim Pruefen kam heraus, dass DMS' HM-Modul nur
+      # elf Optionen kennt und KEINE Einstellungsdatei schreibt — Leiste,
+      # Lock- und Idle-Zeiten waeren GUI-Zustand geworden, samt der
+      # eDP-Freeze-Sperre (idleScreenOff) auf meo. Deshalb zuerst die billige
+      # Erklaerung ausschliessen: veralteter Pin statt falscher Shell.
+      url = "github:noctalia-dev/noctalia/v5.0.0-beta.10";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
