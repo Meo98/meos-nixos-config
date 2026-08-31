@@ -20,18 +20,33 @@
 # outputs.nix/rules.nix) — eine direkte Liste-von-Listen unter
 # settings.spawn-at-startup erzeugt ungueltiges KDL ("- ..."-Kindknoten statt
 # eigener Zeilen) und faellt bei `niri validate` durch.
-{...}: {
-  wayland.windowManager.niri.settings = {
-    _children = [
+{host, ...}: let
+  vars = import ../../../hosts/${host}/variables.nix;
+  inherit (vars) barChoice;
+
+  # cliphist und hyprpolkitagent NUR ohne DMS. DMS bringt beides selbst mit
+  # (eigener Clipboard-Daemon, eigener Polkit-Agent, Letzterer per Default an).
+  # Nicht geloescht, sondern abgehaengt: der Rueckweg auf barChoice="noctalia"
+  # braucht sie unveraendert.
+  shellHelpers =
+    if barChoice == "dms"
+    then []
+    else [
       {spawn-at-startup._args = ["wl-paste" "--type" "text" "--watch" "cliphist" "store"];}
       {spawn-at-startup._args = ["wl-paste" "--type" "image" "--watch" "cliphist" "store"];}
       {spawn-at-startup._args = ["systemctl" "--user" "start" "hyprpolkitagent"];}
-      # Terminal fuer den term-Workspace; die window-rule in rules.nix
-      # platziert es dort. kitty statt des sonst konfigurierten ghostty, weil
-      # ghosttys gtk-single-instance = true einen zweiten Aufruf mit eigener
-      # --class verschluckt (siehe Kommentar in rules.nix).
-      {spawn-at-startup._args = ["kitty" "--class=kitty-dropterm"];}
     ];
+in {
+  wayland.windowManager.niri.settings = {
+    _children =
+      shellHelpers
+      ++ [
+        # Terminal fuer den term-Workspace; die window-rule in rules.nix
+        # platziert es dort. kitty statt des sonst konfigurierten ghostty, weil
+        # ghosttys gtk-single-instance = true einen zweiten Aufruf mit eigener
+        # --class verschluckt (siehe Kommentar in rules.nix).
+        {spawn-at-startup._args = ["kitty" "--class=kitty-dropterm"];}
+      ];
 
     # Verzoegert, damit Stylix zuerst fertig ist und danach das Nutzer-Wallpaper
     # mit genau einem Wechsel gewinnt — gleiche Logik wie unter Hyprland.

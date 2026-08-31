@@ -9,19 +9,47 @@
 #
 # Die Unterdateien schreiben alle in wayland.windowManager.niri.settings; das
 # Modulsystem merged Attrsets und konkateniert _children-Listen.
-{pkgs, ...}: {
-  imports = [
-    ./env.nix
-    ./input.nix
-    ./outputs.nix
-    ./layout.nix
-    ./binds-nav.nix
-    ./binds-apps.nix
-    ./rules.nix
-    ./startup.nix
-    ./hyprland-compat.nix
-    ./dashboard.nix
-  ];
+{
+  host,
+  pkgs,
+  ...
+}: let
+  vars = import ../../../hosts/${host}/variables.nix;
+  inherit (vars) barChoice;
+
+  # hyprland-compat.nix bewacht hyprland-monitor-hotplug, das aus
+  # modules/upstream/home/noctalia.nix stammt (After/PartOf/WantedBy auf
+  # graphical-session.target, das unter niri genauso hochkommt wie unter
+  # Hyprland). Den Dienst gibt es nur, wo barChoice = "noctalia" ist — unter
+  # DMS (barChoice = "dms") importiert modules/meo/default.nix noctalia.nix
+  # gar nicht mehr, also existiert der Dienst dort nicht und der Waechter hat
+  # nichts zu bewachen.
+  #
+  # WICHTIG: dieses Modul (modules/meo/niri/) ist SEIT DER MEO-WORK-MIGRATION
+  # (2026-08-31) fuer BEIDE Hosts geladen, nicht nur meo. Eine unbedingte
+  # Loeschung der Datei wuerde den Guard auch fuer meo-work entfernen — und
+  # meo-work bleibt vorerst bei barChoice = "noctalia", braucht den Guard also
+  # unveraendert weiter (verifiziert: ohne ihn wandert der meo-work-Store-Pfad,
+  # weil sich die Service-Unit-Definition aendert). Deshalb hier per barChoice
+  # geschaltet statt die Datei zu entfernen.
+  hyprlandCompatModules =
+    if barChoice == "dms"
+    then []
+    else [./hyprland-compat.nix];
+in {
+  imports =
+    [
+      ./env.nix
+      ./input.nix
+      ./outputs.nix
+      ./layout.nix
+      ./binds-nav.nix
+      ./binds-apps.nix
+      ./rules.nix
+      ./startup.nix
+      ./dashboard.nix
+    ]
+    ++ hyprlandCompatModules;
 
   # Helper-Scripts, die niri-spezifische Binds brauchen (Task 7,
   # binds-apps.nix). Bewusst hier und nicht in modules/meo/scripts.nix,
