@@ -71,9 +71,16 @@ Per-host: add to `hosts/{meo,meo-work}/host-packages.nix` `environment.systemPac
 If it's a shell tool with config: add to existing module in `modules/upstream/home/cli/`.
 Custom/personal: add to `modules/meo/<name>.nix` as `home.packages = [ pkgs.foo ];`.
 
-### "Add a new Hyprland keybinding"
+### "Add a new keybinding"
 
-`modules/upstream/home/hyprland/binds.nix` — keep changes minimal, mark with `# MODIFIED`.
+Since the niri migration (`meo`: 2026-08-27, `meo-work`: 2026-08-31), no host boots into
+Hyprland by default anymore — it's a fallback session only, selectable in the display
+manager. New binds go into `modules/meo/niri/binds-nav.nix` (navigation/window
+management) or `modules/meo/niri/binds-apps.nix` (app launchers), whichever fits.
+
+`modules/upstream/home/hyprland/binds.nix` still exists for the Hyprland fallback —
+keep changes minimal, mark with `# MODIFIED`, only touch it when the bind must also
+work under the Hyprland rollback session.
 
 ### "Sync zaneyos upstream"
 

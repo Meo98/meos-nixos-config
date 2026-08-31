@@ -15,16 +15,20 @@
 
   # Add our custom home-manager modules on top of modules/upstream/home/.
   # This merges with `imports = [./../home]` set in modules/upstream/core/user.nix.
-  # niri wird host-lokal (nicht über modules/meo/default.nix) importiert, damit
-  # meo-work (das modules/meo genauso importiert) die niri-Session NICHT bekommt.
+  # niri wird host-lokal (nicht über modules/meo/default.nix) importiert. Seit
+  # der meo-work-Migration (2026-08-31) haelt hosts/meo-work/default.nix
+  # denselben Import eigenstaendig — jeder Host entscheidet fuer sich selbst,
+  # statt es zentral von modules/meo/default.nix zu erben.
   home-manager.users.${username}.imports = [ ../../modules/meo ../../modules/meo/niri ];
 
   programs.kdeconnect.enable = true;
 
   # --- niri (Migration 2026-08-27) ---
   # Spec: docs/superpowers/specs/2026-08-27-niri-migration-design.md
-  # Bewusst host-lokal statt in modules/upstream/core/packages.nix, damit
-  # meo-work den niri-Code zwar im Repo hat, aber nie in seiner Session.
+  # Bewusst host-lokal statt in modules/upstream/core/packages.nix — dieselbe
+  # Stelle importiert seit 2026-08-31 auch hosts/meo-work/default.nix
+  # eigenstaendig, damit jeder Host seinen Session-Entscheid explizit selbst
+  # trifft statt ihn zentral zu erben.
   # Das nixpkgs-Modul liefert Session-Datei, systemd-Units, xdg-Portals
   # (gnome + gtk) und gnome-keyring. Es setzt defaultSession selbst per
   # mkDefault "niri" — die Zuweisung unten ueberschreibt das mit mkForce auf

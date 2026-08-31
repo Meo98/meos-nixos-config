@@ -16,7 +16,8 @@ in {
     Unit = {
       Description = "Dashboard-Spalte automatisch pro niri-Workspace";
       # Ohne laufenden Compositor gibt es keinen Event-Stream. niri.service
-      # zieht graphical-session.target hoch (siehe niri-gpu-smart.nix), das
+      # zieht graphical-session.target erst durch sein eigenes Starten hoch
+      # (BindsTo+Before im niri-Paket, share/systemd/user/niri.service), das
       # Target allein reicht als Ordnungskriterium also nicht.
       After = ["niri.service"];
       PartOf = ["graphical-session.target"];

@@ -13,10 +13,10 @@ pkgs.writeShellApplication {
     # Vorher hart `hyprctl dispatch dpms`, was unter niri wirkungslos war —
     # der Bildschirm waere im Travel-Mode angeblieben.
     #
-    # MODIFIED 2026-08-27 (Fix Runde 1): niri bewusst NICHT in runtimeInputs —
-    # dieses Script haengt via modules/meo/scripts.nix -> modules/meo/default.nix
-    # auch an meo-work, das niemals niri hat. runtimeInputs wird PATH nur
-    # vorangestellt, nicht ersetzt: im niri-Zweig reicht das ambiente PATH,
+    # MODIFIED 2026-08-27 (Fix Runde 1): niri bewusst NICHT in runtimeInputs.
+    # Dieses Script haengt via modules/meo/scripts.nix -> modules/meo/default.nix
+    # an BEIDEN Hosts (seit 2026-08-31 auch meo-work). runtimeInputs wird PATH
+    # nur vorangestellt, nicht ersetzt: im niri-Zweig reicht das ambiente PATH,
     # dort ist niri per niri-Modul (home.packages) ohnehin vorhanden, sobald
     # NIRI_SOCKET gesetzt ist. Fehlt niri trotzdem im PATH, sichtbarer Hinweis
     # auf stderr statt stillem No-op.

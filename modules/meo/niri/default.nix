@@ -2,8 +2,10 @@
 # Spec: docs/superpowers/specs/2026-08-27-niri-migration-design.md
 #
 # Home-Manager-Modul. Die System-Seite (programs.niri.enable und
-# services.displayManager.defaultSession) liegt bewusst in hosts/meo/default.nix,
-# damit meo-work diesen Code zwar im Repo hat, aber nie in seiner Session.
+# services.displayManager.defaultSession) liegt bewusst hostlokal, nicht hier
+# oder in modules/upstream/core/packages.nix. Seit der meo-work-Migration
+# (2026-08-31) steht sie in BEIDEN hosts/*/default.nix — jeder Host importiert
+# sie fuer sich selbst, statt sie zentral zu teilen.
 #
 # Die Unterdateien schreiben alle in wayland.windowManager.niri.settings; das
 # Modulsystem merged Attrsets und konkateniert _children-Listen.
@@ -22,9 +24,9 @@
   ];
 
   # Helper-Scripts, die niri-spezifische Binds brauchen (Task 7,
-  # binds-apps.nix). Bewusst hier und nicht in modules/meo/scripts.nix, damit
-  # meo-work (das dieses Modul nicht importiert) sie nicht mitbekommt —
-  # niri-term-toggle zieht sonst z.B. pkgs.niri unnoetig in dessen Profil.
+  # binds-apps.nix). Bewusst hier und nicht in modules/meo/scripts.nix,
+  # kolokiert mit dem niri-Feature, das sie braucht — nicht wegen einer
+  # Host-Trennung: seit 2026-08-31 importieren beide Hosts dieses Modul.
   #
   # wl-color-picker: Ersatz fuer hyprpicker, das Hyprland-Protokolle braucht.
   # Setzt auf grim/slurp und damit auf zwlr_screencopy_manager_v1, das niri
