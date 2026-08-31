@@ -130,57 +130,62 @@ sind daher unveraendert."
 
 ---
 
-### Aufgabe 2: Klären, ob DMS eine unvollständige `settings.json` akzeptiert
+### Aufgabe 2: Die Modul-Optionen am ausgewerteten Modul bestätigen
 
-Das ist offener Punkt 1 des Specs und die einzige Annahme, die den Entwurf umwerfen kann. Deshalb **vor** allem anderen.
+Der urspruengliche Entwurf vermutete, das DMS-Modul koenne die Konfiguration
+nicht schreiben, und plante einen Spike dazu. Das war ein Irrtum: die Optionen
+sind ueber ZWEI Dateien verteilt, und `distro/nix/home.nix` deklariert genau
+die fehlenden. Statt eines Spikes genuegt eine Bestaetigung — aber am
+ausgewerteten Modul, nicht wieder an einer einzelnen Quelldatei.
 
-Erwartung aus dem Quelltext: jede Einstellung ist eine QML-`property` mit Vorgabewert, eine Teilmenge sollte also genügen. Zu belegen, nicht zu glauben.
+**Dateien:** keine (Bestaetigungsaufgabe, kein Commit)
 
-**Dateien:**
-- Erstellt: keine (Erkenntnis-Aufgabe)
-- Bericht: die Antwort wandert als Kommentar in `modules/meo/dms/settings.nix` (Aufgabe 4)
+- [ ] **Schritt 1: Die Optionen des importierten Moduls auflisten**
 
-- [ ] **Schritt 1: Den Ladepfad im Quelltext lesen**
+```bash
+cd /home/meo/nixos-config
+nix eval --json --impure --expr '
+  let
+    f = builtins.getFlake (toString ./.);
+    m = f.inputs.dank-material-shell.homeModules.dank-material-shell;
+    pkgs = f.inputs.nixpkgs.legacyPackages.x86_64-linux;
+    ev = pkgs.lib.evalModules {
+      modules = [ m { _module.args = { inherit pkgs; }; } ];
+      specialArgs = { inherit pkgs; };
+    };
+  in builtins.attrNames ev.options.programs.dank-material-shell
+' 2>&1 | tail -3
+```
+
+Erwartet: die Liste enthaelt **`settings`**, **`clipboardSettings`**,
+**`session`** und **`managePluginSettings`** neben `enable`, `package`,
+`systemd`, `plugins` und den Funktionsschaltern.
+
+Scheitert die Auswertung an fehlenden Modul-Argumenten, ist das kein negatives
+Ergebnis — dann stattdessen die Quelldatei lesen:
 
 ```bash
 cd /tmp/claude-1000/-home-meo/90fa53bf-bf51-4a6d-8b74-fdd6a02a882a/scratchpad
-curl -sSL --max-time 25 "https://raw.githubusercontent.com/AvengeMedia/DankMaterialShell/master/quickshell/Common/SettingsData.qml" -o sd.qml
-sed -n '1665,1700p' sd.qml
+curl -sSL --max-time 25 "https://raw.githubusercontent.com/AvengeMedia/DankMaterialShell/v1.5.3/distro/nix/home.nix" | sed -n '50,72p'
 ```
 
-Gesucht: die Stelle, die `settingsFile.text()` parst und die Werte übernimmt. Entscheidend ist, ob sie über die **vorhandenen Schlüssel der Datei** iteriert (dann genügt eine Teilmenge) oder über **alle bekannten Properties** und fehlende auf `undefined` setzt (dann nicht).
+Erwartet: die vier Optionen mit ihren Zielpfaden in der `description`.
 
-- [ ] **Schritt 2: Den Store-Mechanismus ansehen**
+- [ ] **Schritt 2: Stylix' DMS-Ziel bestaetigen**
 
 ```bash
-cd /tmp/claude-1000/-home-meo/90fa53bf-bf51-4a6d-8b74-fdd6a02a882a/scratchpad
-curl -sSL --max-time 25 "https://api.github.com/repos/AvengeMedia/DankMaterialShell/contents/quickshell/Common" 2>/dev/null | grep -oE '"name": "[^"]*Store[^"]*"'
+cd /home/meo/nixos-config
+nix eval --json '.#nixosConfigurations.meo.config.home-manager.users.meo.stylix.targets' --apply 'ts: ts.dank-material-shell' 2>/dev/null
 ```
 
-Die gefundene Datei holen und ihre `fromJson`-Funktion lesen.
+Erwartet: `{"enable":true}`. Damit themt Stylix DMS selbst, sobald das Modul
+importiert ist — Aufgabe 4 setzt deshalb KEINE Farben, Schriften oder
+Transparenzen.
 
-- [ ] **Schritt 3: Praktisch gegenprüfen, wenn möglich**
+- [ ] **Schritt 3: Ergebnis melden**
 
-niri kann verschachtelt in einem Fenster laufen. Damit lässt sich DMS mit einer Minimal-Konfiguration starten, ohne die laufende Sitzung anzufassen:
-
-```bash
-D=$(mktemp -d)
-mkdir -p "$D/DankMaterialShell"
-printf '{"fadeToDpmsEnabled": false}\n' > "$D/DankMaterialShell/settings.json"
-dms=$(nix build --no-link --print-out-paths 'github:AvengeMedia/DankMaterialShell#dms-shell')
-XDG_CONFIG_HOME="$D" timeout 25 "$dms"/bin/dms run 2>&1 | head -40
-```
-
-Erwartet bei gutem Ausgang: DMS startet, meldet sinngemäss `settings.json is now read-only` **nicht** (die Datei ist hier schreibbar) und wirft keine Fehler über fehlende Schlüssel.
-
-Scheitert der Start mangels Wayland-Display, ist das **kein** negatives Ergebnis — dann zählt allein die Quelltext-Analyse aus Schritt 1 und 2.
-
-- [ ] **Schritt 4: Ergebnis festhalten**
-
-Kein Commit (nichts geändert). Das Ergebnis in den Bericht schreiben, in einem Satz:
-
-- **Teilmenge genügt** → weiter wie geplant.
-- **Vollständige Datei nötig** → **melden und anhalten.** Dann muss `settings.nix` alle Schlüssel führen, und der Spec braucht eine Überarbeitung; das ist keine Entscheidung, die in dieser Aufgabe getroffen wird.
+Kein Commit. Weichen die Optionsnamen ab, **melden und anhalten** — Aufgabe 4
+baut direkt darauf auf.
 
 ---
 
@@ -298,7 +303,7 @@ unveraendert, weil barChoice ueberall noch auf noctalia steht."
 
 **Schnittstellen:**
 - Verbraucht: `inputs.dank-material-shell.homeModules.dank-material-shell` aus Aufgabe 1.
-- Erzeugt: `xdg.configFile."DankMaterialShell/settings.json"`, gelesen von DMS zur Laufzeit.
+- Erzeugt: `programs.dank-material-shell.settings`; das Modul schreibt daraus `xdg.configFile."DankMaterialShell/settings.json"`, gelesen von DMS zur Laufzeit.
 
 - [ ] **Schritt 1: `dmsScreenOff` in `hosts/meo/variables.nix`**
 
@@ -320,40 +325,34 @@ Direkt unter `idleScreenOff` einfügen:
 - [ ] **Schritt 2: `modules/meo/dms/settings.nix` anlegen**
 
 ```nix
-# Erzeugt ~/.config/DankMaterialShell/settings.json aus Nix.
+# DMS-Einstellungen, die beim ersten Start stimmen muessen.
 #
-# WARUM NICHT UEBER DAS NIX-MODUL: programs.dank-material-shell kennt nur elf
-# Optionen (enable, package, systemd.*, sechs Funktionsschalter,
-# quickshell.package, plugins) und schreibt KEINE Einstellungsdatei. Die
-# eigentliche Schnittstelle ist die Datei, die die Anwendung liest.
+# Die Datei setzt die MODUL-OPTION programs.dank-material-shell.settings; das
+# Modul schreibt daraus ~/.config/DankMaterialShell/settings.json (siehe
+# distro/nix/home.nix im DMS-Flake). Ein leeres Attrset erzeugt gar keine
+# Datei, eine Teilmenge ist also der vorgesehene Fall — alles Uebrige bleibt
+# bei DMS' Vorgaben.
 #
-# WARUM DAS FUNKTIONIERT: DMS prueft zur Laufzeit die Schreibbarkeit von
-# settings.json und schaltet sauber in einen Nur-Lese-Modus
-# (quickshell/Common/SettingsData.qml, _onWritableCheckComplete). Eine Datei
-# aus dem Nix-Store ist schreibgeschuetzt — das ist ein vorgesehener
-# Betriebsmodus, kein Fehlerpfad. DMS beobachtet die Datei zusaetzlich und
-# laedt sie neu, ein fr wirkt also ohne Neustart des Shells.
+# HIER STEHEN BEWUSST KEINE FARBEN, SCHRIFTEN ODER TRANSPARENZEN.
+# stylix.targets.dank-material-shell ist in dieser Konfiguration bereits
+# aktiv und setzt fontFamily, monoFontFamily, popupTransparency,
+# dockTransparency, session.wallpaperPath und einen customThemeFile aus der
+# base16-Palette. Wer hier dieselben Schluessel setzt, streitet mit Stylix.
 #
-# Hier stehen nur die Werte, die beim ersten Start stimmen MUESSEN. Alles
-# Uebrige bleibt bei DMS' Vorgaben — gleiche Aufteilung wie in
-# modules/upstream/home/noctalia.nix.
-{
-  host,
-  pkgs,
-  ...
-}: let
+# Gleiche Aufteilung wie modules/upstream/home/noctalia.nix: nur die Werte,
+# die beim ersten Boot korrekt sein muessen; der Rest ueber die Oberflaeche.
+{host, ...}: let
   vars = import ../../../hosts/${host}/variables.nix;
 in {
-  xdg.configFile."DankMaterialShell/settings.json".source =
-    (pkgs.formats.json {}).generate "dms-settings.json" {
-      # Bildschirm-Abschaltung. Auf meo AUS gegen den eDP-OLED-Freeze.
-      fadeToDpmsEnabled = vars.dmsScreenOff or false;
-      fadeToDpmsGracePeriod = 5;
+  programs.dank-material-shell.settings = {
+    # Bildschirm-Abschaltung. Auf meo AUS gegen den eDP-OLED-Freeze.
+    fadeToDpmsEnabled = vars.dmsScreenOff or false;
+    fadeToDpmsGracePeriod = 5;
 
-      # Sperr-Zeiten in Sekunden, wie bisher unter Noctalia (600).
-      acLockTimeout = 600;
-      batteryLockTimeout = 600;
-    };
+    # Sperr-Zeiten in Sekunden, wie bisher unter Noctalia (600).
+    acLockTimeout = 600;
+    batteryLockTimeout = 600;
+  };
 }
 ```
 
@@ -386,21 +385,22 @@ for h in meo meo-work; do printf '%-10s ' "$h"; nix build --no-link --print-out-
 
 Erwartet: **beide unverändert.** `barChoice` steht noch auf `"noctalia"`, das Modul wird nicht importiert.
 
-- [ ] **Schritt 5: Die erzeugte Datei trotzdem prüfen**
+- [ ] **Schritt 5: Die gesetzte Option trotzdem prüfen**
 
-Das Modul wird nicht importiert — die Datei lässt sich aber direkt auswerten:
+Das Modul wird noch nicht importiert (Gate auf `noctalia`), die Datei entsteht
+also nicht. Die Datei selbst laesst sich aber auswerten:
 
 ```bash
 cd /home/meo/nixos-config
-nix eval --raw --impure --expr '
-  let
-    pkgs = (builtins.getFlake (toString ./.)).inputs.nixpkgs.legacyPackages.x86_64-linux;
-    m = import ./modules/meo/dms/settings.nix { host = "meo"; inherit pkgs; };
-  in m.xdg.configFile."DankMaterialShell/settings.json".source
-' | xargs cat
+nix eval --json --impure --expr '
+  (import ./modules/meo/dms/settings.nix { host = "meo"; }).programs.dank-material-shell.settings
+'
 ```
 
-Erwartet: gültiges JSON mit **`"fadeToDpmsEnabled": false`**. Das ist die sicherheitsrelevante Zeile; steht dort `true`, ist die Aufgabe nicht erfüllt.
+Erwartet: `{"acLockTimeout":600,"batteryLockTimeout":600,"fadeToDpmsEnabled":false,"fadeToDpmsGracePeriod":5}`.
+
+**`"fadeToDpmsEnabled": false` ist die sicherheitsrelevante Zeile.** Steht dort
+`true`, ist die Aufgabe nicht erfuellt.
 
 - [ ] **Schritt 6: Commit**
 

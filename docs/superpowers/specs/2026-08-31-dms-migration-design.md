@@ -84,10 +84,27 @@ acLockTimeout           (int)    0 = aus
 batteryLockTimeout      (int)
 ```
 
-**Das Nix-Modul deckt nur einen kleinen Teil ab** — elf Optionen (`enable`,
-`package`, `systemd.*`, sechs Funktionsschalter, `quickshell.package`,
-`plugins`) und schreibt **keine** Einstellungsdatei. Die Konfiguration läuft
-deshalb nicht über das Modul, sondern über die Datei.
+**Das Nix-Modul schreibt die Konfiguration selbst.** `distro/nix/home.nix`
+deklariert (zusätzlich zu den Schaltern in `options.nix` — die Optionen sind
+über zwei Dateien verteilt):
+
+```
+programs.dank-material-shell.settings          -> ~/.config/DankMaterialShell/settings.json
+programs.dank-material-shell.clipboardSettings -> ~/.config/DankMaterialShell/clsettings.json
+programs.dank-material-shell.session           -> ~/.local/state/DankMaterialShell/session.json
+programs.dank-material-shell.managePluginSettings
+```
+
+Alle per `jsonFormat`, jeweils mit `lib.mkIf (cfg.settings != { })`. Eine
+Teilmenge ist damit ausdrücklich vorgesehen; ein leeres Attrset erzeugt gar
+keine Datei. Die Konfiguration läuft also über das Modul, nicht an ihm vorbei.
+
+**Stylix hat ein eigenes DMS-Ziel, und es ist bereits aktiv.**
+`stylix.targets.dank-material-shell.enable` steht auf `true`. Das Ziel setzt
+`fontFamily`, `monoFontFamily`, `popupTransparency`, `dockTransparency`,
+`session.wallpaperPath` sowie einen vollständigen `customThemeFile` mit 18 aus
+der base16-Palette abgeleiteten Farben. Das Theming ist damit ohne eigenen Code
+erledigt.
 
 **Der Include-Mechanismus zielt auf niri-flake.** `distro/nix/niri.nix` setzt
 `xdg.configFile.niri-config.target = lib.mkForce "niri/hm.kdl"`. Dieser
@@ -105,7 +122,7 @@ Config; die eigene gewinnt damit.
 | # | Entscheidung | Begründung |
 |---|---|---|
 | 1 | Schalter über das vorhandene `barChoice`, Wert `"dms"` | die Weiche existiert bereits für `noctalia`/`waybar`; kein neues Konzept |
-| 2 | `settings.json` aus Nix statt über Modul-Optionen | das Modul kann es nicht, die Anwendung schon — und sie ist auf Schreibschutz vorbereitet |
+| 2 | Konfiguration über `programs.dank-material-shell.settings` | das Modul schreibt `settings.json` selbst (`distro/nix/home.nix`); eine Teilmenge ist per `mkIf (cfg.settings != {})` ausdrücklich vorgesehen |
 | 3 | eDP-Sperre aus `variables.nix`, nicht fest verdrahtet | gleiche Aufteilung wie `idleScreenOff` heute; meo-work braucht später den anderen Wert |
 | 4 | `includes.override = false` | DMS als Basis, die gewachsene niri-Config gewinnt — Spaltenbreiten, Zentrierung, Dashboard-Regel und CH-Binds bleiben unangetastet |
 | 5 | Nur `meo` | meo-work ist nicht erreichbar und nicht auf niri |
@@ -146,28 +163,22 @@ Aufräumschritt und keine Voraussetzung.
 
 ### 5.2 Die Einstellungsdatei
 
-Neues `modules/meo/dms/settings.nix` erzeugt `settings.json` aus einem
-Nix-Attrset und legt sie über `xdg.configFile` ab. Der Aufbau folgt
-`modules/upstream/home/noctalia.nix`: nur die Werte, die beim ersten Start
-stimmen müssen; alles Übrige bleibt bei DMS' Vorgaben.
-
-Zu setzen sind mindestens:
+Neues `modules/meo/dms/settings.nix` setzt `programs.dank-material-shell.settings`.
+Der Aufbau folgt `modules/upstream/home/noctalia.nix`: nur die Werte, die beim
+ersten Start stimmen müssen; alles Übrige bleibt bei DMS' Vorgaben und bei dem,
+was Stylix beisteuert.
 
 ```nix
-{
+programs.dank-material-shell.settings = {
   fadeToDpmsEnabled = vars.dmsScreenOff or false;   # eDP-Sperre, siehe 5.3
   fadeToDpmsGracePeriod = 5;
   acLockTimeout = 600;                              # wie Noctalia heute
   batteryLockTimeout = 600;
-  currentThemeName = …;                             # Stylix, siehe 5.4
-}
+};
 ```
 
-**Offen:** ob DMS eine **unvollständige** `settings.json` akzeptiert und die
-fehlenden Werte aus den QML-Vorgaben ergänzt, oder ob es eine vollständige
-Datei erwartet. Der Code deutet auf Ersteres (jede Einstellung ist eine
-`property` mit Vorgabewert), ist aber vor der Umsetzung zu prüfen — siehe
-Abschnitt 7.
+Farben, Schriften, Transparenz und Wallpaper stehen bewusst **nicht** hier —
+die setzt Stylix über sein DMS-Ziel (siehe 5.4).
 
 ### 5.3 Die eDP-Sperre
 
@@ -182,14 +193,20 @@ nicht in den Zustand geraten, statt dass es an einem Häkchen hängt.
 
 ### 5.4 Theming
 
-Stylix setzt bei Noctalia heute `theme.mode`, `theme.source` und
-`shell.font_family` (mit `mkForce` gegen Konflikte). DMS kennt
-`currentThemeName`, `currentThemeCategory` und `customThemeFile`.
+**Nichts zu tun.** `stylix.targets.dank-material-shell.enable` steht in dieser
+Konfiguration bereits auf `true`. Sobald DMS' Modul importiert ist, setzt
+Stylix von selbst:
 
-Der Weg führt über `customThemeFile`: eine aus der Stylix-Palette erzeugte
-Themendatei, ebenfalls im Store. Alternativ deckt DMS' Modul-Option
-`enableDynamicTheming` einen Teil ab — welcher Weg trägt, ist in der Umsetzung
-zu entscheiden, sobald die Themendatei-Struktur bekannt ist.
+- `settings.fontFamily`, `settings.monoFontFamily` aus den Stylix-Schriften,
+- `settings.popupTransparency`, `settings.dockTransparency` aus `stylix.opacity`,
+- `session.wallpaperPath` aus `stylix.image`,
+- `settings.currentThemeName = "custom"` und einen `customThemeFile` mit 18 aus
+  der base16-Palette abgeleiteten Farben.
+
+Das deckt mehr ab als Stylix' Noctalia-Ziel. Ein eigenes Themenmodul wäre
+doppelte Arbeit und würde mit Stylix um dieselben Schlüssel streiten — die
+DMS-Einstellungen in 5.2 setzen deshalb bewusst **keine** Farben, Schriften
+oder Transparenzen.
 
 ### 5.5 Die niri-Integration
 
@@ -251,8 +268,8 @@ nach dem ersten Start über `dms plugins search`; der Spec legt sich nicht fest.
 
 | # | Punkt | Klärung |
 |---|---|---|
-| 1 | Akzeptiert DMS eine unvollständige `settings.json`? | vor der Umsetzung mit einer Minimaldatei gegen das Paket prüfen |
-| 2 | Struktur der `customThemeFile` für Stylix | aus dem DMS-Quelltext ableiten; sonst `enableDynamicTheming` als Rückfall |
+| 1 | Akzeptiert DMS eine unvollständige `settings.json`? | **Entschieden: ja.** Das Modul schreibt sie über `jsonFormat` mit `lib.mkIf (cfg.settings != { })` — eine Teilmenge ist der vorgesehene Fall, ein leeres Attrset erzeugt gar keine Datei |
+| 2 | Struktur der `customThemeFile` für Stylix | **Entfällt.** Stylix' DMS-Ziel erzeugt die Datei selbst; die Struktur ist dort festgelegt |
 | 3 | IPC-Name für das Wallpaper-Panel (`Mod+Shift+W`) | `dms ipc call` gegen das Paket abfragen |
 | 4 | Kollidiert DMS' Dock mit der Dashboard-Spalte? | erst im Betrieb entscheidbar |
 | 5 | `modules/meo/niri/hyprland-compat.nix` wird zum toten Code | **Entschieden: ja.** Seine einzige Aufgabe ist, `hyprland-monitor-hotplug` unter niri zu überspringen. Wird Noctalia stillgelegt, existiert dieser Dienst gar nicht mehr — der Wächter bewacht dann nichts. Die Datei wird im Zuge der Umsetzung entfernt und aus `modules/meo/niri/default.nix` ausgetragen. Konsequenz für den Rückweg: schaltet man auf `barChoice = "noctalia"` zurück, kommt der Hotplug-Dienst ungewächtert wieder und würde unter niri als `failed` parken. Das ist hinnehmbar (kosmetisch, kein Funktionsverlust), muss aber im Plan als Nebenwirkung stehen |
