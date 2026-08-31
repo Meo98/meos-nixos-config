@@ -1,7 +1,9 @@
-# Anwendungs-, Noctalia-, Screenshot- und Hardware-Binds.
+# Anwendungs-, Shell-Panel-, Screenshot- und Hardware-Binds.
 #
-# Portiert aus modules/upstream/home/hyprland/binds.nix. Die Noctalia-IPC-Syntax
-# (noctalia msg panel-toggle …) ist compositor-unabhaengig und bleibt unveraendert.
+# Portiert aus modules/upstream/home/hyprland/binds.nix. Die IPC-Syntax der
+# Shell-Panels (noctalia msg … bzw. dms ipc call …) ist compositor-unabhaengig
+# und bleibt unveraendert; welcher Zweig greift, entscheidet barChoice aus
+# hosts/${host}/variables.nix (siehe shellBinds unten).
 #
 # ENTFALLEN gegenueber Hyprland, mit Begruendung:
 #   Mod+Ctrl+D  Dock        -> nwg-dock-hyprland ist Hyprland-only; Noctalia
@@ -17,114 +19,136 @@
 #                              gewinnt eindeutig das Noctalia-Wallpaper-Panel
 {host, ...}: let
   vars = import ../../../hosts/${host}/variables.nix;
-  inherit (vars) browser terminal;
+  inherit (vars) browser terminal barChoice;
+
+  # Shell-Panels. Die Tasten bleiben gleich, nur der Adressat wechselt mit
+  # barChoice -- so muss beim Umschalten zwischen den Shells keine
+  # Tastenbelegung im Kopf umgelernt werden.
+  shellBinds =
+    if barChoice == "dms"
+    then {
+      "Mod+D".spawn = ["dms" "ipc" "call" "spotlight" "toggle"];
+      "Mod+Shift+Return".spawn = ["dms" "ipc" "call" "spotlight" "toggle"];
+      "Mod+M".spawn = ["dms" "ipc" "call" "notifications" "toggle"];
+      "Mod+V".spawn = ["dms" "ipc" "call" "clipboard" "toggle"];
+      "Mod+C".spawn = ["dms" "ipc" "call" "control-center" "toggle"];
+      "Mod+X".spawn = ["dms" "ipc" "call" "powermenu" "toggle"];
+      "Mod+Alt+P".spawn = ["dms" "ipc" "call" "settings" "toggle"];
+      "Mod+Shift+Comma".spawn = ["dms" "ipc" "call" "settings" "toggle"];
+      # DMS hat KEIN eigenstaendiges Wallpaper-Panel wie Noctalia. Am
+      # naechsten kommt das Dashboard mit seinem Wallpaper-Reiter.
+      # Belegt gegen den Quelltext v1.5.3, Bericht research-ipc.md.
+      "Mod+Shift+W".spawn = ["dms" "ipc" "call" "dankdash" "wallpaper"];
+    }
+    else {
+      "Mod+D".spawn = ["noctalia" "msg" "panel-toggle" "launcher"];
+      "Mod+Shift+Return".spawn = ["noctalia" "msg" "panel-toggle" "launcher"];
+      "Mod+M".spawn = ["noctalia" "msg" "panel-toggle" "control-center" "notifications"];
+      "Mod+V".spawn = ["noctalia" "msg" "panel-toggle" "clipboard"];
+      "Mod+C".spawn = ["noctalia" "msg" "panel-toggle" "control-center"];
+      "Mod+X".spawn = ["noctalia" "msg" "panel-toggle" "session"];
+      "Mod+Alt+P".spawn = ["noctalia" "msg" "settings-toggle"];
+      "Mod+Shift+Comma".spawn = ["noctalia" "msg" "settings-toggle"];
+      "Mod+Shift+W".spawn = ["noctalia" "msg" "panel-toggle" "wallpaper"];
+    };
 in {
-  wayland.windowManager.niri.settings.binds = {
-    # ---- Terminal und Anwendungen ----
-    "Mod+Return" = {
-      _props.hotkey-overlay-title = "Terminal";
-      spawn = [terminal];
-    };
-    "Mod+W" = {
-      _props.hotkey-overlay-title = "Browser";
-      spawn = [browser];
-    };
-    "Mod+Y".spawn = ["kitty" "-e" "yazi"];
-    "Mod+E".spawn = ["emopicker9000"];
-    "Mod+O".spawn = ["obs"];
-    "Mod+G".spawn = ["gimp"];
-    "Mod+T".spawn = ["thunar"];
-    "Mod+Alt+M".spawn = ["pavucontrol"];
-    "Mod+Shift+D".spawn = ["discord"];
-    "Mod+Alt+W".spawn = ["web-search"];
-    "Mod+Ctrl+C".spawn = ["qs-cheatsheets"];
+  wayland.windowManager.niri.settings.binds =
+    shellBinds
+    // {
+      # ---- Terminal und Anwendungen ----
+      "Mod+Return" = {
+        _props.hotkey-overlay-title = "Terminal";
+        spawn = [terminal];
+      };
+      "Mod+W" = {
+        _props.hotkey-overlay-title = "Browser";
+        spawn = [browser];
+      };
+      "Mod+Y".spawn = ["kitty" "-e" "yazi"];
+      "Mod+E".spawn = ["emopicker9000"];
+      "Mod+O".spawn = ["obs"];
+      "Mod+G".spawn = ["gimp"];
+      "Mod+T".spawn = ["thunar"];
+      "Mod+Alt+M".spawn = ["pavucontrol"];
+      "Mod+Shift+D".spawn = ["discord"];
+      "Mod+Alt+W".spawn = ["web-search"];
+      "Mod+Ctrl+C".spawn = ["qs-cheatsheets"];
 
-    # Ersatz fuer den pyprland-Scratchpad. Siehe modules/meo/scripts/niri-term-toggle.nix.
-    "Mod+Shift+T" = {
-      _props.hotkey-overlay-title = "Terminal-Workspace";
-      spawn = ["niri-term-toggle"];
-    };
+      # Ersatz fuer den pyprland-Scratchpad. Siehe modules/meo/scripts/niri-term-toggle.nix.
+      "Mod+Shift+T" = {
+        _props.hotkey-overlay-title = "Terminal-Workspace";
+        spawn = ["niri-term-toggle"];
+      };
 
-    # ---- Noctalia (IPC unveraendert aus binds.nix) ----
-    "Mod+D".spawn = ["noctalia" "msg" "panel-toggle" "launcher"];
-    "Mod+Shift+Return".spawn = ["noctalia" "msg" "panel-toggle" "launcher"];
-    "Mod+M".spawn = ["noctalia" "msg" "panel-toggle" "control-center" "notifications"];
-    "Mod+V".spawn = ["noctalia" "msg" "panel-toggle" "clipboard"];
-    "Mod+C".spawn = ["noctalia" "msg" "panel-toggle" "control-center"];
-    "Mod+X".spawn = ["noctalia" "msg" "panel-toggle" "session"];
-    "Mod+Shift+W".spawn = ["noctalia" "msg" "panel-toggle" "wallpaper"];
-    "Mod+Alt+P".spawn = ["noctalia" "msg" "settings-toggle"];
-    "Mod+Shift+Comma".spawn = ["noctalia" "msg" "settings-toggle"];
+      # sleep 0.5 haelt dasselbe Schutzfenster wie unter Hyprland: es gibt
+      # Noctalia Zeit, das Lock-Surface zu committen, bevor logind suspendiert.
+      "Mod+Alt+L" = {
+        _props.hotkey-overlay-title = "Sperren und Suspend";
+        spawn-sh = "loginctl lock-session && sleep 0.5 && systemctl suspend";
+      };
 
-    # sleep 0.5 haelt dasselbe Schutzfenster wie unter Hyprland: es gibt
-    # Noctalia Zeit, das Lock-Surface zu committen, bevor logind suspendiert.
-    "Mod+Alt+L" = {
-      _props.hotkey-overlay-title = "Sperren und Suspend";
-      spawn-sh = "loginctl lock-session && sleep 0.5 && systemctl suspend";
-    };
+      # ---- Fenster und Session ----
+      "Mod+Q".close-window = {};
+      "Mod+F".fullscreen-window = {};
+      "Mod+Shift+F".toggle-window-floating = {};
+      "Mod+Shift+C".quit = {};
 
-    # ---- Fenster und Session ----
-    "Mod+Q".close-window = {};
-    "Mod+F".fullscreen-window = {};
-    "Mod+Shift+F".toggle-window-floating = {};
-    "Mod+Shift+C".quit = {};
+      # ---- Screenshots (nativ statt hyprshot) ----
+      "Mod+S" = {
+        _props.hotkey-overlay-title = "Screenshot";
+        screenshot = {};
+      };
+      "Mod+Ctrl+S".screenshot-screen = {};
+      "Mod+Shift+S".screenshot-window = {};
 
-    # ---- Screenshots (nativ statt hyprshot) ----
-    "Mod+S" = {
-      _props.hotkey-overlay-title = "Screenshot";
-      screenshot = {};
-    };
-    "Mod+Ctrl+S".screenshot-screen = {};
-    "Mod+Shift+S".screenshot-window = {};
+      # niri hat mit `niri msg pick-color` einen eingebauten Picker, der die Farbe
+      # aber nur auf stdout schreibt. wl-color-picker legt sie direkt in die
+      # Zwischenablage und zeigt eine Lupe. Native Alternative ohne Extrapaket:
+      #   spawn-sh = "niri msg pick-color | wl-copy";
+      "Mod+Alt+C".spawn = ["wl-color-picker"];
 
-    # niri hat mit `niri msg pick-color` einen eingebauten Picker, der die Farbe
-    # aber nur auf stdout schreibt. wl-color-picker legt sie direkt in die
-    # Zwischenablage und zeigt eine Lupe. Native Alternative ohne Extrapaket:
-    #   spawn-sh = "niri msg pick-color | wl-copy";
-    "Mod+Alt+C".spawn = ["wl-color-picker"];
+      # ---- Keyball-Overlays (Toggle statt Halten, siehe Task 5) ----
+      "F13".spawn = ["keymap-popup" "1"];
+      "F14".spawn = ["keymap-popup" "2"];
+      "F15".spawn = ["keymap-popup" "3"];
 
-    # ---- Keyball-Overlays (Toggle statt Halten, siehe Task 5) ----
-    "F13".spawn = ["keymap-popup" "1"];
-    "F14".spawn = ["keymap-popup" "2"];
-    "F15".spawn = ["keymap-popup" "3"];
-
-    # ---- Audio und Helligkeit ----
-    # allow-when-locked, damit die Tasten auch auf dem Lockscreen wirken.
-    "XF86AudioRaiseVolume" = {
-      _props.allow-when-locked = true;
-      spawn = ["vol-smart" "up" "5%" "5%" "20%"];
+      # ---- Audio und Helligkeit ----
+      # allow-when-locked, damit die Tasten auch auf dem Lockscreen wirken.
+      "XF86AudioRaiseVolume" = {
+        _props.allow-when-locked = true;
+        spawn = ["vol-smart" "up" "5%" "5%" "20%"];
+      };
+      "XF86AudioLowerVolume" = {
+        _props.allow-when-locked = true;
+        spawn = ["vol-smart" "down" "5%" "5%" "20%"];
+      };
+      "XF86AudioMute" = {
+        _props.allow-when-locked = true;
+        spawn = ["vol-smart" "mute"];
+      };
+      "XF86AudioPlay" = {
+        _props.allow-when-locked = true;
+        spawn = ["playerctl" "play-pause"];
+      };
+      "XF86AudioPause" = {
+        _props.allow-when-locked = true;
+        spawn = ["playerctl" "play-pause"];
+      };
+      "XF86AudioNext" = {
+        _props.allow-when-locked = true;
+        spawn = ["playerctl" "next"];
+      };
+      "XF86AudioPrev" = {
+        _props.allow-when-locked = true;
+        spawn = ["playerctl" "previous"];
+      };
+      "XF86MonBrightnessUp" = {
+        _props.allow-when-locked = true;
+        spawn = ["bright-smart" "up" "10" "5%" "card0-HDMI-A-1" "0.2"];
+      };
+      "XF86MonBrightnessDown" = {
+        _props.allow-when-locked = true;
+        spawn = ["bright-smart" "down" "10" "5%" "card0-HDMI-A-1" "0.2"];
+      };
     };
-    "XF86AudioLowerVolume" = {
-      _props.allow-when-locked = true;
-      spawn = ["vol-smart" "down" "5%" "5%" "20%"];
-    };
-    "XF86AudioMute" = {
-      _props.allow-when-locked = true;
-      spawn = ["vol-smart" "mute"];
-    };
-    "XF86AudioPlay" = {
-      _props.allow-when-locked = true;
-      spawn = ["playerctl" "play-pause"];
-    };
-    "XF86AudioPause" = {
-      _props.allow-when-locked = true;
-      spawn = ["playerctl" "play-pause"];
-    };
-    "XF86AudioNext" = {
-      _props.allow-when-locked = true;
-      spawn = ["playerctl" "next"];
-    };
-    "XF86AudioPrev" = {
-      _props.allow-when-locked = true;
-      spawn = ["playerctl" "previous"];
-    };
-    "XF86MonBrightnessUp" = {
-      _props.allow-when-locked = true;
-      spawn = ["bright-smart" "up" "10" "5%" "card0-HDMI-A-1" "0.2"];
-    };
-    "XF86MonBrightnessDown" = {
-      _props.allow-when-locked = true;
-      spawn = ["bright-smart" "down" "10" "5%" "card0-HDMI-A-1" "0.2"];
-    };
-  };
 }
