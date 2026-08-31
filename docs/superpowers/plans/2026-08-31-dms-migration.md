@@ -402,7 +402,7 @@ nix eval --json --impure --expr '
 '
 ```
 
-Erwartet: `{"acLockTimeout":600,"batteryLockTimeout":600,"fadeToDpmsEnabled":false,"fadeToDpmsGracePeriod":5}`.
+Erwartet: `{"acLockTimeout":600,"batteryLockTimeout":600,"fadeToDpmsEnabled":false,"fadeToDpmsGracePeriod":5,"showDock":true}`.
 
 **`"fadeToDpmsEnabled": false` ist die sicherheitsrelevante Zeile.** Steht dort
 `true`, ist die Aufgabe nicht erfuellt.
