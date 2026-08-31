@@ -93,9 +93,27 @@ in {
       "Mod+Shift+F".toggle-window-floating = {};
       "Mod+Shift+C".quit = {};
 
-      # ---- Screenshots (nativ statt hyprshot) ----
+      # ---- Screenshots ----
+      #
+      # MODIFIED 2026-08-31: Mod+S wieder auf screenshootin, wie unter Hyprland.
+      # Bei der niri-Migration (27.08.) hatte Mod+S die eingebaute
+      # Screenshot-UI bekommen, mit der Begruendung, sie starte ohnehin in der
+      # Regionsauswahl. Das stimmt — uebersehen wurde aber, wo die alte Taste
+      # ENDETE: screenshootin ist `grim -g "$(slurp)" - | swappy -f -`, also
+      # Bereich waehlen und direkt in swappy zum Draufzeichnen. Genau das fehlte
+      # seither.
+      #
+      # Die niri-eigene UI ist deshalb nicht weg, sondern nach Mod+Alt+S
+      # gewandert (unter Hyprland war das ebenfalls eine Screenshot-Taste). Sie
+      # kann etwas, das swappy nicht kann: Bereich, Fenster ODER Bildschirm in
+      # einer Oberflaeche, und sie legt das Bild gleichzeitig in die
+      # Zwischenablage und nach screenshot-path.
       "Mod+S" = {
-        _props.hotkey-overlay-title = "Screenshot";
+        _props.hotkey-overlay-title = "Screenshot + Zeichnen";
+        spawn = ["screenshootin"];
+      };
+      "Mod+Alt+S" = {
+        _props.hotkey-overlay-title = "Screenshot (niri-UI)";
         screenshot = {};
       };
       "Mod+Ctrl+S".screenshot-screen = {};
