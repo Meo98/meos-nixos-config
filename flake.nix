@@ -70,6 +70,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # DankMaterialShell — Shell-Alternative zu Noctalia, gated ueber
+    # barChoice in hosts/<host>/variables.nix.
+    # Spec: docs/superpowers/specs/2026-08-31-dms-migration-design.md
+    #
+    # Wie bei noctalia bewusst auf einen Release-Tag gepinnt statt auf
+    # master-HEAD: Releases sind getestet, master ist Lotterie.
+    # v1.5.3 ist der aktuellste Release-Tag (geprueft 2026-08-31 ueber die
+    # GitHub-API).
+    dank-material-shell = {
+      url = "github:AvengeMedia/DankMaterialShell/v1.5.3";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     antigravity-nix = {
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
