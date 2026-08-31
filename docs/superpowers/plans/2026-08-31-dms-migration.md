@@ -22,6 +22,7 @@
   - `meo-work` → `/nix/store/ngvh42fb3nqmb7wazpdrvf9l0k028n2h-nixos-system-meo-work-26.11.20260822.2c423e0`
 - **`meo-work` darf sich in diesem gesamten Plan NIE bewegen.** Dieser Umbau betrifft nur `meo`. Ein wandernder meo-work-Pfad bedeutet, dass versehentlich etwas Gemeinsames verändert wurde — melden, nicht hinnehmen.
 - Bis einschliesslich Aufgabe 7 bleibt `barChoice = "noctalia"`; **auch `meo` darf sich bis dahin nicht bewegen.** Erst Aufgabe 8 schaltet um.
+- **DMS' `homeModules.niri` darf NICHT importiert werden.** Es setzt unbedingt `programs.niri.settings` (eine niri-flake-Option); dieses Repo benutzt das nixpkgs-HM-Modul unter `wayland.windowManager.niri`, `programs.niri` existiert hier nicht. Ein Import bricht die Auswertung. Gemessen am 2026-08-31.
 - Jede Aufgabe endet mit einem Commit. Commit-Nachrichten auf Deutsch.
 - Kommentare im Code auf Deutsch, ohne Umlaute.
 - Builds dauern; Timeouts grosszügig (600000 ms). Bekannte harmlose Eval-Warnungen von nix-index-database und hyprland auf stderr ignorieren.
@@ -35,8 +36,7 @@
 | `modules/upstream/core/packages.nix` | Noctalia-Pakete nur noch bei `"noctalia"` (Aufgabe 3) |
 | `modules/meo/dms/default.nix` | Modul-Einstieg: Paket, systemd-Unit, Importe |
 | `modules/meo/dms/settings.nix` | erzeugt `settings.json` aus Nix |
-| `modules/meo/dms/niri.nix` | Include-Nachbau + `homeModules.niri` |
-| `modules/meo/dms/theme.nix` | Stylix-Farben nach DMS |
+| `modules/meo/dms/niri.nix` | Include-Verdrahtung von Hand (DMS' `homeModules.niri` ist NICHT importierbar) |
 | `modules/meo/niri/binds-apps.nix` | neun Binds, geschaltet vom Gate |
 | `hosts/meo/variables.nix` | `barChoice`, `dmsScreenOff` |
 
@@ -441,61 +441,62 @@ Erwartet: enthält `"niri/config.kdl"`. Das ist der Eintrag, den der Nachbau umb
 ```nix
 # DMS' niri-Integration.
 #
-# DMS bringt homeModules.niri mit, das eigene KDL-Dateien erzeugt und per
-# include einbindet. Sein Einbindungs-Trick greift hier aber NICHT: er biegt
-# xdg.configFile.niri-config um — ein Attributname aus niri-flake. Dieses Repo
-# benutzt das nixpkgs-HM-Modul, das seinen Eintrag "niri/config.kdl" nennt.
-# Deshalb wird der Mechanismus hier von Hand nachgebaut.
+# DMS' eigenes homeModules.niri wird BEWUSST NICHT IMPORTIERT. Es setzt in
+# seinem config-Block unbedingt `programs.niri.settings` — eine Option aus
+# niri-flake. Dieses Repo benutzt das nixpkgs-HM-Modul, dessen Config unter
+# wayland.windowManager.niri liegt; `programs.niri` existiert hier gar nicht
+# (gemessen 2026-08-31: programs.* kennt nur "niriswitcher"). Ein Import
+# braeche mit "option programs.niri.settings does not exist".
+#
+# Das ist kein Verlust: das Modul verdrahtet nur die include-Zeilen. Die
+# KDL-Dateien selbst schreibt DMS zur LAUFZEIT aus eingebetteten Vorlagen
+# (core/internal/config/embedded/niri-*.kdl, quickshell/Services/
+# niri-wpblur.kdl, Farben ueber quickshell/matugen/configs/niri.toml).
+# Wir binden sie hier nur ein.
 #
 # REIHENFOLGE IST DER GANZE PUNKT: niri-Includes sind positional, spaetere
 # ueberschreiben fruehere, und Fensterregeln werden an der include-Zeile
 # eingefuegt. DMS' Dateien stehen deshalb ZUERST und die eigene Config
-# ZULETZT — damit gewinnen Spaltenbreiten, Zentrierung, Dashboard-Regel und
-# die CH-Tastaturbelegung aus modules/meo/niri/.
+# ZULETZT.
 #
-# enableKeybinds bleibt AUS: DMS' Vorschlag belegt Mod+Space, Mod+Comma,
-# Mod+V, Mod+X und Mod+M — hier sind das "zwischen Floating und Tiling
-# wechseln" und "Fenster in Spalte aufnehmen". Die Binds setzt Aufgabe 6
-# von Hand.
-{
-  inputs,
-  lib,
-  ...
-}: {
-  imports = [inputs.dank-material-shell.homeModules.niri];
-
-  programs.dank-material-shell.niri = {
-    enableKeybinds = false;
-    enableSpawn = false;
-    includes = {
-      enable = true;
-      override = false;
-      originalFileName = "hm";
-      filesToInclude = ["colors" "cursor" "wpblur"];
-    };
-  };
-
-  # Nachbau des Einbindungs-Tricks fuer das nixpkgs-HM-Modul.
+# Daraus folgt, dass wir GROSSZUEGIG einbinden koennen: wo eigene Werte
+# existieren, gewinnen sie ohnehin; wo keine existieren, gilt DMS' Vorgabe.
+# Genau das ist der Wunsch — so viel DMS-Default wie moeglich, aber die
+# eigene Tastenbelegung unangetastet. Konkret bleiben Mod+Space
+# (Floating/Tiling), Mod+Comma (Fenster in Spalte), Mod+V/X/M und die
+# Multimedia-Tasten mit vol-smart/bright-smart bei ihrer Belegung, waehrend
+# Mod+N, Mod+P und Mod+Alt+N von DMS dazukommen.
+#
+# optional=true gibt es seit niri 26.04 (hier im Einsatz): fehlt eine Datei —
+# etwa beim allerersten Start, bevor DMS sie geschrieben hat —, ist das eine
+# Warnung im Log statt eines Config-Fehlers, der die Session lahmlegen wuerde.
+{lib, ...}: {
   # 1. Die vom HM-Modul erzeugte Config nach niri/hm.kdl umleiten.
-  # 2. Eine eigene niri/config.kdl schreiben, die erst DMS' Dateien und dann
-  #    hm.kdl einbindet.
-  #
-  # optional=true gibt es seit niri 26.04 (hier im Einsatz): ein fehlendes
-  # Teilstueck ist damit eine Warnung im Log statt eines Config-Fehlers, der
-  # die Session lahmlegen wuerde.
   xdg.configFile."niri/config.kdl".target = lib.mkForce "niri/hm.kdl";
 
+  # 2. Eigene niri/config.kdl, die erst DMS' Dateien und dann hm.kdl einbindet.
   xdg.configFile."niri/config-dms" = {
     target = "niri/config.kdl";
     text = ''
+      include optional=true "dms/alttab.kdl"
+      include optional=true "dms/binds.kdl"
       include optional=true "dms/colors.kdl"
-      include optional=true "dms/cursor.kdl"
+      include optional=true "dms/input.kdl"
+      include optional=true "dms/layout.kdl"
       include optional=true "dms/wpblur.kdl"
       include optional=true "hm.kdl"
     '';
   };
 }
 ```
+
+**Die Dateinamen unter `dms/` sind aus den Vorlagennamen im DMS-Repo abgeleitet** (`niri-alttab.kdl` → vermutlich `dms/alttab.kdl`). Stimmen sie nicht, greift `optional=true` und es passiert schlicht nichts — die Abnahme (Aufgabe 8) prüft, ob die Dateien tatsächlich entstehen:
+
+```bash
+ls ~/.config/niri/dms/
+```
+
+Weichen die Namen ab, hier nachziehen. Ein falscher Name kostet nur eine Log-Warnung, keinen Ausfall.
 
 - [ ] **Schritt 3: Import ergänzen**
 
@@ -607,92 +608,25 @@ Store-Pfade bei barChoice = noctalia."
 
 ---
 
-### Aufgabe 7: Stylix-Theming
+### Aufgabe 7: Theming pruefen (keine Codeaenderung)
 
-**Dateien:**
-- Erstellt: `modules/meo/dms/theme.nix`
-- Ändern: `modules/meo/dms/default.nix` (Import ergänzen)
+ENTFALLEN als Bauaufgabe. Der urspruengliche Entwurf wollte die Stylix-Palette
+in eine eigene DMS-Themendatei schreiben. Das ist das Gegenteil des Wunsches
+"so viel DMS-Default wie moeglich": DMS faerbt sich ueber matugen selbst
+(`quickshell/matugen/configs/niri.toml`), und `dms/colors.kdl` traegt diese
+Farben auch in die niri-Config.
 
-- [ ] **Schritt 1: Die Theme-Schlüssel bestätigen**
+Stylix bleibt unangetastet und themt weiterhin GTK- und Qt-Anwendungen; nur
+die Farben des Shells kommen jetzt von DMS.
 
-```bash
-cd /tmp/claude-1000/-home-meo/90fa53bf-bf51-4a6d-8b74-fdd6a02a882a/scratchpad
-grep -nE "currentThemeName|currentThemeCategory|customThemeFile" sd.qml | head
-```
+- [ ] **Schritt 1: Nichts tun, aber festhalten**
 
-`customThemeFile` nimmt einen Pfad. Das erwartete Format zeigt die Stelle, die die Datei einliest:
+Kein Commit. In den Bericht schreiben, dass Aufgabe 7 bewusst leer bleibt und
+warum. Die Farbfrage wird in der Abnahme (Aufgabe 8, Schritt 7) beurteilt:
+passt DMS optisch zum uebrigen System, oder steht es in Fremdfarben da?
 
-```bash
-cd /tmp/claude-1000/-home-meo/90fa53bf-bf51-4a6d-8b74-fdd6a02a882a/scratchpad
-grep -n -A25 "customThemeFile" sd.qml | grep -iE "JSON.parse|\\.parse|primary|surface|error|\\[\"|readFile" | head -20
-curl -sSL --max-time 25 "https://api.github.com/repos/AvengeMedia/DankMaterialShell/contents/quickshell/Common/settings" 2>/dev/null | grep -oE '"name": "[^"]+"'
-```
-
-Gesucht sind die **Schlüsselnamen**, die DMS aus der Themendatei liest. Sie ersetzen die im nächsten Schritt notierten, falls sie abweichen.
-
-- [ ] **Schritt 2: `modules/meo/dms/theme.nix` anlegen**
-
-Die Stylix-Palette liegt unter `config.lib.stylix.colors`. Die Datei erzeugt daraus eine DMS-Themendatei im Store und verweist per `customThemeFile` darauf:
-
-```nix
-# Stylix-Farben nach DankMaterialShell durchreichen.
-#
-# Noctalia bekam die Farben ueber theme.mode/source/builtin (mit mkForce
-# gegen Konflikte mit Stylix' eigener noctalia-Integration). DMS kennt
-# stattdessen currentThemeName/currentThemeCategory und customThemeFile.
-#
-# Der Weg fuehrt ueber customThemeFile: eine aus der Stylix-Palette erzeugte
-# Datei im Store, auf die settings.json zeigt.
-{
-  config,
-  pkgs,
-  ...
-}: let
-  c = config.lib.stylix.colors;
-
-  themeFile = (pkgs.formats.json {}).generate "dms-stylix-theme.json" {
-    name = "stylix";
-    primary = "#${c.base0D}";
-    secondary = "#${c.base0E}";
-    surface = "#${c.base00}";
-    surfaceText = "#${c.base05}";
-    error = "#${c.base08}";
-  };
-in {
-  xdg.configFile."DankMaterialShell/themes/stylix.json".source = themeFile;
-}
-```
-
-**Die Schlüsselnamen (`primary`, `secondary`, …) sind aus Schritt 1 zu bestätigen** und gegebenenfalls zu ersetzen. Stimmen sie nicht, ignoriert DMS die Datei stillschweigend — deshalb Schritt 4.
-
-- [ ] **Schritt 3: `settings.nix` auf das Thema zeigen lassen**
-
-In `modules/meo/dms/settings.nix` ergänzen:
-
-```nix
-      currentThemeName = "stylix";
-      currentThemeCategory = "custom";
-      customThemeFile = "${config.xdg.configHome}/DankMaterialShell/themes/stylix.json";
-```
-
-Dafür muss `settings.nix` `config` als Argument annehmen.
-
-- [ ] **Schritt 4: Bauen und die erzeugten Dateien ansehen**
-
-```bash
-cd /home/meo/nixos-config
-for h in meo meo-work; do printf '%-10s ' "$h"; nix build --no-link --print-out-paths ".#nixosConfigurations.$h.config.system.build.toplevel"; done
-```
-
-Erwartet: beide unverändert.
-
-- [ ] **Schritt 5: Commit**
-
-```bash
-cd /home/meo/nixos-config
-git add modules/meo/dms/theme.nix modules/meo/dms/settings.nix modules/meo/dms/default.nix
-git commit -m "dms: Stylix-Farben ueber customThemeFile anbinden"
-```
+Faellt die Antwort schlecht aus, ist das ein eigener, spaeterer Schritt — dann
+mit Kenntnis davon, wie DMS ueberhaupt aussieht, statt vorab dagegen zu bauen.
 
 ---
 
@@ -815,7 +749,7 @@ Zehn Minuten nichts tun. Erwartet: die Sitzung sperrt nach 600 s, **der Bildschi
 
 - [ ] **Schritt 7: Farben**
 
-Passt DMS zum übrigen System, oder steht es in Fremdfarben da? Letzteres heisst, die Schlüsselnamen in `theme.nix` stimmen nicht — kein Beinbruch, aber ein Nacharbeitspunkt.
+Passt DMS zum übrigen System, oder steht es in Fremdfarben da? DMS färbt sich über matugen selbst; Stylix themt weiterhin GTK- und Qt-Anwendungen. Beissen sich die beiden sichtbar, ist das ein eigener, späterer Schritt — jetzt mit Kenntnis davon, wie DMS aussieht.
 
 - [ ] **Schritt 8: Dashboard-Spalte**
 
