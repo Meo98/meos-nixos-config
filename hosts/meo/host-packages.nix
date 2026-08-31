@@ -3,13 +3,15 @@
   nixpkgs.overlays = [
     (import ../../modules/meo/bambu.nix)
     (import ../../modules/meo/orcastudio.nix)
-    # DEAKTIVIERT 2026-08-27, kurz nach dem Einbau: der Patch ist sachlich
-    # richtig, aber sein einziger spuerbarer Effekt war, dass schnelles Scrollen
-    # im Terminal ~20% weiter laeuft (der zuvor verworfene Rest kommt jetzt an).
-    # Die Zeilen-Stufigkeit, derentwegen er gebaut wurde, beseitigt er nicht --
-    # die ist prinzipbedingt. Datei + Analyse bleiben fuer einen Upstream-Report
-    # liegen; zum Reaktivieren einfach diese Zeile entkommentieren.
-    # (import ../../modules/meo/ghostty-scroll-fix.nix)
+    # WIEDER AKTIV 2026-08-31, jetzt mit der eigentlichen Ursache drin:
+    # Ghostty klemmt Hi-Res-Scroll-Ticks auf einen ganzen Wheel-Klick hoch
+    # (@max(yoff, 1) in scrollCallback(), laut Kommentar dort ein macOS-Workaround).
+    # Damit haengt die Scroll-Geschwindigkeit an der Event-Rate des Keyballs
+    # statt an der Ballstrecke -> im Terminal um ein Vielfaches zu schnell, und
+    # die Geschwindigkeitskurve aus der Firmware ohne jede Wirkung.
+    # Der Patch klemmt nur noch auf macOS, hebt den Sub-Zeilen-Rest richtig auf
+    # und repariert die x-Achse. Volle Analyse in der Datei selbst.
+    (import ../../modules/meo/ghostty-scroll-fix.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
   ];

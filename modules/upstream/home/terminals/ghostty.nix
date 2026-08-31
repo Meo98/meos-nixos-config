@@ -46,19 +46,31 @@ in {
       selection-foreground = "#c8d3f5";
       cursor-style = "bar";
       mouse-hide-while-typing = "true";
-      # MODIFIED 2026-08-27: discrete 1 -> 0.5, um Ghostty an die Scroll-Distanz
-      # anderer Apps (Browser) anzugleichen.
-      # Hintergrund: Ghostty multipliziert die Wheel-Deltas in
-      # ecMouseScrollVertical() mit scaledCoordinates(), also mit GTKs
-      # GANZZAHLIGEM Scale-Faktor. Auf eDP-1 (Hyprland-Scale 1.6) meldet GTK4
-      # scale_factor = 2 -> die Kette ist 1 Tick * 2 * Zellenhoehe * discrete,
-      # also 2 Textzeilen pro Rasterschritt statt der konfigurierten 1.
-      # 0.5 hebt diese Verdopplung auf: wieder 1 Zeile pro Raste.
-      # Auf einem 1x-Monitor waere 0.5 entsprechend eine halbe Zeile -- der Wert
-      # ist also displayabhaengig, nicht universell.
-      # precision (Touchpad/Kinetic) bleibt bei 1, das laeuft ueber einen
-      # anderen Zweig und ist nicht betroffen.
-      mouse-scroll-multiplier = "precision:1,discrete:0.5";
+      # MODIFIED 2026-08-31: discrete 0.5 -> 1.5, zusammen mit dem Ghostty-Patch
+      # in modules/meo/ghostty-scroll-fix.nix (dort steht die volle Analyse).
+      #
+      # Ungepatcht klemmt Ghostty jeden Hi-Res-Tick auf einen ganzen Wheel-Klick
+      # hoch (@max(yoff, 1) in scrollCallback()). Dadurch haengt die
+      # Scroll-Geschwindigkeit an der EVENT-RATE des Keyballs statt an der
+      # Ballstrecke, und 0.5 war nur ein Versuch, das Ergebnis zu daempfen.
+      # Mit dem Patch gilt wieder die saubere Rechnung:
+      #
+      #   Zeilen pro Detent = ticks * GTK-scale_factor * discrete
+      #
+      # scale_factor ist der GANZZAHLIGE GTK-Scale, weil scaledCoordinates() in
+      # src/apprt/gtk/class/surface.zig auch die Scroll-Deltas mitskaliert.
+      # eDP-1 laeuft unter niri auf 1.6, DP-1 auf 1.2 -> GTK rundet beide auf 2.
+      # Mit discrete 1.5 also 3 Zeilen pro Detent = Desktop-Konvention.
+      # Die Firmware-Kurve legt fest, wieviel Ballstrecke ein Detent ist:
+      # 1.6 mm beim Lesen, bis 0.27 mm bei vollem 6x-Gain.
+      #
+      # Der Wert ist displayabhaengig (auf einem 1x-Monitor waere 3.0 richtig).
+      # Andere Werte ohne Rebuild ausprobieren:
+      #   ghostty --gtk-single-instance=false \
+      #           --mouse-scroll-multiplier=precision:1,discrete:2.5
+      #
+      # precision (Touchpad/Kinetic) bleibt bei 1, anderer Zweig, nicht betroffen.
+      mouse-scroll-multiplier = "precision:1,discrete:1.5";
       # scrollbar=system ist bereits Ghostty-Default (1.3.1), hier nur explizit.
       scrollbar = "system";
       wait-after-command = "false";

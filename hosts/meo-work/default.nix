@@ -4,6 +4,7 @@
     ./host-packages.nix
     ../../modules/meo/kanata.nix
     ../meo/affinity.nix
+    ../../modules/meo/lock-before-sleep.nix
   ];
 
   # Add our custom home-manager modules on top of modules/upstream/home/.
