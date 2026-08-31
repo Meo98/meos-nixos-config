@@ -5,6 +5,12 @@
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
     (import ../../modules/meo/masterpdfeditor-fix.nix)  # 5.9.98->5.9.99 (Upstream-404)
+    # Muss zusammen mit mouse-scroll-multiplier = discrete:1.5 in
+    # modules/upstream/home/terminals/ghostty.nix laufen: der Multiplikator ist
+    # auf die GEPATCHTE Rechnung geeicht. Ohne den Patch klemmt Ghostty jeden
+    # Hi-Res-Tick des Keyballs auf einen vollen Wheel-Klick hoch und 1.5 waere
+    # dreimal zu schnell. Analyse in der Overlay-Datei.
+    (import ../../modules/meo/ghostty-scroll-fix.nix)
   ];
 
   services.flatpak.enable = true; # Ermöglicht die Installation von Flatpaks (GUI-Apps außerhalb des Nix-Stores)
