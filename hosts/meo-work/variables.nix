@@ -27,6 +27,47 @@
     monitor = desc:LG Display 0x06B8,1920x1080@60,2280x1080,1.2
   '';
 
+  # niri-Monitore. Uebersetzt aus extraMonitorSettings oben; Hyprland und niri
+  # rechnen beide in LOGISCHEN Koordinaten, die Positionen gehen daher 1:1 auf.
+  # Nur die Groesse wird durch die Skalierung geteilt: 1920/1.2 = 1600.
+  #
+  #   HP Z24n      1920x1200@60, 0x0,       1     ->  1920x1200 bei (0, 0)
+  #   Dell U2422H  1920x1080@60, 1920x0,    1     ->  1920x1080 bei (1920, 0)
+  #   LG (Laptop)  1920x1080@60, 2280x1080, 1.2   ->  1600x900  bei (2280, 1080)
+  #
+  # ANSCHLUSSNAMEN SIND EINE ANNAHME. Hyprland adressiert die externen Monitore
+  # per EDID (desc:), niri kann beides. Die tatsaechlichen Namen zeigt
+  # `niri msg outputs` in einer laufenden niri-Session. Stimmen sie nicht,
+  # bleiben die betroffenen Monitore auf niris Automatik-Layout — das ist
+  # unschoen, aber nicht kaputt.
+  #
+  # Umstellung auf EDID spaeter: name = "Dell Inc. DELL U2422H 9FGXF83".
+  # Achtung, niris Schreibweise ist NICHT identisch mit Hyprlands desc: bei
+  # fehlender Seriennummer haengt niri " Unknown" an.
+  niriOutputs = [
+    {
+      name = "DP-1";
+      mode = "1920x1200@60.000";
+      scale = 1.0;
+      x = 0;
+      y = 0;
+    }
+    {
+      name = "DP-2";
+      mode = "1920x1080@60.000";
+      scale = 1.0;
+      x = 1920;
+      y = 0;
+    }
+    {
+      name = "eDP-1";
+      mode = "1920x1080@60.000";
+      scale = 1.2;
+      x = 2280;
+      y = 1080;
+    }
+  ];
+
   # Bar/Shell
   barChoice = "noctalia";
 
