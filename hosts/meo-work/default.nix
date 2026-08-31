@@ -7,7 +7,23 @@
   ];
 
   # Add our custom home-manager modules on top of modules/upstream/home/.
-  home-manager.users.${username}.imports = [ ../../modules/meo ];
+  home-manager.users.${username}.imports = [ ../../modules/meo ../../modules/meo/niri ];
+
+  # --- niri (Migration 2026-08-31) ---
+  # Spec: docs/superpowers/specs/2026-08-31-meo-work-niri-migration-design.md
+  #
+  # Der Import oben ist bewusst hostlokal und steht nicht in
+  # modules/meo/default.nix — dieselbe Trennung wie auf meo.
+  #
+  # Bewusst NICHT niri-smart: der Wrapper aus modules/meo/niri-gpu-smart.nix
+  # ist der NVIDIA-Umschalter und auf dieser reinen Intel-Maschine gegenstands-
+  # los. meo-work bekommt die schlichte niri-session.
+  #
+  # mkForce ist noetig, weil sowohl das niri-Modul (mkDefault "niri") als auch
+  # Hyprland eine Session eintragen. Hyprland bleibt installiert und im
+  # SDDM-Menue waehlbar — das ist der Rueckweg ohne Rebuild.
+  programs.niri.enable = true;
+  services.displayManager.defaultSession = lib.mkForce "niri";
 
   programs.kdeconnect.enable = true;
 
