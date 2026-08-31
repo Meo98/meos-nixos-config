@@ -7,11 +7,23 @@
 # dagegen nach D3cold fallen duerfen.
 #
 # Unterschied zu Hyprland: niri kennt kein AQ_DRM_DEVICES. Die Renderer-Wahl
-# sitzt in der Config unter debug { render-drm-device "..." }. Und weil niri
-# KEIN include in KDL unterstuetzt (verifiziert: `niri validate` bricht mit
-# Parse-Fehler), kann kein Fragment nachgeladen werden. Stattdessen: die
-# HM-Config kopieren, den passenden debug-Block anhaengen und niri mit -c auf
-# die Kopie zeigen lassen.
+# sitzt in der Config unter debug { render-drm-device "..." }. Stattdessen: die
+# HM-Config kopieren, den passenden debug-Block anhaengen und niri per
+# NIRI_CONFIG auf die Kopie zeigen lassen.
+#
+# KORREKTUR 2026-08-31 (Fix-Runde 1 zu Aufgabe 8): hier stand bis eben "niri
+# kennt KEIN include in KDL, verifiziert" -- das war falsch. Mit niri 26.04
+# funktioniert `include` in KDL, wie die DMS-Integration (modules/meo/dms/
+# niri.nix) beweist. Der Irrtum stammte aus der niri-Migration am 27.08. und
+# ist genau deshalb gefaehrlich geblieben: niri loest RELATIVE include-Pfade
+# gegen das VERZEICHNIS DER EINSCHLIESSENDEN DATEI auf, nicht gegen
+# ~/.config/niri/. Die Kopie mit dem angehaengten debug-Block muss deshalb
+# NEBEN der Basis liegen (also in ~/.config/niri/ selbst) -- sonst gehen die
+# eigenen includes (hm.kdl, dms/*.kdl) ins Leere. niri validiert eine solche
+# Kopie trotzdem klaglos: fehlende optional=true-includes sind nur eine
+# Warnung, kein Fehler, und `niri validate` liefert Exit 0. Betraf nur `meo`
+# (niri-smart), nicht `meo-work` (kein Wrapper, startet direkt auf
+# ~/.config/niri/config.kdl).
 #
 # WICHTIG: In modules/meo/niri/ darf deshalb KEIN debug-Block stehen, sonst
 # entsteht er hier doppelt.
@@ -122,7 +134,12 @@ let
         "$mode" "''${render_node:-unset}" > "$status_file" 2>/dev/null || true
 
       base="$HOME/.config/niri/config.kdl"
-      generated="''${XDG_RUNTIME_DIR:-/tmp}/niri-config.kdl"
+      # NEBEN der Basis, nicht in $XDG_RUNTIME_DIR: niri loest relative
+      # include-Pfade (hm.kdl, dms/*.kdl) gegen das Verzeichnis DIESER Datei
+      # auf. Lag die Kopie in /run/user/*, gingen die includes ins Leere --
+      # siehe Kopfkommentar. Versteckte Datei, damit sie nicht wie eine
+      # zweite echte Config aussieht.
+      generated="$HOME/.config/niri/.niri-smart.kdl"
 
       # Ohne NIRI_CONFIG sucht niri selbst unter genau diesem Pfad. Fehlt die
       # Datei, faengt niris eigener Default das ab. Existiert sie aber nur mit
@@ -147,6 +164,18 @@ let
         exec niri-session "$@"
       fi
 
+      # Sinnvolleres Kriterium als der fruehere Groessenvergleich weiter unten
+      # (der mit Aufgabe 8 entfallen ist, siehe dort): die Kopie muss
+      # BYTE-IDENTISCH mit der Basis sein, direkt nach dem Kopieren und vor
+      # jeder Veraenderung durch das Anhaengen. install meldet einen
+      # Schreibfehler zwar per Exit-Code, aber cmp faengt zusaetzlich einen
+      # stillen Partial-Write ab (z.B. ein tmpfs, das mittendrin volllaeuft,
+      # ohne dass install das sauber propagiert).
+      if ! cmp -s "$base" "$generated"; then
+        printf '[niri-smart] Kopie von %s weicht von der Basis ab, starte mit HM-Config\n' "$base" >&2
+        exec niri-session "$@"
+      fi
+
       # Das Anhaengen ist bewusst abgesichert: unter errexit wuerde ein
       # Schreibfehler (praktisch nur ENOSPC auf dem tmpfs) das Script sonst
       # VOR jedem exec beenden und den Benutzer zurueck in den Greeter werfen.
@@ -161,18 +190,18 @@ let
         fi
       fi
 
-      # Zusaetzlich zum Statuscode: "cp" haette (z.B. bei ENOSPC) auch mit
-      # Fehler durchlaufen koennen, ohne dass wir es hier abgefangen haetten,
-      # und dann haette ">>" oben die Datei aus dem Nichts angelegt -- so eine
-      # Mini-Datei aus nur dem debug-Block besteht "niri validate" (sie ist
-      # syntaktisch gueltiges KDL), waere aber eine Session ohne jegliche
-      # Binds. Deshalb: die Kopie muss mindestens so gross sein wie die Basis.
-      base_size=$(wc -c < "$base")
-      generated_size=$(wc -c < "$generated")
-      if [ "$generated_size" -lt "$base_size" ]; then
-        printf '[niri-smart] generierte Config (%s Bytes) kleiner als Basis (%s Bytes), starte mit HM-Config\n' "$generated_size" "$base_size" >&2
-        exec niri-session "$@"
-      fi
+      # ENTFALLEN 2026-08-31 (Fix-Runde 1 zu Aufgabe 8): hier stand ein
+      # Groessenvergleich "Kopie muss >= Basis sein", der genau den Fehlerfall
+      # abfangen sollte, den dieser gesamte Fix behebt (Kopie besteht nur noch
+      # aus dem angehaengten debug-Block). Seit Aufgabe 8 ist die Basis
+      # (~/.config/niri/config.kdl) selbst nur noch ein 8-zeiliger
+      # include-Stub (~310 Byte, siehe modules/meo/dms/niri.nix) statt der
+      # vollen gerenderten Config. Jede Kopie plus debug-Block liegt WEIT
+      # darueber -- der Vergleich haette also nie wieder ausgeloest, selbst
+      # bei einer komplett leeren oder kaputten Kopie. Ersetzt durch den
+      # cmp-Vergleich weiter oben: der prueft Byte-Identitaet mit der Basis
+      # direkt nach dem Kopieren, bevor ueberhaupt etwas angehaengt wird --
+      # unabhaengig davon, wie gross die Basis gerade ist.
 
       # Bricht lieber hier ab als in einer schwarzen Session.
       if ! niri validate --config "$generated"; then
@@ -202,7 +231,13 @@ let
       ${gpuDecision}
 
       base="$HOME/.config/niri/config.kdl"
-      generated="''${XDG_RUNTIME_DIR:-/tmp}/niri-config.kdl"
+      # Muss WORTGLEICH mit dem Pfad in niri-smart sein: niri laeuft mit
+      # NIRI_CONFIG=$generated aus niri-smarts Login, und dieses Script muss
+      # exakt diese Datei atomar per mv ersetzen -- ein abweichender Pfad
+      # wuerde NIRI_CONFIG ins Leere zeigen lassen. Neben der Basis, nicht in
+      # $XDG_RUNTIME_DIR: siehe Kopfkommentar (relative includes aufloesen
+      # sich gegen das Verzeichnis dieser Datei).
+      generated="$HOME/.config/niri/.niri-smart.kdl"
 
       if [ ! -r "$base" ]; then
         printf 'niri-reload: %s nicht lesbar\n' "$base" >&2
