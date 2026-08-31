@@ -86,6 +86,17 @@
   # `hyprctl dispatch dpms off && sleep 5 && hyprctl dispatch dpms on` auf eDP-1).
   idleScreenOff = false;
 
+  # Bildschirm-Abschaltung fuer DankMaterialShell (fadeToDpmsEnabled).
+  # Eigene Variable statt Wiederverwendung von idleScreenOff, weil die beiden
+  # Shells verschiedene Schluessel benutzen und getrennt schaltbar bleiben
+  # sollen — sonst wuerde ein Wechsel des einen still den anderen mitziehen.
+  #
+  # AUS auf meo, aus demselben Grund wie idleScreenOff: DPMS-off->on wedged
+  # die i915-Pipe des OLED (siehe kernelParams i915.enable_{psr,fbc,dc}=0 in
+  # default.nix). Nur Reboot hilft. Diese Sperre ist der Grund, warum die
+  # DMS-Konfiguration deklarativ bleiben MUSS statt GUI-Zustand zu werden.
+  dmsScreenOff = false;
+
   # Program Options
   # Set Default Browser (google-chrome-stable for google-chrome)
   # This does NOT install your browser
