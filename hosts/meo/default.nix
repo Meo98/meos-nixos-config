@@ -34,8 +34,8 @@
   # (Ende der Migration, Task 11). Rueckweg ohne Rebuild: in SDDM unten links
   # die Session "Hyprland (Smart GPU)" waehlen. Die Hyprland-Module bleiben
   # vollstaendig im Repo. mkForce bleibt noetig: das niri-Modul setzt
-  # defaultSession selbst per mkDefault "niri", und Hyprland traegt ebenfalls
-  # einen Wert bei — ohne mkForce waere die Zuweisung mehrdeutig.
+  # defaultSession selbst per mkDefault "niri" — mkForce nagelt hier
+  # stattdessen "niri-smart" fest. Hyprland selbst setzt defaultSession nicht.
   services.displayManager.defaultSession = lib.mkForce "niri-smart";
 
   # --- AUTOMOUNTING ---

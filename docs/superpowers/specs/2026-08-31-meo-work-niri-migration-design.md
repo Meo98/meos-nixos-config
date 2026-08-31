@@ -139,8 +139,10 @@ programs.niri.enable = true;
 services.displayManager.defaultSession = lib.mkForce "niri";
 ```
 
-`mkForce` ist nötig, weil sowohl das niri-Modul (`mkDefault "niri"`) als auch
-Hyprland eine Session eintragen.
+`mkForce` nagelt die Session explizit fest und sichert sie gegen das
+`mkDefault "niri"` des niri-Moduls ab (Grund laut dessen Quellkommentar:
+verhindert eine GDM-Login-Schleife bei reinen niri-Setups). Hyprland selbst
+setzt `defaultSession` nicht.
 
 Der Import bleibt **hostlokal** und wandert nicht nach `modules/meo/default.nix` —
 dieselbe Trennung, die schon auf meo dafür sorgt, dass ein Host den niri-Code im

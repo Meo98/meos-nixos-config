@@ -19,8 +19,10 @@
   # ist der NVIDIA-Umschalter und auf dieser reinen Intel-Maschine gegenstands-
   # los. meo-work bekommt die schlichte niri-session.
   #
-  # mkForce ist noetig, weil sowohl das niri-Modul (mkDefault "niri") als auch
-  # Hyprland eine Session eintragen. Hyprland bleibt installiert und im
+  # mkForce nagelt die Session explizit fest und sichert sie gegen das
+  # mkDefault "niri" des niri-Moduls ab (Grund laut dessen Quellkommentar:
+  # verhindert eine GDM-Login-Schleife bei reinen niri-Setups). Hyprland
+  # selbst setzt defaultSession nicht. Hyprland bleibt installiert und im
   # SDDM-Menue waehlbar — das ist der Rueckweg ohne Rebuild.
   programs.niri.enable = true;
   services.displayManager.defaultSession = lib.mkForce "niri";
