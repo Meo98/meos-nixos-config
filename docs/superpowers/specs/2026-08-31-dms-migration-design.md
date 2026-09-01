@@ -69,6 +69,33 @@ function _onWritableCheckComplete(writable) {
 Das ist ein vorgesehener Betriebsmodus, kein Fehlerpfad. Eine Datei aus dem
 Nix-Store ist schreibgeschützt — DMS respektiert sie.
 
+> **KORREKTUR 2026-09-01.** Der Absatz oben ist faktisch richtig und in seiner
+> Schlussfolgerung falsch. „DMS respektiert sie" heisst: die Oberfläche wird
+> schreibgeschützt. Der Quelltext sagt das im selben Atemzug —
+> `_hasUnsavedChanges` existiert genau deshalb, weil Änderungen dann nirgends
+> mehr hingeschrieben werden können. Sie leben bis zum nächsten Start des
+> Shells im Arbeitsspeicher und sind danach weg.
+>
+> `settings.json` kennt **353** Schlüssel, `session.json` **64**. Deklarativ
+> gesetzt waren 11 bzw. 3 (diese Datei plus das Stylix-Ziel). Die übrigen 342
+> bzw. 61 fielen bei jedem Start auf Werkseinstellung zurück — Leisten-Widgets,
+> Uhrformat, Eckenradius, angeheftete Programme, Hell/Dunkel-Modus,
+> Bitte-nicht-stören, Wetterort. Der Nutzer hat es am Tag nach der Umstellung
+> beim ersten Reboot gemerkt.
+>
+> Der Denkfehler war die Frage. Geprüft wurde „kann das Modul die Einstellungen
+> schreiben" — richtig gewesen wäre „**wem gehört die Datei danach**". Bei
+> `xdg.configFile … source = …` gibt es kein teilweise deklarativ: die Option
+> erzeugt die vollständige Datei, und was nicht darin steht, existiert für die
+> Anwendung nicht mehr. Genau eine Partei kann eine Datei besitzen.
+>
+> Behoben in `modules/meo/dms/settings.nix`: Nix setzt die Modul-Option nicht
+> mehr, sondern befüllt beide Dateien einmalig über ein Aktivierungsskript
+> (`entryAfter ["linkGeneration"]`), falls sie fehlen. Danach gehören sie DMS.
+> `stylix.targets.dank-material-shell.enable = false`, weil das Ziel sonst
+> dieselbe Option belegt und den Symlink zurückbringt. Abschnitt 5.4 unten
+> („Nichts zu tun") ist damit überholt.
+
 **Pfad und Nachladen.** `settingsFile.path` ist
 `StandardPaths.ConfigLocation + "/DankMaterialShell/settings.json"`, also
 `~/.config/DankMaterialShell/settings.json`. Die Datei wird beobachtet und über
