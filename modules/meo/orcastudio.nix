@@ -51,6 +51,13 @@ in {
       export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
       export __GLX_VENDOR_LIBRARY_NAME=nvidia
       export __VK_LAYER_NV_optimus=NVIDIA_only
+      # FIX 2026-09-02: Die Offload-Vars brechen den nativen Wayland/EGL-Pfad
+      # ("post_init: glcontext not ready" endlos -> leere 3D-View, Crash beim
+      # Preview-Wechsel). Auf X11/GLX funktioniert das Offload nachweislich
+      # (Log: "graphics card model zink Vulkan 1.4(NVIDIA GeForce RTX 4080)").
+      # Also XWayland erzwingen. NICHT entfernen, solange die __NV_*-Vars
+      # oben stehen — Wayland+PRIME = kein GL-Kontext.
+      export GDK_BACKEND=x11
     '';
 
     extraPkgs = pkgs: with pkgs; [
