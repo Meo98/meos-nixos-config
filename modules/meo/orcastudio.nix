@@ -41,22 +41,19 @@ in {
       # Gleicher em-Skalierungs-Fix wie bambu.nix: Stylix' 12pt-Systemfont
       # macht die UI sonst ~20% zu gross (siehe Kommentar dort).
       export GDK_DPI_SCALE="''${GDK_DPI_SCALE:-0.75}"
-      # ADDED 2026-09-02: PRIME-Offload auf die RTX 4080 (sonst rendert die
-      # 3D-Vorschau auf der Intel-Arc-iGPU, Log: "graphics card model Mesa
-      # Intel(R) Arc(tm)"). Direkt hier statt im Desktop-Exec, damit es auch
-      # beim Terminal-Start greift. Modul wird nur von hosts/meo importiert —
-      # auf einem Host ohne NVIDIA wuerde __GLX_VENDOR_LIBRARY_NAME=nvidia
-      # den GL-Kontext brechen, also NICHT nach meo-work uebernehmen.
-      export __NV_PRIME_RENDER_OFFLOAD=1
-      export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
-      export __GLX_VENDOR_LIBRARY_NAME=nvidia
-      export __VK_LAYER_NV_optimus=NVIDIA_only
-      # FIX 2026-09-02: Die Offload-Vars brechen den nativen Wayland/EGL-Pfad
-      # ("post_init: glcontext not ready" endlos -> leere 3D-View, Crash beim
-      # Preview-Wechsel). Auf X11/GLX funktioniert das Offload nachweislich
-      # (Log: "graphics card model zink Vulkan 1.4(NVIDIA GeForce RTX 4080)").
-      # Also XWayland erzwingen. NICHT entfernen, solange die __NV_*-Vars
-      # oben stehen — Wayland+PRIME = kein GL-Kontext.
+      # ADDED 2026-09-02: X11 erzwingen, damit die App auf der RTX 4080 rendert
+      # statt auf der Intel-Arc-iGPU (nativer Wayland/EGL-Pfad landete auf
+      # "Mesa Intel(R) Arc(tm)" -> laggende UI). Unter Xwayland ist NVIDIA hier
+      # ohnehin der GLX-Provider, die App bekommt damit direkt
+      # "vendor NVIDIA Corporation, RTX 4080/PCIe/SSE2" — GANZ OHNE
+      # __NV_PRIME_*-Variablen.
+      # WARNUNG (teuer gelernt, 2 Anlaeufe): Die klassischen PRIME-Offload-Vars
+      # (__NV_PRIME_RENDER_OFFLOAD, __GLX_VENDOR_LIBRARY_NAME=nvidia,
+      # __VK_LAYER_NV_optimus) hier NICHT setzen!
+      #   - auf Wayland/EGL: GL-Kontext kommt nie hoch ("post_init: glcontext
+      #     not ready" endlos -> leere 3D-View, Crash bei Preview-Wechsel)
+      #   - auf X11: zwingt Mesa/zink-Umweg -> Fenster bleibt komplett blank
+      #     und haengt (Log sieht dabei sogar gesund aus!)
       export GDK_BACKEND=x11
     '';
 
