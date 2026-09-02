@@ -41,6 +41,16 @@ in {
       # Gleicher em-Skalierungs-Fix wie bambu.nix: Stylix' 12pt-Systemfont
       # macht die UI sonst ~20% zu gross (siehe Kommentar dort).
       export GDK_DPI_SCALE="''${GDK_DPI_SCALE:-0.75}"
+      # ADDED 2026-09-02: PRIME-Offload auf die RTX 4080 (sonst rendert die
+      # 3D-Vorschau auf der Intel-Arc-iGPU, Log: "graphics card model Mesa
+      # Intel(R) Arc(tm)"). Direkt hier statt im Desktop-Exec, damit es auch
+      # beim Terminal-Start greift. Modul wird nur von hosts/meo importiert —
+      # auf einem Host ohne NVIDIA wuerde __GLX_VENDOR_LIBRARY_NAME=nvidia
+      # den GL-Kontext brechen, also NICHT nach meo-work uebernehmen.
+      export __NV_PRIME_RENDER_OFFLOAD=1
+      export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+      export __GLX_VENDOR_LIBRARY_NAME=nvidia
+      export __VK_LAYER_NV_optimus=NVIDIA_only
     '';
 
     extraPkgs = pkgs: with pkgs; [
