@@ -12,6 +12,9 @@
     # Der Patch klemmt nur noch auf macOS, hebt den Sub-Zeilen-Rest richtig auf
     # und repariert die x-Achse. Volle Analyse in der Datei selbst.
     (import ../../modules/meo/ghostty-scroll-fix.nix)
+    # ADDED 2026-09-07: JLCPCB-Desktop-Client (App-Rabatte fuer
+    # PicoStack-Bestellungen), .deb via AUR-Quelle, s. Datei.
+    (import ../../modules/meo/jlcone.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
   ];
@@ -48,6 +51,7 @@
     orca-slicer               # Open-Source Slicer (Bambu-Studio-Fork), native from-source
     bambu-studio              # Offizieller BambuLab-Slicer (AppImage via modules/meo/bambu.nix overlay)
     orca-studio               # Community-Fork: Bambu Studio + Orca-Features + Cloud-Senden (AppImage via modules/meo/orcastudio.nix overlay)
+    jlcone                    # JLCPCB-Desktop-Client für Bestellungen mit App-Rabatt (.deb via modules/meo/jlcone.nix overlay)
 
     # --- Webbrowser ---
     # MODIFIED 2026-07-28: WaylandPerWindowScaling gegen falsch skalierte /
