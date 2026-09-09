@@ -11,16 +11,27 @@ in {
     layout = {
       gaps = 8;
 
-      # MODIFIED 2026-08-28: "never" -> "always". Die fokussierte Spalte sitzt
-      # jetzt immer mittig, links und rechts bleibt symmetrisch (1 - 5/6) / 2
-      # = 1/12 des Schirms fuer die Nachbarspalten sichtbar. Das war beim
-      # Einstieg bewusst aus ("stabiler Viewport ist leichter zu lesen"), hat
-      # sich aber nach einem Tag als das Falsche herausgestellt.
+      # MODIFIED 2026-09-09: "always" -> "never". ACHTUNG, das liest sich wie
+      # ein Rueckschritt zum Zustand vor dem 28.08. und ist das Gegenteil.
       #
-      # Alternativen, falls das Nachruecken bei jedem Fokuswechsel stoert:
-      # "on-overflow" zentriert nur, wenn die neue Spalte nicht zusammen mit
-      # der vorherigen auf den Schirm passt.
-      center-focused-column = "always";
+      # "always" zentriert AUCH die erste und die letzte Spalte. Dort gibt es
+      # aussen aber keinen Nachbarn, also blieb dort (1 - Breite)/2 des
+      # Schirms schlicht leer — der Rand, ueber den sich beim Benutzen
+      # gestolpert wurde. Und weil Zentrierung symmetrisch wirkt, laesst sich
+      # das durch Verbreitern nicht beheben: jeder Zuschlag verkleinert den
+      # toten Aussenrand und den Guckstreifen nach innen gleichermassen.
+      #
+      # Mit "never" klemmt niri die Ansicht an den Enden fest: die erste
+      # Spalte sitzt buendig links, die letzte buendig rechts, aussen bleibt
+      # nichts leer. Die Zentrierung der MITTLEREN Spalten uebernimmt
+      # stattdessen der Daemon aus edge-width.nix per `center-column` — die
+      # gewohnte Optik bleibt also, sie kommt nur aus einer anderen Quelle.
+      #
+      # ABHAENGIGKEIT, DIE MAN KENNEN MUSS: faellt niri-edge-width.service
+      # aus, wird gar nichts mehr zentriert (vorher waere nur die
+      # Randverbreiterung ausgeblieben). Der Dienst hat deshalb
+      # Restart=always.
+      center-focused-column = "never";
 
       # Mod+R zykliert vorwaerts, Mod+Shift+R rueckwaerts.
       #

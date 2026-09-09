@@ -1,9 +1,11 @@
 # Randspalten verbreitern: Dienst zum Daemon in
 # modules/meo/scripts/niri-edge-width-daemon.nix.
 #
-# Steht die fokussierte Spalte am linken oder rechten Ende ihres Workspace,
-# bekommt sie den Platz, der dort sonst leer bliebe. Die Begruendung der
-# Zahlen steht im Kopf des Daemons.
+# Setzt Breite UND Ausrichtung der fokussierten Spalte nach ihrer Position:
+# Randspalten buendig am Bildschirmrand mit der Luecke nach innen, mittlere
+# Spalten zentriert. Haengt untrennbar mit center-focused-column = "never"
+# in layout.nix zusammen — ohne den Dienst wird gar nichts mehr zentriert.
+# Deshalb Restart=always. Begruendung und Zahlen im Kopf des Daemons.
 {pkgs, ...}: let
   daemon = import ../scripts/niri-edge-width-daemon.nix {inherit pkgs;};
 in {
@@ -31,16 +33,19 @@ in {
       Environment = [
         "PATH=${pkgs.niri}/bin"
 
-        # Zuschlaege in Prozent der Bildschirmbreite. Zum Abschmecken hier
-        # aendern, nicht im Daemon:
-        #   SINGLE: einzige Spalte im Workspace. 16.667 = 1/6 hebt die
-        #           Standardbreite 5/6 auf volle Breite.
-        #   EDGE:   erste oder letzte von mehreren. 8.333 = 1/12 halbiert den
-        #           toten Aussenrand; weil zentriert wird, halbiert es
-        #           zugleich den Guckstreifen zur Nachbarspalte. Wer den
-        #           Streifen ganz aufgeben will, setzt hier ebenfalls 16.667.
-        "NIRI_EDGE_BONUS_SINGLE=16.667"
-        "NIRI_EDGE_BONUS_EDGE=8.333"
+        # Breiten als proportion-Prozent, dieselbe Einheit wie
+        # default-column-width in layout.nix. Die sichtbaren Kachelbreiten
+        # sind etwas kleiner, weil die gaps abgehen: 100 -> 98.95 %,
+        # 91.667 -> 90.70 %, 83.333 -> 82.38 % (am laufenden System
+        # nachgerechnet, siehe Kopf des Daemons).
+        #
+        #   SINGLE  einzige Spalte im Workspace: fuellt den Schirm.
+        #   EDGE    erste oder letzte: buendig am Bildschirmrand, die Luecke
+        #           liegt innen beim Nachbarn.
+        #   MIDDLE  dazwischen: zentriert, wie bisher.
+        "NIRI_EDGE_WIDTH_SINGLE=100%"
+        "NIRI_EDGE_WIDTH_EDGE=91.667%"
+        "NIRI_EDGE_WIDTH_MIDDLE=83.333%"
       ];
     };
 
