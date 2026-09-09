@@ -610,8 +610,12 @@
         desc = "Enter the child directory, or open the file";
       }
       {
+        # MODIFIED: was `shell --block 'zip -r ...'`, but `zip` is not installed
+        # on this system, so the bind failed with exit 127. Now uses the already
+        # present ouch.yazi plugin (arg "zip" = default format); it prompts for
+        # the archive name and infers the format from the extension typed there.
         on = ["c" "z"];
-        run = ''shell --block 'zip -r "$(basename "%0").zip" %s' '';
+        run = "plugin ouch zip";
         desc = "Zip selected file(s)";
       }
     ];

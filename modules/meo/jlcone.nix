@@ -77,8 +77,17 @@ self: super: {
       # Upstream liefert teils world-writable Dateien (s. AUR-PKGBUILD)
       chmod -R go-w $out/opt
 
+      # libglvnd via LD_LIBRARY_PATH: ANGLEs eigene libEGL.so dlopent zur
+      # Laufzeit das native libEGL.so.1 (GLVND-Dispatcher). Ohne es stirbt
+      # der GPU-Prozess ("Could not dlopen native EGL") und Chromium faellt
+      # auf Software-Rendering zurueck -- der PCB-Viewer ruckelt. mesa in
+      # buildInputs reicht nicht (libEGL.so.1 liegt in libglvnd), und
+      # runtimeDependencies greift nicht (autoPatchelf patcht Executables,
+      # der dlopen kommt aber aus der Bibliothek; RUNPATH ist nicht
+      # transitiv). Nachgewiesen 2026-09-07 mit --enable-logging=stderr.
       makeWrapper $out/opt/JLCONE/jlcone $out/bin/jlcone \
         --add-flags "--ozone-platform-hint=auto" \
+        --prefix LD_LIBRARY_PATH : "${super.lib.makeLibraryPath [ super.libglvnd ]}" \
         --argv0 jlcone
 
       # Desktop-Eintrag auf den Wrapper zeigen lassen, falls vorhanden
