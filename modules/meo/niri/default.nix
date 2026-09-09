@@ -47,6 +47,7 @@ in {
       ./binds-apps.nix
       ./rules.nix
       ./startup.nix
+      ./edge-width.nix
     ]
     ++ hyprlandCompatModules;
 
