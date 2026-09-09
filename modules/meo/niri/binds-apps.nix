@@ -19,7 +19,7 @@
 #                              gewinnt eindeutig das Noctalia-Wallpaper-Panel
 {host, ...}: let
   vars = import ../../../hosts/${host}/variables.nix;
-  inherit (vars) browser terminal barChoice;
+  inherit (vars) terminal barChoice;
 
   # Shell-Panels. Die Tasten bleiben gleich, nur der Adressat wechselt mit
   # barChoice -- so muss beim Umschalten zwischen den Shells keine
@@ -60,19 +60,47 @@ in {
         _props.hotkey-overlay-title = "Terminal";
         spawn = [terminal];
       };
+      # MODIFIED 2026-09-09: aus `spawn [browser]` wurde ein piri-Singleton.
+      # Die Taste startet keine zweite Instanz mehr, sondern springt zur
+      # laufenden. Dasselbe gilt fuer Mod+G, Mod+O und Mod+Shift+D. Welche
+      # Fenster als Singleton gelten, steht in modules/meo/niri/piri.nix.
       "Mod+W" = {
-        _props.hotkey-overlay-title = "Browser";
-        spawn = [browser];
+        _props.hotkey-overlay-title = "Browser (fokussieren oder starten)";
+        spawn = ["piri" "singleton" "browser" "toggle"];
       };
       "Mod+Y".spawn = ["kitty" "-e" "yazi"];
       "Mod+E".spawn = ["emopicker9000"];
-      "Mod+O".spawn = ["obs"];
-      "Mod+G".spawn = ["gimp"];
+      "Mod+O" = {
+        _props.hotkey-overlay-title = "OBS (fokussieren oder starten)";
+        spawn = ["piri" "singleton" "obs" "toggle"];
+      };
+      "Mod+G" = {
+        _props.hotkey-overlay-title = "GIMP (fokussieren oder starten)";
+        spawn = ["piri" "singleton" "gimp" "toggle"];
+      };
       "Mod+T".spawn = ["thunar"];
       "Mod+Alt+M".spawn = ["pavucontrol"];
-      "Mod+Shift+D".spawn = ["discord"];
+      "Mod+Shift+D" = {
+        _props.hotkey-overlay-title = "Discord (fokussieren oder starten)";
+        spawn = ["piri" "singleton" "discord" "toggle"];
+      };
       "Mod+Alt+W".spawn = ["web-search"];
       "Mod+Ctrl+C".spawn = ["qs-cheatsheets"];
+
+      # ---- Picture-in-Picture von Hand (niri-pip) ----
+      #
+      # Browser-PiP erkennt der Daemon selbst, dafuer braucht es keine Taste.
+      # Diese beiden sind fuer alles ANDERE, was mitwandern soll: ein
+      # Videofenster ohne PiP-Modus, ein Rechner, ein Log. `pin` nimmt das
+      # fokussierte Fenster in die Verwaltung, `unpin` entlaesst es wieder.
+      "Mod+P" = {
+        _props.hotkey-overlay-title = "Fenster mitnehmen (PiP anheften)";
+        spawn = ["niripip" "pin"];
+      };
+      "Mod+Shift+P" = {
+        _props.hotkey-overlay-title = "Fenster nicht mehr mitnehmen";
+        spawn = ["niripip" "unpin"];
+      };
 
       # Ersatz fuer den pyprland-Scratchpad. Siehe modules/meo/scripts/niri-term-toggle.nix.
       "Mod+Shift+T" = {

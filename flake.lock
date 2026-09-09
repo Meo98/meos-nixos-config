@@ -489,6 +489,23 @@
         "type": "github"
       }
     },
+    "niri-pip": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1786876968,
+        "narHash": "sha256-2pg18dBMZ+9RoZ5h0LJk66t5AbWzQGXCuM/xEVeuqsQ=",
+        "owner": "t1ktakdev",
+        "repo": "niri-pip",
+        "rev": "4f2075ce35697169e43889aadd55f0900f1d4710",
+        "type": "github"
+      },
+      "original": {
+        "owner": "t1ktakdev",
+        "ref": "v0.2.1",
+        "repo": "niri-pip",
+        "type": "github"
+      }
+    },
     "nix-flatpak": {
       "locked": {
         "lastModified": 1767983141,
@@ -704,6 +721,27 @@
         "type": "github"
       }
     },
+    "piri": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786069006,
+        "narHash": "sha256-mvd8AgEm6onM8L3CfowqcDxa5Kz16wu5rnbnyUHL8Vw=",
+        "owner": "Asthestarsfalll",
+        "repo": "piri",
+        "rev": "f6468e95151795e226df0b1e937d41a77fafe435",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Asthestarsfalll",
+        "ref": "v0.1.9",
+        "repo": "piri",
+        "type": "github"
+      }
+    },
     "plugin-loader-src": {
       "flake": false,
       "locked": {
@@ -745,12 +783,14 @@
         "awww": "awww",
         "dank-material-shell": "dank-material-shell",
         "home-manager": "home-manager",
+        "niri-pip": "niri-pip",
         "nix-flatpak": "nix-flatpak",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-freecad": "nixpkgs-freecad",
         "nixvim": "nixvim",
         "noctalia": "noctalia",
+        "piri": "piri",
         "sddm-noctalia": "sddm-noctalia",
         "stylix": "stylix",
         "zen-browser": "zen-browser"

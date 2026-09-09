@@ -48,6 +48,8 @@ in {
       ./rules.nix
       ./startup.nix
       ./edge-width.nix
+      ./piri.nix
+      ./niri-pip.nix
     ]
     ++ hyprlandCompatModules;
 

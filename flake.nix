@@ -83,6 +83,43 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # piri — Erweiterungs-Daemon fuer niri (MIT, Rust). Deckt zwei Wuensche
+    # auf einmal ab, die sonst zwei eigene Derivationen gebraucht haetten:
+    # singleton (fokussiert eine laufende Instanz statt eine zweite zu
+    # starten, wie niri-ror) und sticky (ein schwebendes Fenster folgt dem
+    # Workspace-Wechsel, der Kern von niri-pip). Sieben weitere Plugins sind
+    # bewusst AUS, siehe modules/meo/niri/piri.nix.
+    #
+    # Wie bei noctalia und dank-material-shell auf einen Release-Tag gepinnt
+    # statt auf master. v0.1.9 ist der aktuellste (geprueft 2026-09-09 ueber
+    # die GitHub-API); zuletzt bewegt am 2026-08-27.
+    piri = {
+      url = "github:Asthestarsfalll/piri/v0.1.9";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # niri-pip — Picture-in-Picture-Regler fuer niri (MIT, Rust).
+    #
+    # Uebernimmt die Aufgabe, fuer die piris sticky-Plugin zu manuell ist:
+    # es ERKENNT Browser-PiP-Fenster selbst, haelt sie schwebend, laesst sie
+    # dem Workspace-Wechsel folgen ohne den Fokus zu stehlen, und merkt sich
+    # ihre Groesse und Position. piris sticky verlangt dagegen ein bereits
+    # schwebendes, fokussiertes Fenster, haelt nur EINES und vergisst es beim
+    # Neustart des Daemons.
+    #
+    # Kein eigener Flake im Projekt, deshalb flake = false und eine
+    # Derivation in modules/meo/scripts/niri-pip.nix.
+    #
+    # ACHTUNG BEIM BEWERTEN: das Projekt ist jung (2 Sterne, erster Release
+    # v0.2.1). Dafuer sauber gebaut — reines Rust ohne Systembibliotheken,
+    # keine git-Abhaengigkeiten im Cargo.lock, statische Konfiguration und
+    # gelernter Zustand getrennt (config.toml wird nur gelesen, state.json
+    # allein vom Daemon geschrieben). Zuletzt bewegt am 2026-09-06.
+    niri-pip = {
+      url = "github:t1ktakdev/niri-pip/v0.2.1";
+      flake = false;
+    };
+
     antigravity-nix = {
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
