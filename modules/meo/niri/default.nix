@@ -47,7 +47,6 @@ in {
       ./binds-apps.nix
       ./rules.nix
       ./startup.nix
-      ./dashboard.nix
     ]
     ++ hyprlandCompatModules;
 
