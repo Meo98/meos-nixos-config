@@ -17,5 +17,6 @@
     ./update-prewarm.nix
     ./dev-tools.nix
     ./doc-convert.nix
+    ./claude-tools-path.nix
   ];
 }
