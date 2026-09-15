@@ -247,6 +247,16 @@ in
         action = "<cmd>Telescope find_files<cr>";
         options.desc = "Find files";
       }
+      # Esc im Normal-Mode loescht das Such-Highlight.
+      # <cmd> statt : -- so wird der Modus nicht verlassen und ein
+      # wartender Operator (d, c, y) bleibt unberuehrt, weil das
+      # Mapping nur im Normal-Mode greift, nicht in operator-pending.
+      {
+        key = "<Esc>";
+        mode = ["n"];
+        action = "<cmd>noh<CR>";
+        options.desc = "Such-Highlight loeschen";
+      }
       # Markdown Reading-Mode ein/aus (Roh-Syntax der Cursor-Zeile)
       {
         key = "<leader>rm";
