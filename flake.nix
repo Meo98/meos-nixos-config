@@ -4,12 +4,18 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Separater Pin nur fuer FreeCAD: auf dem Haupt-Pin (20260715) ist die
-    # Kette pdal->vtk->freecad kaputt (GCC15/GDAL-Buildfehler, nicht in Hydra
-    # gecached). Neueres unstable hat den Fix + Binary-Cache. Kann beim
-    # naechsten grossen nixpkgs-Bump wieder entfernt werden (dann freecad
-    # regulaer aus pkgs beziehen).
-    nixpkgs-freecad.url = "github:nixos/nixpkgs/nixos-unstable";
+    # Rueckfall-Pin fuer Pakete, die am Kanal-Kopf nicht bauen.
+    #
+    # Zeigt bewusst auf einen REV, nicht auf einen Branch. Der Vorgaenger
+    # nixpkgs-freecad trackte ebenfalls nixos-unstable und isolierte deshalb
+    # GAR NICHTS -- beide Inputs standen am 2026-09-15 auf demselben Rev
+    # 34ab990, und ein `nix flake update` zog den kaputten Kanal-Kopf in
+    # beide gleichzeitig. Genau daran ist das Update am 15.09. gescheitert.
+    #
+    # WELCHES Paket hier herkommt und WARUM, steht in blockers.toml --
+    # inklusive der Bedingung, unter der der Pin wieder verschwindet.
+    # Siehe docs/superpowers/specs/2026-09-15-nixup-update-architecture-design.md
+    nixpkgs-fallback.url = "github:nixos/nixpkgs/34ab99075ac4f7e40cf037eef32cb1c360bb85e9";
 
     home-manager = {
       url = "github:nix-community/home-manager";

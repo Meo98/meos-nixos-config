@@ -72,8 +72,10 @@
     plasticity                # CAD-Modeler (Direct Modeling, Parasolid-Kernel)
     blender                   # 3D-Suite für Modeling, Sculpting, Animation und Rendering
     # Open-Source Parametrik-CAD (Feature-Tree, STEP); Wayland-Build für Hyprland.
-    # Aus separatem Pin nixpkgs-freecad (pdal/vtk auf Haupt-Pin kaputt, s. flake.nix).
-    inputs.nixpkgs-freecad.legacyPackages.${pkgs.system}.freecad-wayland
+    # Aus dem Rueckfall-Pin nixpkgs-fallback (34ab990, 2026-08-31), weil
+    # ifcopenshell 0.8.0 am Kanal-Kopf nicht gegen boost 1.91 baut.
+    # Registriert in blockers.toml -> dort steht die Freigabe-Bedingung.
+    inputs.nixpkgs-fallback.legacyPackages.${pkgs.system}.freecad-wayland
     obsidian                  # Markdown-Note-Editor + Vault für obsidian-stack Projekt
 
     # --- Entwicklung & System-Tools ---

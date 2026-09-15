@@ -1,0 +1,53 @@
+# Blocker-Register
+#
+# Einzige Quelle der Wahrheit dafuer, WELCHES Paket WARUM festgenagelt ist --
+# und vor allem: unter welcher Bedingung der Pin wieder verschwindet.
+#
+# Der Sinn dieser Datei ist nicht Dokumentation, sondern ein Verfallsdatum.
+# FreeCAD hat zwischen Juli und September drei Workarounds gekostet (pdal-
+# Overlay 16.07. -> Paket entfernt 16.07. -> Schein-Pin August -> Abbruch
+# 15.09.), weil kein einziger davon eine Bedingung hatte, unter der er
+# zurueckgebaut wird, und niemand je nachgeschaut hat.
+#
+# Stand 2026-09-15 wird diese Datei noch von Hand gepflegt. Das geplante
+# Werkzeug `nixup` liest und schreibt sie, und `nixup status` prueft die
+# Freigabe-Bedingung jedes Eintrags automatisch nach.
+# Siehe docs/superpowers/specs/2026-09-15-nixup-update-architecture-design.md
+
+[blocker.freecad]
+package  = "freecad-wayland"
+strategy = "fallback"
+input    = "nixpkgs-fallback"
+rev      = "34ab99075ac4f7e40cf037eef32cb1c360bb85e9"   # nixos-unstable 2026-08-31
+
+reason = """
+python3.14-ifcopenshell 0.8.0 baut nicht gegen boost 1.91. boost hat den
+konvertierenden Konstruktor von boost::optional unconditionally `explicit`
+gemacht; ifcopenshell nutzt Aggregat-Brace-Init fuer das radius-Feld in
+profile_point (src/ifcgeom/profile_helper.h). Fehler:
+'converting to boost::optional<double> from initializer list would use
+explicit constructor'. Zieht freecad-1.1.3 und damit system-path mit runter.
+"""
+
+upstream = "NixOS/nixpkgs#563014"   # gemergt 2026-09-15 08:15 UTC nach master
+fix_commit = "f2544b9673a6467eb1944b2e3643f91c211d1de9"
+
+# Freigabe-Bedingung. Maschinelle Pruefung laut Spec 3.4: das Paket am
+# aktuellen Kanal-Kopf evaluieren und `nix build --dry-run` fragen.
+#   "will be fetched" => Fix ist da UND gecacht  => Pin kann weg
+#   "will be built"   => Fix evtl. da, aber teuer => Hinweis statt Aktion
+#   Eval-Fehler       => weiterhin blockiert
+release_when = "freecad-wayland ist am nixos-unstable-Kopf substituierbar"
+
+# Warum gepinnt und nicht gepatcht (Spec 3.8, Stufe 1b): den Upstream-Patch
+# vorzuziehen haette ifcopenshell UND freecad-1.1.3 neu gebaut -- ein grosser
+# C++-Bau fuer einen Fix, den der Kanal in Tagen ohnehin liefert. Der Pin
+# kostet null Bauzeit, weil freecad aus dem Store bedient wird.
+decision = "pin statt patch: Neubau-Kosten unverhaeltnismaessig"
+
+since        = "2026-09-15"
+last_checked = "2026-09-15"
+
+# Belegte Messung vom 15.09. (nix build --dry-run, Wegwerf-Kopie):
+#   ohne Pin -> 24 Derivations (ifcopenshell, freecad, ghostty + 21x Glue)
+#   mit Pin  -> 22 Derivations (ghostty + 21x Glue)
