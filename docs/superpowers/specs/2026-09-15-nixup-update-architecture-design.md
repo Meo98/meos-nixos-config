@@ -125,7 +125,7 @@ Datenfluss-Absicht, nicht den fertigen Code.
 | `core` | `nixpkgs`, `home-manager`, `stylix`, `nixvim`, `nix-index-database` | Versionen sind wechselseitig abhängig; HM-master gegen altes nixpkgs bricht |
 | je Blatt | `nix-flatpak`, `antigravity-nix`, `awww`, `zen-browser`, `affinity-nix`, `sddm-noctalia` | unabhängig, einzeln testbar |
 | `fallback` | `nixpkgs-fallback` | wird **nie** automatisch bewegt, nur per `nixup unpin` |
-| Tag-gepinnt | `noctalia`, `dank-material-shell`, `piri`, `niri-pip` | bewegen sich bei `flake update` gar nicht → eigener Release-Wächter |
+| Tag-gepinnt | `noctalia`, `dank-material-shell`, `piri`, `niri-pip` | bewegen sich bei `flake update` gar nicht → Release-Wächter, siehe 3.9 |
 
 ### 3.3 Die Befehle
 
@@ -211,6 +211,81 @@ Führt `nixup check --quiet --notify` aus, vergleicht gegen
 
 Kein tägliches Genörgel bei unverändertem Zustand.
 
+### 3.8 Reparatur-Agent
+
+Wenn eine Gruppe rot wird, erzeugt `nixup` einen maschinenlesbaren Auftrag
+und ruft einen Claude-Agenten headless (`claude -p`) auf. Der Agent arbeitet
+**immer in einem git-Worktree**, nie auf `main`.
+
+**Eskalationsleiter** (der Agent arbeitet sie von oben nach unten ab):
+
+| # | Lage | Handlung |
+|---|---|---|
+| 1 | Upstream-Fix gemergt, noch nicht im Kanal, **und** Neubau-Kosten vertretbar | Patch aus dem PR holen, als Overlay einhängen. Verfällt von selbst (3.8.1) |
+| 1b | Fix gemergt, aber der Patch zieht teure Neubauten nach sich | Pinnen statt patchen. Begründung: der Kanal holt den Fix in Tagen ein, ein stundenlanger Neubau lohnt dafür nicht |
+| 2 | Kein Fix, Fehler sieht nach staging-Durchlauf aus | Überspringen, als `transient` vermerken, nächster Lauf probiert erneut |
+| 3 | Kein Fix in Sicht | Auf `nixpkgs-fallback` pinnen, Blocker mit Begründung und Upstream-Link eintragen |
+| 4 | Lage unklar | Nichts ändern. Bericht schreiben, Benutzer fragen (Varianten aus 3.5) |
+
+**Änderungs-Allowlist** — nur diese Pfade darf der Agent anfassen:
+
+- `blockers.toml`
+- `modules/meo/patches/*.patch` (neue vendorte Patches)
+- Overlay-Dateien, die ausschliesslich `overrideAttrs` mit `patches` setzen
+- `flake.nix`: ausschliesslich Input-URLs und Revs
+- `flake.lock`
+
+**Hart verboten**, auch wenn es den Bau grün machen würde:
+
+- Hardware-Workarounds in jeder Form (i915-PSR, RTD3, dpcd-backlight,
+  Docker `liveRestore`, CIFS soft-mount, zram+Swapfile, Ladelimit 80 %)
+- Secrets: `smb-secrets`, `setup-secrets`, `keys/`
+- Pakete aus der Config entfernen oder ersetzen (das ist die `drop`-Variante
+  und bleibt eine Nutzungsentscheidung des Benutzers)
+- `nh os switch` / jede Form von Aktivierung
+- **`doCheck = false` als Reparatur.** Tests abschalten, damit etwas baut, ist
+  das Löschen des Zeugen. Erlaubt ist es nur dort, wo ein Mensch es bewusst
+  gesetzt hat (ghostty, siehe 5.2).
+
+**Kostenregel:** Vor Stufe 1 schätzt der Agent per `--dry-run` ab, wie viele
+Derivations der Patch nach sich zieht. Ein Patch, der ein grosses Paket
+(freecad, qt, llvm, chromium …) zum Neubau zwingt, ist teurer als ein Pin,
+der aus dem Store bedient wird — dann gilt Stufe 1b. Konkreter Fall vom
+15.09.: `ifcopenshell` patchen hätte `freecad-1.1.3` neu gebaut, der Pin
+kostete null Bauzeit.
+
+**Gate:** Das Ergebnis muss auf **beiden** Hosts grün bauen. Nur dann wird
+committet und nach `main` gepusht. Aktiviert wird nie automatisch.
+
+**Budget:** höchstens N Anläufe je Blocker (Vorschlag: 3), danach Bericht
+statt weiterer Versuche. Ein Lockfile verhindert, dass Timer-Lauf und
+manueller Lauf sich in die Quere kommen.
+
+#### 3.8.1 Selbst verfallende Patches
+
+Ein vorgezogener Upstream-Patch lässt sich nicht mehr anwenden, sobald der
+Kanal ihn selbst enthält — der Bau bricht mit „patch does not apply" ab.
+Dieser spezielle Fehler ist **kein Blocker, sondern das Verfallsdatum**: der
+Agent erkennt ihn, entfernt Patch, Overlay und Registereintrag und committet
+den Rückbau. Damit räumt sich der Workaround selbst weg, statt zu Schulden zu
+werden (Ursache U2).
+
+### 3.9 Release-Wächter für tag-gepinnte Inputs
+
+`noctalia`, `dank-material-shell`, `piri` und `niri-pip` bewegen sich bei
+`nix flake update` nicht. Für sie prüft `nixup check` per `gh release list`
+auf neuere Tags. Bei einem Fund bekommt der Agent den Auftrag:
+
+1. Release-Notes zwischen gepinntem und neuem Tag lesen
+2. Auf Breaking Changes prüfen, die **diese** Config betreffen
+3. Ohne Breaking Change: bumpen, bauen, bei Grün committen — mit den
+   geprüften Notes in der Commit-Message
+4. Mit Breaking Change: **nicht** bumpen, Bericht schreiben, Benutzer fragen
+
+Vorbild ist der bestehende Commit `55feefa` (noctalia beta.3 → beta.10):
+sieben Releases gelesen, genau eine Breaking Change gefunden und benannt,
+dann gebumpt. Genau diese Form wird vom Agenten verlangt.
+
 ## 4. Was zurückgebaut wird
 
 Entsprechend der Entscheidung „lokal, CI nur als Linter":
@@ -248,10 +323,19 @@ Mit Nix, aber ohne Bauen:
 
 `--dry-run`-Modus für `update`, der alles tut außer committen.
 
-## 7. Offene Punkte
+## 7. Entschiedenes
 
-- Sollen die Tag-gepinnten Inputs (noctalia, dms, piri, niri-pip) in v1 einen
-  Release-Wächter bekommen oder erst in v2?
-- Bleibt FreeCAD überhaupt in der Config? Es wurde am 16.07. schon einmal als
-  „wird nicht mehr benoetigt" entfernt und hat seither drei Eingriffe gekostet.
-  Der Pin macht die Frage unkritisch, beantwortet sie aber nicht.
+- **Release-Wächter für tag-gepinnte Inputs: in v1** (Abschnitt 3.9). Ziel ist
+  „alles updatet sich", nicht „das meiste".
+- **FreeCAD bleibt.** Mit Reparatur-Agent und Registereintrag ist es nicht mehr
+  teuer, es zu behalten. Ob es genutzt wird, bleibt eine Frage für später und
+  keine Voraussetzung für diesen Umbau.
+- **Vollmacht des Agenten:** grüner Code geht nach `main`, aktiviert wird nie
+  automatisch (Abschnitt 3.8).
+
+## 8. Offene Punkte
+
+- Anlaufbudget je Blocker (Vorschlag: 3) und Token-Budget je Timer-Lauf sind
+  noch nicht festgelegt.
+- Verhalten, wenn der Agent auf `meo-work` etwas repariert, das nur dort bricht
+  — der Timer läuft vorerst nur auf `meo`.
