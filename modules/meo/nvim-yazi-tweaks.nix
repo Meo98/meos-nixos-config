@@ -105,6 +105,12 @@ in
         settings = {
           # Sign-Spalte abschalten (kein "H1"/"H2" links neben dem Heading)
           sign = {enabled = false;};
+          # Reading-Mode: auch die Zeile unter dem Cursor bleibt gerendert.
+          # (anti_conceal blendet normalerweise auf der Cursor-Zeile die
+          # Roh-Syntax ein -- genau das, was hier stoert.)  Im Insert-Mode
+          # wird ohnehin nicht gerendert (render_modes = n/c/t), die
+          # Roh-Syntax ist also beim Tippen weiterhin da.
+          anti_conceal = {enabled = false;};
           heading = {
             icons = ["󰉫 " "󰉬 " "󰉭 " "󰉮 " "󰉯 " "󰉰 "];
             position = "overlay";
@@ -241,6 +247,13 @@ in
         action = "<cmd>Telescope find_files<cr>";
         options.desc = "Find files";
       }
+      # Markdown Reading-Mode ein/aus (Roh-Syntax der Cursor-Zeile)
+      {
+        key = "<leader>rm";
+        mode = ["n"];
+        action.__raw = "function() _G.md_reading_toggle() end";
+        options.desc = "Markdown Reading-Mode umschalten";
+      }
       # System-Yank/Paste shortcuts
       {
         key = "<leader>y";
@@ -278,6 +291,25 @@ in
           source = "always",
         },
       })
+
+      -- Markdown Reading-Mode umschalten.
+      -- anti_conceal.enabled == false  =>  Reading-Mode AN (Cursor-Zeile
+      -- bleibt gerendert).  Der Toggle holt die Roh-Syntax zurueck, wenn
+      -- man am Markup selbst arbeitet (Links, Tabellen, Code-Fences).
+      function _G.md_reading_toggle()
+        local ok, state = pcall(require, "render-markdown.state")
+        if not ok or not state.config then
+          vim.notify("render-markdown nicht geladen", vim.log.levels.WARN)
+          return
+        end
+        local anti = not state.config.anti_conceal.enabled
+        state.config.anti_conceal.enabled = anti
+        for _, cfg in pairs(state.cache or {}) do
+          if cfg.anti_conceal then cfg.anti_conceal.enabled = anti end
+        end
+        require("render-markdown.api").render({ buf = vim.api.nvim_get_current_buf() })
+        vim.notify("Markdown Reading-Mode: " .. (anti and "aus" or "an"))
+      end
 
       -- Hover/Signature Help mit rounded borders
       vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
