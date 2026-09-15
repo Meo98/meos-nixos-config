@@ -25,20 +25,34 @@ in {
     # MODIFIED 2026-08-03: auf 02.08.00.50 (Public BETA) gebumpt wegen
     # abgeschnittener Popups/Dialoge (Send-Print-Dialog, Dual-Nozzle-Layout X2D);
     # Release-Notes nennen "dialog centering" + UI-Fixes. ACHTUNG: 3MF aus der
-    # Beta laesst sich nicht zu MakerWorld hochladen. Revert: version/buildstamp/
-    # sha256 auf den 02.07.01.62-Stand aus git zuruecksetzen.
+    # Beta laesst sich nicht zu MakerWorld hochladen.
+    # MODIFIED 2026-09-15: von der 02.08.00.50-BETA auf die STABILE 02.08.02.61
+    # ("Latest", 21.08.) gebumpt — die Beta stuerzte in 6 Wochen 8x ab, davor
+    # unter 02.07.01.62 genau 1x. Coredumps zeigten drei Signaturen, fuer die
+    # 2.8.1/2.8.2 die passenden Fixes nennen:
+    #   - Main-Thread-SEGV aus einem GLib-idle-Callback (toter Zeiger, 15.09.)
+    #     -> 2.8.2 "crash when shutting down the application" (#11482)
+    #   - SEGV/GP-Fault im bbl_BgSlcPcs-Slicethread (20.08. + 10.09.)
+    #     -> 2.8.1 "slicing crash after fully color-painting a modifier" (#11152)
+    #   - Dauerlast in libbambu_networking.so (800 MB Log in 15 h Laufzeit)
+    #     -> 2.8.2.61 "occasional crash in LAN mode under unstable network"
+    # Nebeneffekte: 3MF-Upload zu MakerWorld geht wieder (kein Beta-Build mehr),
+    # und 2.8.2.61 bringt korrigierte X2D-Presets. Die UI-Fixes, wegen denen am
+    # 03.08. auf die Beta gewechselt wurde, sind in 2.8.2.61 enthalten (neuer).
+    # Revert: version/buildstamp/sha256 auf den 02.08.00.50-Stand aus git
+    # zuruecksetzen (git log -p modules/meo/bambu.nix).
     # Namensschema der AppImage hat sich geaendert: frueher
     # "Bambu_Studio_ubuntu-${ubuntu_version}.AppImage", jetzt
     # "BambuStudio_ubuntu24.04-v${version}-${buildstamp}.AppImage".
     # Bei kuenftigem Bump: neue Version + buildstamp aus dem GitHub-Release holen
     #   gh release view --repo bambulab/BambuStudio --json tagName,assets
     # dann Hash: nix store prefetch-file --hash-type sha256 <url>
-    version = "02.08.00.50";
-    buildstamp = "20260625193201";
+    version = "02.08.02.61";
+    buildstamp = "20260820225108";
 
     src = super.fetchurl {
       url = "https://github.com/bambulab/BambuStudio/releases/download/v${version}/BambuStudio_ubuntu24.04-v${version}-${buildstamp}.AppImage";
-      sha256 = "sha256-JGy2ua2TtLSmX2MTJN1/CYvyEZiiw5g36RqmoDk+TdQ=";
+      sha256 = "sha256-1QGxA/rFQkUT7A6Na8FF+zBxneLH2U1zINcjdAyBp/0=";
     };
   
     # HINWEIS 2026-08-04: Per-App-FONTCONFIG_FILE (Noto-Sans-Umbiegung) damals
