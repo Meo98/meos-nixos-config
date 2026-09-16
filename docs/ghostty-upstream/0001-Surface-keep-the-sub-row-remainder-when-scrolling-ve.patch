@@ -1,0 +1,49 @@
+From e4fafe4f5130f77f6db732b7d29358cdf7d859ee Mon Sep 17 00:00:00 2001
+From: Meo98 <chenevard.romeo@gmail.com>
+Date: Wed, 16 Sep 2026 11:42:42 +0200
+Subject: [PATCH 1/2] Surface: keep the sub-row remainder when scrolling
+ vertically
+
+The accumulator in scrollCallback was reset to zero on every emission
+instead of keeping the sub-row remainder.
+
+`amount` is an f64 (`poff / cell_size`), so `amount * cell_size` evaluates
+back to `poff`, and `poff - (amount * cell_size)` is always 0. The intent
+was to subtract the part that was actually scrolled, which is the
+*truncated* delta, not the unrounded amount.
+
+The scrolled distance therefore lost everything below a full row on each
+event. The loss grows with scroll speed -- negligible while reading, but
+around 20% when scrolling fast, and it makes the row cadence uneven.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+---
+ src/Surface.zig | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/Surface.zig b/src/Surface.zig
+index 24d2d26..0fa8772 100644
+--- a/src/Surface.zig
++++ b/src/Surface.zig
+@@ -3546,12 +3546,17 @@ pub fn scrollCallback(
+         // We scroll by the number of rows in the offset and save the remainder
+         const amount = poff / cell_size;
+         assert(@abs(amount) >= 1);
+-        self.mouse.pending_scroll_y = poff - (amount * cell_size);
+ 
+         // Round towards zero.
+         const delta: isize = @intFromFloat(@trunc(amount));
+         assert(@abs(delta) >= 1);
+ 
++        // Save the sub-row remainder. `amount` is a float, so
++        // `amount * cell_size` is exactly `poff` again and subtracting it
++        // always zeroed the accumulator, discarding up to a full row of
++        // motion on every emission. Subtract the truncated delta instead.
++        self.mouse.pending_scroll_y = poff - (@as(f64, @floatFromInt(delta)) * cell_size);
++
+         break :y .{ .delta = delta };
+     };
+ 
+-- 
+2.55.0
+

@@ -1,0 +1,75 @@
+From 5711a3b96176eb694338c9678d5c67c0094b8799 Mon Sep 17 00:00:00 2001
+From: Meo98 <chenevard.romeo@gmail.com>
+Date: Wed, 16 Sep 2026 11:42:54 +0200
+Subject: [PATCH 2/2] Surface: accumulate horizontal high-resolution scroll
+ ticks
+
+Non-precision horizontal offsets were rounded straight to whole columns
+with `@round(xoff)`, bypassing the pending_scroll_x accumulator that the
+precision path uses.
+
+A high-resolution horizontal tick reports a fraction of a wheel click, so
+any |xoff| < 0.5 rounded to zero and was dropped. On devices that emit
+REL_WHEEL_HI_RES (forwarded by Wayland as wl_pointer.axis_value120),
+horizontal scrolling was effectively dead: the events arrive, but none of
+them ever produce a column.
+
+Normalize non-precision offsets to pixels the way the y axis already does
+(tick * cell_size * mouse-scroll-multiplier.discrete) and run both paths
+through the same accumulator. Also applies the same remainder fix as the
+previous commit to the x axis.
+
+Note: the precision path still ignores mouse-scroll-multiplier.precision
+on the x axis, unlike y. That looks inconsistent, but changing it would
+alter behaviour for existing users, so it is left alone here.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+---
+ src/Surface.zig | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/src/Surface.zig b/src/Surface.zig
+index 0fa8772..26d24e3 100644
+--- a/src/Surface.zig
++++ b/src/Surface.zig
+@@ -3562,13 +3562,19 @@ pub fn scrollCallback(
+ 
+     // For detailed comments see the y calculation above.
+     const x: ScrollAmount = if (xoff == 0) .{} else x: {
+-        if (!scroll_mods.precision) {
+-            const x_delta_isize: isize = @intFromFloat(@round(xoff));
+-            break :x .{ .delta = x_delta_isize };
+-        }
+-
+-        const poff: f64 = self.mouse.pending_scroll_x + xoff;
+         const cell_size: f64 = @floatFromInt(self.size.cell.width);
++
++        // Non-precision offsets are wheel ticks, not pixels, so normalize
++        // them to pixels the way the y axis does instead of rounding them
++        // straight to whole columns. Rounding dropped every high-resolution
++        // horizontal tick, since any |xoff| < 0.5 rounds to zero and never
++        // reached the accumulator.
++        const xoff_adjusted: f64 = if (scroll_mods.precision)
++            xoff
++        else
++            xoff * cell_size * self.config.mouse_scroll_multiplier.discrete;
++
++        const poff: f64 = self.mouse.pending_scroll_x + xoff_adjusted;
+         if (@abs(poff) < cell_size) {
+             self.mouse.pending_scroll_x = poff;
+             break :x .{};
+@@ -3576,9 +3582,10 @@ pub fn scrollCallback(
+ 
+         const amount = poff / cell_size;
+         assert(@abs(amount) >= 1);
+-        self.mouse.pending_scroll_x = poff - (amount * cell_size);
+         const delta: isize = @intFromFloat(@trunc(amount));
+         assert(@abs(delta) >= 1);
++        // Same remainder fix as the y axis above.
++        self.mouse.pending_scroll_x = poff - (@as(f64, @floatFromInt(delta)) * cell_size);
+         break :x .{ .delta = delta };
+     };
+ 
+-- 
+2.55.0
+
