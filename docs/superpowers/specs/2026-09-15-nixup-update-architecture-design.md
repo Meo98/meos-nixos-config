@@ -270,6 +270,33 @@ Agent erkennt ihn, entfernt Patch, Overlay und Registereintrag und committet
 den Rückbau. Damit räumt sich der Workaround selbst weg, statt zu Schulden zu
 werden (Ursache U2).
 
+**Teilverfall — der wichtige Sonderfall.** Ein Patch kann aus mehreren Hunks
+bestehen, die *unabhängig voneinander* verfallen. Dann schlägt nur ein Hunk
+fehl, und den ganzen Patch zu verwerfen würde noch gültige Fixes mit
+wegräumen.
+
+Belegter Fall: `ghostty-hires-scroll.patch` hat drei Hunks. Hunk 1 (Klemmung
+nur auf macOS) wurde von upstream selbst behoben — PR ghostty-org/ghostty#12483,
+gemergt 2026-04-27, mit derselben Lösung. Hunk 2 (verworfener Sub-Zeilen-Rest)
+und Hunk 3 (x-Achse ohne Akkumulator) sind in `main` unverändert offen, und es
+existiert kein PR dazu. Sobald nixpkgs ghostty über v1.3.1 hinaus bumpt,
+verfällt genau ein Drittel dieses Patches.
+
+Regel für den Agenten:
+
+1. Bei „patch does not apply" **hunkweise** erneut versuchen
+   (`patch --forward --batch` je Hunk, oder `git apply --reject` und die
+   `.rej`-Dateien auswerten).
+2. Hunks, die fehlschlagen **weil ihr Inhalt bereits vorhanden ist**
+   (`--forward` meldet „Reversed (or previously applied) patch detected"),
+   werden entfernt.
+3. Hunks, die aus einem anderen Grund fehlschlagen — verschobener Kontext,
+   umgebauter Code — sind **kein** Verfall, sondern ein echter Blocker:
+   Bericht schreiben, Benutzer fragen. Der Agent rebast keinen Patch auf
+   umgebauten Code im Alleingang.
+4. Der Registereintrag wird nur dann geloescht, wenn **alle** Hunks verfallen
+   sind. Sonst wird er aktualisiert.
+
 ### 3.9 Release-Wächter für tag-gepinnte Inputs
 
 `noctalia`, `dank-material-shell`, `piri` und `niri-pip` bewegen sich bei
