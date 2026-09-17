@@ -1,5 +1,8 @@
-{ pkgs, inputs, ... }:
-  {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
   nixpkgs.overlays = [
     (import ../../modules/meo/bambu.nix)
     (import ../../modules/meo/orcastudio.nix)
@@ -21,12 +24,11 @@
 
   services.flatpak.enable = true; # Ermöglicht die Installation von Flatpaks (GUI-Apps außerhalb des Nix-Stores)
 
-
   # 2. QMK & Vial Berechtigungen (Udev Rules)
   # Dies erlaubt dir, ohne 'sudo' zu flashen und Vial zu nutzen
-  services.udev.packages = [ 
-    pkgs.vial 
-    pkgs.qmk-udev-rules 
+  services.udev.packages = [
+    pkgs.vial
+    pkgs.qmk-udev-rules
   ];
 
   # 3. QMK Hardware Support aktivieren
@@ -42,71 +44,73 @@
     jq
     # libnotify — in core/packages.nix
     # --- Multimedia & Kommunikation ---
-    audacity                  # Open-Source Audio-Editor für Aufnahme und Bearbeitung
-    discord                   # Chat- und Voice-Plattform für Communities/Gaming (hier statt core)
-    signal-desktop            # Signal Messenger (kein Web-Wrapper möglich, braucht native App)
-    vlc                       # Universeller Medienplayer, spielt fast jedes Videoformat ab
-    tidal-hifi                # Desktop-Client für den High-Fidelity Musik-Streamingdienst Tidal
-    morgen                    # All-in-one Calendars, Tasks and Scheduler
-    orca-slicer               # Open-Source Slicer (Bambu-Studio-Fork), native from-source
-    bambu-studio              # Offizieller BambuLab-Slicer (AppImage via modules/meo/bambu.nix overlay)
-    orca-studio               # Community-Fork: Bambu Studio + Orca-Features + Cloud-Senden (AppImage via modules/meo/orcastudio.nix overlay)
-    jlcone                    # JLCPCB-Desktop-Client für Bestellungen mit App-Rabatt (.deb via modules/meo/jlcone.nix overlay)
+    audacity # Open-Source Audio-Editor für Aufnahme und Bearbeitung
+    discord # Chat- und Voice-Plattform für Communities/Gaming (hier statt core)
+    signal-desktop # Signal Messenger (kein Web-Wrapper möglich, braucht native App)
+    vlc # Universeller Medienplayer, spielt fast jedes Videoformat ab
+    tidal-hifi # Desktop-Client für den High-Fidelity Musik-Streamingdienst Tidal
+    morgen # All-in-one Calendars, Tasks and Scheduler
+    orca-slicer # Open-Source Slicer (Bambu-Studio-Fork), native from-source
+    bambu-studio # Offizieller BambuLab-Slicer (AppImage via modules/meo/bambu.nix overlay)
+    orca-studio # Community-Fork: Bambu Studio + Orca-Features + Cloud-Senden (AppImage via modules/meo/orcastudio.nix overlay)
+    jlcone # JLCPCB-Desktop-Client für Bestellungen mit App-Rabatt (.deb via modules/meo/jlcone.nix overlay)
 
     # --- Webbrowser ---
     # MODIFIED 2026-07-28: WaylandPerWindowScaling gegen falsch skalierte /
     # fragmentierte erste Frames beim Fensteröffnen (fractional scale 1.6 auf
     # eDP-1): Chromium rendert sonst initial mit Scale 1/2 und der Compositor
     # skaliert die Frames hoch, bis der korrekte Faktor ankommt.
-    (vivaldi.override {       # Feature-reicher Browser mit Fokus auf Tab-Management und Privatsphäre
-      commandLineArgs = [ "--enable-features=WaylandPerWindowScaling" ];
+    (vivaldi.override {
+      # Feature-reicher Browser mit Fokus auf Tab-Management und Privatsphäre
+      commandLineArgs = ["--enable-features=WaylandPerWindowScaling"];
     })
-    google-chrome             # Standard-Browser von Google (oft nötig für DRM/Netflix-Stabilität)
-    firefox                   # Der klassische, privatsphäre-orientierte Open-Source Browser
+    google-chrome # Standard-Browser von Google (oft nötig für DRM/Netflix-Stabilität)
+    firefox # Der klassische, privatsphäre-orientierte Open-Source Browser
 
     # --- Produktivität & Office ---
-    bitwarden-desktop         # Passwort-Manager zur sicheren Verwaltung deiner Zugangsdaten
+    bitwarden-desktop # Passwort-Manager zur sicheren Verwaltung deiner Zugangsdaten
     onlyoffice-desktopeditors # Office-Suite mit sehr hoher Kompatibilität zu MS Office-Formaten
-    insync                    # Synchronisations-Client für Google Drive und OneDrive
-    kicad                     # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
-    plasticity                # CAD-Modeler (Direct Modeling, Parasolid-Kernel)
-    blender                   # 3D-Suite für Modeling, Sculpting, Animation und Rendering
+    insync # Synchronisations-Client für Google Drive und OneDrive
+    kicad # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
+    plasticity # CAD-Modeler (Direct Modeling, Parasolid-Kernel)
+    blender # 3D-Suite für Modeling, Sculpting, Animation und Rendering
     # Open-Source Parametrik-CAD (Feature-Tree, STEP); Wayland-Build für Hyprland.
     # Aus dem Rueckfall-Pin nixpkgs-fallback (34ab990, 2026-08-31), weil
     # ifcopenshell 0.8.0 am Kanal-Kopf nicht gegen boost 1.91 baut.
     # Registriert in blockers.toml -> dort steht die Freigabe-Bedingung.
     inputs.nixpkgs-fallback.legacyPackages.${pkgs.system}.freecad-wayland
-    obsidian                  # Markdown-Note-Editor + Vault für obsidian-stack Projekt
+    obsidian # Markdown-Note-Editor + Vault für obsidian-stack Projekt
 
     # --- Entwicklung & System-Tools ---
-    nodejs                    # JavaScript-Laufzeitumgebung für Server- und Frontend-Entwicklung
-    glab                      # GitLab CLI - Ermöglicht GitLab-Aktionen (wie Login/Push) im Terminal
-    distrobox                 # Erlaubt es, andere Linux-Distros (wie Ubuntu/Arch) in Containern zu nutzen
-    antigravity               # Ein spezieller Port/Fork für VS Codium/VS Code optimiert
-    claude-code               # Anthropic Claude CLI – wird von der Claude Code VS Code-Extension benötigt
-    dos2unix                  # Werkzeug zum Umwandeln von Windows-Zeilenumbrüchen in Linux-Format
-
+    nodejs # JavaScript-Laufzeitumgebung für Server- und Frontend-Entwicklung
+    glab # GitLab CLI - Ermöglicht GitLab-Aktionen (wie Login/Push) im Terminal
+    distrobox # Erlaubt es, andere Linux-Distros (wie Ubuntu/Arch) in Containern zu nutzen
+    antigravity # Ein spezieller Port/Fork für VS Codium/VS Code optimiert
+    claude-code # Anthropic Claude CLI – wird von der Claude Code VS Code-Extension benötigt
+    dos2unix # Werkzeug zum Umwandeln von Windows-Zeilenumbrüchen in Linux-Format
+    thonny
     # --- Grafik & Gaming ---
-    vulkan-tools              # Diagnose-Tools für die Vulkan-Grafik-Schnittstelle (z.B. vulkaninfo)
+    vulkan-tools # Diagnose-Tools für die Vulkan-Grafik-Schnittstelle (z.B. vulkaninfo)
     # mesa-demos — in core/packages.nix (systemweit verfügbar)
-    gamescope                 # Micro-Compositor von Valve für stabileres Gaming und Upscaling
-    kdePackages.qtmultimedia  # Multimedia-Bibliotheken für QT-Anwendungen (wichtig für einige Player/UIs)
+    gamescope # Micro-Compositor von Valve für stabileres Gaming und Upscaling
+    kdePackages.qtmultimedia # Multimedia-Bibliotheken für QT-Anwendungen (wichtig für einige Player/UIs)
 
     # --- Keyboard & Hardware ---
-    qmk                       # CLI-Tool zum Flashen von mechanischen Tastaturen mit QMK-Firmware
-    vial                      # GUI zur Echtzeit-Konfiguration von Tastatur-Keymaps (Vial-Firmware)
+    qmk # CLI-Tool zum Flashen von mechanischen Tastaturen mit QMK-Firmware
+    vial # GUI zur Echtzeit-Konfiguration von Tastatur-Keymaps (Vial-Firmware)
     imv
     procps
     qmk_hid
-    hid-listen    
+    hid-listen
 
     # --- Keyball Layer Pop-up Tool ---
-    (python3.withPackages (ps: with ps; [
-      pynput                    # Globales Keyboard-Listening für F13-F16 Layer-Hotkeys
-      pillow                    # Bildverarbeitung für Layer-Screenshots
-      tkinter                   # GUI für Pop-up-Fenster
-      evdev                     # Direkter Zugriff auf Input-Devices (für Wayland)
-    ]))
+    (python3.withPackages (ps:
+      with ps; [
+        pynput # Globales Keyboard-Listening für F13-F16 Layer-Hotkeys
+        pillow # Bildverarbeitung für Layer-Screenshots
+        tkinter # GUI für Pop-up-Fenster
+        evdev # Direkter Zugriff auf Input-Devices (für Wayland)
+      ]))
 
     # --- Custom Desktop Items (Web-Apps) ---
     # Erstellt einen Menü-Eintrag, der Microsoft 365 als "App" (Web-Wrapper) über Vivaldi startet
@@ -115,9 +119,9 @@
       desktopName = "Microsoft 365";
       exec = "${pkgs.vivaldi}/bin/vivaldi --app=\"https://www.office.com/?auth=2\"";
       icon = "vivaldi";
-      categories = [ "Office" ];
+      categories = ["Office"];
     })
-    
+
     # --- Platzhalter für optionale v2 (Affinity Suite via Nix) ---
     # inputs.affinity-nix.packages.${pkgs.system}.designer
     # inputs.affinity-nix.packages.${pkgs.system}.photo
