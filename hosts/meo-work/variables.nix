@@ -44,24 +44,29 @@
   # Umstellung auf EDID spaeter: name = "Dell Inc. DELL U2422H 9FGXF83".
   # Achtung, niris Schreibweise ist NICHT identisch mit Hyprlands desc: bei
   # fehlender Seriennummer haengt niri " Unknown" an.
+  # KORRIGIERT 2026-10-05: Namen von DP-1/DP-2 (existierten nicht -> niri
+  # positionierte HP+Dell automatisch auf 5800/3880, Maus-Durchgleiten kaputt)
+  # auf die stabilen EDID-Namen umgestellt (per `niri msg outputs` verifiziert).
+  # `mode` weggelassen -> niri nutzt den bevorzugten Modus; die alten
+  # Mode-Strings (@60.000) passten ohnehin nicht zu den realen (@59.950/@59.977).
   niriOutputs = [
     {
-      name = "DP-1";
-      mode = "1920x1200@60.000";
+      # HP Z24n - oben links
+      name = "Hewlett Packard HP Z24n CN47260BBN";
       scale = 1.0;
       x = 0;
       y = 0;
     }
     {
-      name = "DP-2";
-      mode = "1920x1080@60.000";
+      # Dell U2422H - oben rechts
+      name = "Dell Inc. DELL U2422H 9FGXF83";
       scale = 1.0;
       x = 1920;
       y = 0;
     }
     {
-      name = "eDP-1";
-      mode = "1920x1080@60.000";
+      # LG Laptop-Panel - darunter, zentriert unter dem rechten Monitor
+      name = "LG Display 0x06B8 Unknown";
       scale = 1.2;
       x = 2280;
       y = 1080;
@@ -69,12 +74,19 @@
   ];
 
   # Bar/Shell
-  barChoice = "noctalia";
+  # 2026-10-05: von "noctalia" auf "dms" (DankMaterialShell) umgestellt, damit
+  # meo-work dasselbe Aussehen/Shell wie meo hat (Teilprojekt B der dms-Migration,
+  # das meo-work bis jetzt ausgespart hatte). Rueckweg: wieder "noctalia".
+  barChoice = "dms";
 
   # Idle-Screen-Off (noctalia): Display bei Inaktivitaet abschalten (660s).
   # meo-work (Tiger Lake, IPS) ist vom eDP-OLED-Freeze auf meo NICHT betroffen
   # -> Screen-off hier wieder aktiv (2026-07-16, vorher pauschal deaktiviert).
   idleScreenOff = true;
+
+  # dms-Pendant zu idleScreenOff (DMS liest dmsScreenOff, nicht idleScreenOff).
+  # meo-work ist IPS -> nicht vom eDP-OLED-Freeze betroffen, Screen-off ist sicher.
+  dmsScreenOff = true;
 
   # Waybar Settings
   clock24h = true;
