@@ -80,12 +80,16 @@
     # barChoice in hosts/<host>/variables.nix.
     # Spec: docs/superpowers/specs/2026-08-31-dms-migration-design.md
     #
-    # Wie bei noctalia bewusst auf einen Release-Tag gepinnt statt auf
-    # master-HEAD: Releases sind getestet, master ist Lotterie.
-    # v1.5.3 ist der aktuellste Release-Tag (geprueft 2026-08-31 ueber die
-    # GitHub-API).
+    # 2026-10-05: AUF WUNSCH auf master-Branch statt Tag umgestellt, damit DMS
+    # immer die neueste Version ist UND automatisch aktuell bleibt: der
+    # woechentliche flake-update.yml (Mo 04:00 UTC) bewegt nur bewegliche Refs,
+    # ein fester Tag wuerde nie nachziehen. Trade-off: master ist ungetestet
+    # ("Lotterie"), aber der automerge-Gate mergt den Update-PR nur, wenn
+    # build.yml auf BEIDEN Hosts gruen ist -> kaputte Builds landen nie im System.
+    # Rueckweg zu Stabilitaet: url wieder auf einen Release-Tag pinnen
+    # (zuletzt getestet: v1.6.2). Betrifft beide Hosts (geteilter Input).
     dank-material-shell = {
-      url = "github:AvengeMedia/DankMaterialShell/v1.5.3";
+      url = "github:AvengeMedia/DankMaterialShell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
