@@ -88,6 +88,15 @@
   # meo-work ist IPS -> nicht vom eDP-OLED-Freeze betroffen, Screen-off ist sicher.
   dmsScreenOff = true;
 
+  # Clamshell-Modus (modules/meo/scripts/clamshell-toggle.nix, Mod+Alt+D):
+  # darf das INTERNE Panel per `niri msg output <eDP> off` abgeschaltet werden,
+  # waehrend die Maschine mit zugeklapptem Deckel weiterlaeuft?
+  #
+  # true: IPS-Panel, nicht vom eDP-Freeze betroffen (dieselbe Begruendung wie
+  # dmsScreenOff darueber). Ohne das wuerde der Schirm unter dem geschlossenen
+  # Deckel weiterleuchten — Hitze und Strom fuer ein Bild, das niemand sieht.
+  clamshellPanelOff = true;
+
   # Waybar Settings
   clock24h = true;
 

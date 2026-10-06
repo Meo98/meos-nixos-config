@@ -64,6 +64,15 @@ in {
   home.packages = [
     (import ../scripts/keymap-popup.nix {inherit pkgs;})
     (import ../scripts/niri-term-toggle.nix {inherit pkgs;})
+
+    # Clamshell-Schalter (Mod+Alt+D). Braucht als einziges dieser Scripts einen
+    # Host-Parameter: ob der interne Schirm dabei abgeschaltet werden darf, ist
+    # auf meo eine Hardware-Frage (eDP-OLED-Freeze), nicht Geschmack.
+    (import ../scripts/clamshell-toggle.nix {
+      inherit pkgs;
+      panelOff = vars.clamshellPanelOff or false;
+    })
+
     pkgs.wl-color-picker
   ];
 

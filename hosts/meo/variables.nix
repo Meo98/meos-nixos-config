@@ -97,6 +97,20 @@
   # DMS-Konfiguration deklarativ bleiben MUSS statt GUI-Zustand zu werden.
   dmsScreenOff = false;
 
+  # Clamshell-Modus (modules/meo/scripts/clamshell-toggle.nix, Mod+Alt+D):
+  # darf das INTERNE Panel per `niri msg output <eDP> off` abgeschaltet werden,
+  # waehrend die Maschine mit zugeklapptem Deckel weiterlaeuft?
+  #
+  # FALSE auf meo, aus exakt demselben Grund wie dmsScreenOff darueber:
+  # `output ... off` IST ein DPMS-Off und wedged die i915-Pipe des OLED, nur
+  # ein Reboot holt den Schirm zurueck. Clamshell funktioniert hier trotzdem,
+  # der interne Panel bleibt dabei nur an.
+  #
+  # Eigene Variable statt Wiederverwendung von dmsScreenOff — gleiche Regel wie
+  # dort beschrieben: die beiden sollen getrennt schaltbar bleiben, sonst zieht
+  # ein Wechsel des einen still den anderen mit.
+  clamshellPanelOff = false;
+
   # Program Options
   # Set Default Browser (google-chrome-stable for google-chrome)
   # This does NOT install your browser

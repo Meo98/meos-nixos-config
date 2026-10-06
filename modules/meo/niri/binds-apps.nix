@@ -108,6 +108,19 @@ in {
         spawn = ["niri-term-toggle"];
       };
 
+      # Clamshell: Deckel zu, Maschine laeuft weiter. Seit 2026-10-06 ist
+      # Zuklappen per Default ein Suspend (services.logind in beiden
+      # hosts/*/default.nix); diese Taste haengt den logind-Lid-Handler fuer
+      # eine Sitzung aus. Details in modules/meo/scripts/clamshell-toggle.nix.
+      #
+      # Mod+Alt+D wie "Deckel". Mod+Ctrl+D waere das Hyprland-Erbe gewesen, ist
+      # aber laut Kopf dieser Datei bewusst entfallen (nwg-dock) — die Taste
+      # hier zu recyceln wuerde diese Notiz unlesbar machen.
+      "Mod+Alt+D" = {
+        _props.hotkey-overlay-title = "Clamshell (Deckel zu, laeuft weiter)";
+        spawn = ["clamshell-toggle"];
+      };
+
       # sleep 0.5 haelt dasselbe Schutzfenster wie unter Hyprland: es gibt
       # Noctalia Zeit, das Lock-Surface zu committen, bevor logind suspendiert.
       "Mod+Alt+L" = {

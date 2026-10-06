@@ -1,6 +1,7 @@
 { config, pkgs, inputs, lib, username, ... }: {
   imports = [
     ./hardware.nix
+    ./daten.nix # ADDED 2026-10-06: /daten-Partition (ex Windows-Dual-Boot), nur meo-work
     ./host-packages.nix
     ../../modules/meo/kanata.nix
     ../meo/affinity.nix
@@ -114,6 +115,32 @@
     xorg.libXft
     xorg.libXinerama
   ];
+
+  # --- LOGIND: Zuklappen -> Suspend, IMMER ---
+  # ADDED 2026-10-06. Dieser Host hatte BISHER GAR KEINEN logind-Block, der
+  # Wert kam also als systemd-Default — nicht aus dieser Konfiguration. Das ist
+  # der Grund, warum die Suche nach "wo haben wir das verstellt" ins Leere
+  # lief: niemand hatte es gesetzt.
+  #
+  # Der Default ist HandleLidSwitchDocked=ignore, und "docked" heisst laut
+  # `man 5 logind.conf` woertlich "if the system is inserted in a docking
+  # station, OR IF MORE THAN ONE DISPLAY IS CONNECTED". Mit den drei Schirmen
+  # aus niriOutputs ist dieser Host also permanent "docked" — Zuklappen loeste
+  # nie einen Suspend aus. Sichtbar wurde stattdessen der Idle-Lock von DMS:
+  # Lockscreen auf allen drei Monitoren, Maschine hellwach.
+  #
+  # Reihenfolge laut derselben Manpage: Docked > ExternalPower > LidSwitch.
+  # Alle drei explizit, damit kein kuenftiger systemd-Default-Wechsel das
+  # Verhalten still umdreht.
+  #
+  # Clamshell (Deckel zu, am externen Monitor weiterarbeiten) ist damit nicht
+  # verloren, nur nicht mehr der Default: modules/meo/scripts/
+  # clamshell-toggle.nix haengt den Lid-Handler auf Zuruf aus (Mod+Alt+D).
+  services.logind = {
+    lidSwitch = "suspend";
+    lidSwitchDocked = "suspend";
+    lidSwitchExternalPower = "suspend";
+  };
 
   # --- MONITOR LAYOUT NACH SUSPEND WIEDERHERSTELLEN ---
   systemd.services.hyprland-monitor-restore = {

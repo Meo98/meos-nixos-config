@@ -252,19 +252,37 @@
   # Noctalia v5's idle daemon racen. mkForce [] kappt nur den Auto-Start.
   systemd.user.services.hypridle.wantedBy = lib.mkForce [];
 
-  # --- LOGIND: Zuklappen -> Suspend, ABER nur OHNE externen Monitor ---
-  # (2026-07-01) Vorher alles "ignore" (Idle-Screen-off machte noctalia). Da der
-  # noctalia Idle-Screen-off jetzt deaktiviert ist (eDP-Freeze-Workaround, siehe
-  # kernelParams i915.enable_dc=0 + noctalia.nix), bliebe der interne Panel beim
-  # Zuklappen sonst dauerhaft an. Jetzt:
-  #   - kein externer Screen  -> Suspend (Panel physisch aus, hitzesicher)
-  #   - externer Screen = "docked" -> ignore (Maschine + externer Monitor laufen
-  #     weiter; interner Panel bleibt an, aber KEIN DPMS-Freeze-Trigger)
-  # lidSwitchExternalPower=suspend, damit es auch am Netzteil (ohne externen)
-  # suspendet; "docked" hat Vorrang und greift, sobald ein externer Screen haengt.
+  # --- LOGIND: Zuklappen -> Suspend, IMMER ---
+  # MODIFIED 2026-10-06: lidSwitchDocked "ignore" -> "suspend". Das revidiert
+  # bewusst die Entscheidung vom 2026-07-01, die unten noch einmal steht.
+  #
+  # WAS "DOCKED" WIRKLICH HEISST — der Grund, warum die alte Regel in der
+  # Praxis fast immer griff: nicht "in einer Dockingstation", sondern laut
+  # `man 5 logind.conf` woertlich "if the system is inserted in a docking
+  # station, OR IF MORE THAN ONE DISPLAY IS CONNECTED". Am Schreibtisch haengt
+  # immer mindestens ein externer Schirm, also war der Lid-Handler dort
+  # dauerhaft "ignore". Zuklappen tat schlicht nichts; was man sah, war der
+  # Idle-Lock der Shell, der irgendwann spaeter den Lockscreen auf alle
+  # Schirme legte und sie dabei anliess.
+  #
+  # Reihenfolge laut derselben Manpage: Docked > ExternalPower > LidSwitch.
+  # Docked gewinnt, sobald ein zweiter Schirm haengt — deshalb nuetzten die
+  # beiden anderen Zeilen am Schreibtisch gar nichts.
+  #
+  # ALTE BEGRUENDUNG (2026-07-01), zur Einordnung: damals war "docked ->
+  # ignore" gewollt, damit Maschine und externer Monitor weiterlaufen, und der
+  # interne Panel durfte NICHT per DPMS abgeschaltet werden (eDP-OLED-Freeze,
+  # siehe kernelParams i915.enable_dc=0). Der Freeze-Punkt gilt unveraendert —
+  # er betrifft aber DPMS-off/on, nicht Suspend/Resume. Suspend macht einen
+  # vollen Modeset und ist auf diesem Host seit jeher der Weg ohne externen
+  # Schirm; er war nie das Problem.
+  #
+  # Das "weiterlaufen lassen" ist nicht verloren, es ist nur nicht mehr der
+  # Default: modules/meo/scripts/clamshell-toggle.nix haengt den Lid-Handler
+  # auf Zuruf per Inhibitor aus (Mod+Alt+D).
   services.logind = {
     lidSwitch = "suspend";
-    lidSwitchDocked = "ignore";
+    lidSwitchDocked = "suspend";
     lidSwitchExternalPower = "suspend";
   };
 
