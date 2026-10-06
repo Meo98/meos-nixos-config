@@ -6,6 +6,12 @@
 #   - j/k und Pfeil hoch/runter wechseln das Fenster INNERHALB der Spalte
 #     (wie bisher)
 #   - u/i wechseln den Workspace (neu; Workspaces sind in niri vertikal)
+#   - Ctrl dazu (Mod+Ctrl+hjkl) wechselt den MONITOR (seit 2026-10-06)
+#
+# DREI ACHSEN, NICHT ZWEI: Spalte -> Workspace -> Monitor. Workspaces gehoeren
+# in niri dem Output, nicht dem System; die Nummern in der Bar sind also pro
+# Monitor und Mod+1..0 kommt nie vom aktuellen Monitor weg. Details im Block
+# "Fokus: Monitor" unten.
 #
 # Bewusst NICHT uebernommen (kein Gegenstueck im Spalten-Modell): pseudo,
 # togglesplit, workspaceopt allfloat, swapwindow hoch/runter.
@@ -77,16 +83,24 @@ in {
     // moveBinds
     // {
       # ---- Fokus: Spalten ----
-      "Mod+H".focus-column-left = {};
-      "Mod+L".focus-column-right = {};
-      "Mod+Left".focus-column-left = {};
-      "Mod+Right".focus-column-right = {};
+      # MODIFIED 2026-10-06: focus-column-* -> focus-column-or-monitor-*.
+      # Grund siehe Block "Fokus: Monitor" weiter unten. Solange die Spalte
+      # einen Nachbarn hat, verhaelt sich das identisch zu vorher; erst AM
+      # RAND des Workspace rollt der Fokus auf den Nachbarmonitor ueber,
+      # statt stehenzubleiben.
+      "Mod+H".focus-column-or-monitor-left = {};
+      "Mod+L".focus-column-or-monitor-right = {};
+      "Mod+Left".focus-column-or-monitor-left = {};
+      "Mod+Right".focus-column-or-monitor-right = {};
 
       # ---- Fokus: Fenster in der Spalte ----
-      "Mod+J".focus-window-down = {};
-      "Mod+K".focus-window-up = {};
-      "Mod+Down".focus-window-down = {};
-      "Mod+Up".focus-window-up = {};
+      # Gleiche Umstellung wie bei den Spalten: am oberen/unteren Ende der
+      # Spalte geht es auf den Monitor darueber/darunter weiter. Auf meo-work
+      # ist das der Weg zum Laptop-Panel, das unter dem Dell liegt.
+      "Mod+J".focus-window-or-monitor-down = {};
+      "Mod+K".focus-window-or-monitor-up = {};
+      "Mod+Down".focus-window-or-monitor-down = {};
+      "Mod+Up".focus-window-or-monitor-up = {};
 
       # ---- Fokus: Workspace (vertikal) ----
       "Mod+U".focus-workspace-down = {};
@@ -127,8 +141,37 @@ in {
       "Mod+Alt+Left".swap-window-left = {};
       "Mod+Alt+Right".swap-window-right = {};
 
+      # ---- Fokus: Monitor ----
+      # ADDED 2026-10-06. Bis hierher kannte diese Config AUSSCHLIESSLICH
+      # move-column-to-monitor-* (die zwei Zeilen darunter): Fenster liessen
+      # sich auf den Nachbarmonitor werfen, der Fokus kam aber nicht
+      # hinterher. Damit war jeder Monitor eine Sackgasse.
+      #
+      # WARUM DAS EINE EIGENE AKTIONSFAMILIE IST: in niri gehoeren
+      # Workspaces dem OUTPUT, nicht dem System. Jeder Monitor fuehrt seinen
+      # eigenen, dynamischen Stapel 1..n (siehe `niri msg workspaces`).
+      # focus-workspace / focus-workspace-up/down weiter oben wirken deshalb
+      # per Definition nur innerhalb des fokussierten Monitors — anders als
+      # unter Hyprland, wo Workspace-Nummern global waren und ein Sprung auf
+      # Workspace 3 implizit den Monitor wechselte.
+      #
+      # Richtung ist GEOMETRISCH, nicht per Index: niri liest die logischen
+      # Positionen aus niriOutputs (hosts/<host>/variables.nix). Auf meo-work
+      # steht der LG unter dem Dell (y=1080), nicht rechts daneben — dorthin
+      # fuehrt also -down, nicht -right.
+      "Mod+Ctrl+H".focus-monitor-left = {};
+      "Mod+Ctrl+L".focus-monitor-right = {};
+      "Mod+Ctrl+J".focus-monitor-down = {};
+      "Mod+Ctrl+K".focus-monitor-up = {};
+
+      # ---- Spalte auf anderen Monitor ----
+      # ADDED 2026-10-06 (down/up): es gab nur left/right. Auf meo-work war
+      # das Laptop-Panel damit per Tastatur gar nicht als Ziel erreichbar,
+      # weil es UNTER dem Dell haengt statt neben ihm.
       "Mod+Ctrl+Shift+H".move-column-to-monitor-left = {};
       "Mod+Ctrl+Shift+L".move-column-to-monitor-right = {};
+      "Mod+Ctrl+Shift+J".move-column-to-monitor-down = {};
+      "Mod+Ctrl+Shift+K".move-column-to-monitor-up = {};
 
       # ---- Layout: die eigentliche niri-Geste ----
       # Fenster in die Spalte links von sich einsaugen bzw. wieder rauswerfen.

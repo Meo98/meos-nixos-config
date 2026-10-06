@@ -25,13 +25,23 @@ in {
   orca-studio = super.appimageTools.wrapType2 rec {
     name = "OrcaStudio";
     pname = "orca-studio";
-    version = "02.08.01.55-p3";
+    # MODIFIED 2026-10-06: von p3 auf p6 (27.09.2026) gebumpt. Grund: p3 hatte
+    # reproduzierbare Crash-beim-Senden- und "Bambu Network Plug-in corrupted"-
+    # Bugs (OrcaStudio-Issues #16/#17/#22, upstream — auch auf normalen Distros,
+    # NICHT Nix-spezifisch). p4-p6 nennen Send-/Plugin-Fixes. ACHTUNG: Projekt
+    # steht unter Bambu-Rechtsdruck ("impersonation", Mai 2026) und wird laut
+    # jarczakpawels Haupt-Repo-Titel ("This is the end....") ausgephast — fuer
+    # verlaessliches Cloud-Senden ist das offizielle bambu-studio der Fallback.
+    # Bei kuenftigem Bump: gh release view --repo jarczakpawel/OrcaStudio,
+    # dann Hex aus SHA256SUMS_ubuntu24.04_appimage.txt via
+    #   nix hash convert --hash-algo sha256 --to sri <hex>
+    version = "02.08.01.55-p6";
 
     src = super.fetchurl {
       url = "https://github.com/jarczakpawel/OrcaStudio/releases/download/v${version}/OrcaStudio_Linux_AppImage_ubuntu24.04_amd64_${version}.AppImage";
       # verifiziert gegen SHA256SUMS_ubuntu24.04_appimage.txt des Releases
-      # (508c5fc15ecba9...d457cf95)
-      sha256 = "sha256-UIxfwV7Lqcp8r4iWO1PfleV8Pjxv/Mxl6o8L9tRXz5U=";
+      # (7f1723cab14fa4...2b9cf75)
+      sha256 = "sha256-fxcjyrFPpDGxcdHoJV8/NkmOkpdHJhEKqTqS8PK5z3U=";
     };
 
     profile = ''

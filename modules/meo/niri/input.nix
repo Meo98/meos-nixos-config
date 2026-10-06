@@ -20,26 +20,36 @@ in {
 
     mouse.accel-profile = "flat";
 
-    # Entspricht dem bisherigen focus_follows_mouse aus Hyprland.
+    # focus-follows-mouse: AUS (= niri-Default; die Zeile fehlt bewusst).
     #
-    # MODIFIED 2026-08-28: max-scroll-amount="0%" wieder ENTFERNT. Der Wert
-    # heisst laut niri-Doku nicht "fokussiere ohne zu scrollen", sondern
-    # "fokussiere gar nicht, wenn dafuer mehr als 0% gescrollt werden muesste"
-    # — also nur bei Fenstern, die schon vollstaendig sichtbar sind. Im
-    # Scroll-Layout ist die Nachbarspalte fast immer angeschnitten (Spalten
-    # sind 2/3 breit, aufs eDP passen ~1.5), deshalb passierte beim
-    # Drueberfahren nichts und man musste erst klicken.
+    # Historie, damit das nicht im Kreis geht:
+    #   2026-08-27  eingeschaltet, um Hyprlands focus_follows_mouse nachzubauen
+    #   2026-08-28  max-scroll-amount="0%" probiert und wieder entfernt — der
+    #               Wert heisst nicht "fokussiere ohne zu scrollen", sondern
+    #               "fokussiere gar nicht, wenn dafuer mehr als 0% gescrollt
+    #               werden muesste". Im Scroll-Layout ist die Nachbarspalte
+    #               fast immer angeschnitten, also passierte gar nichts mehr.
+    #   2026-10-06  GANZ RAUS.
     #
-    # Der Randfall, gegen den "0%" in der niri-FAQ empfohlen wird (CSD-Resize-
-    # Raender lugen ueber die Monitorkante und loesen ungewollt Fokus aus), ist
-    # hier schon durch `prefer-no-csd` in default.nix abgedeckt — das ist die
-    # zweite Fix-Option derselben FAQ-Antwort.
-    focus-follows-mouse = {};
+    # WARUM RAUS: auf drei Monitoren ist der Zeiger kein Fokus-Zeiger mehr,
+    # sondern liegt irgendwo herum. Jede Mausbewegung ueber einen fremden
+    # Schirm riss den Fokus mit — besonders fies zusammen mit
+    # warp-mouse-to-focus unten: Tastendruck warpt den Zeiger auf Monitor B,
+    # ein Zucken der Hand bringt den Fokus ueber ein Fenster, das zufaellig
+    # unter dem neuen Zeigerort liegt. Mit zwei Schirmen war das selten genug,
+    # mit dreien nicht mehr.
+    #
+    # Das Gegenstueck dazu ist die Tastatur-Navigation seit 2026-10-06:
+    # Mod+Ctrl+hjkl (focus-monitor-*) und der Rand-Ueberlauf von Mod+hjkl in
+    # binds-nav.nix. Die MAUS hat den Monitorwechsel ersetzt, nicht verloren.
+    #
+    # Rueckweg: `focus-follows-mouse = {};` hier wieder einfuegen.
 
-    # Zeiger springt zum neu fokussierten Fenster. Auf zwei Monitoren mit
-    # unterschiedlicher Skalierung spart das viel Sucherei. Kollidiert nicht
-    # mit focus-follows-mouse: der Default-Modus warpt nur, wenn der Zeiger
-    # AUSSERHALB des neu fokussierten Fensters war — beim Hover ist er drin.
+    # Zeiger springt zum neu fokussierten Fenster. Bei drei Monitoren mit
+    # unterschiedlicher Skalierung spart das viel Sucherei — und wird durch
+    # das Abschalten von focus-follows-mouse ERST richtig nuetzlich: vorher
+    # konnte der Warp selbst wieder einen Hover-Fokus ausloesen, jetzt folgt
+    # der Zeiger dem Fokus nur noch in eine Richtung.
     warp-mouse-to-focus = {};
   };
 }
