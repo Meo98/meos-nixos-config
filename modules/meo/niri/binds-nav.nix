@@ -3,10 +3,13 @@
 # Schema laut Spec Abschnitt 7 (Hybrid):
 #   - h/l und Pfeil links/rechts wechseln die SPALTE (Achsenwechsel gegenueber
 #     Hyprland, wo es Richtungsfokus war)
-#   - j/k und Pfeil hoch/runter wechseln das Fenster INNERHALB der Spalte
-#     (wie bisher)
-#   - u/i wechseln den Workspace (neu; Workspaces sind in niri vertikal)
-#   - Ctrl dazu (Mod+Ctrl+hjkl) wechselt den MONITOR (seit 2026-10-06)
+#   - j/k und Pfeil hoch/runter wechseln das Fenster INNERHALB der Spalte und
+#     laufen am Spaltenende auf den WORKSPACE ueber (Workspaces sind in niri
+#     vertikal gestapelt)
+#   - Ctrl dazu (Mod+Ctrl+hjkl bzw. Pfeile) wechselt den MONITOR
+#
+#   u/i waren bis 2026-10-06 der Workspace-Wechsel und sind ersatzlos raus;
+#   nur Mod+Shift+u/i lebt weiter (ganze Spalte auf Nachbar-Workspace).
 #
 # DREI ACHSEN, NICHT ZWEI: Spalte -> Workspace -> Monitor. Workspaces gehoeren
 # in niri dem Output, nicht dem System; die Nummern in der Bar sind also pro
@@ -93,20 +96,29 @@ in {
       "Mod+Left".focus-column-or-monitor-left = {};
       "Mod+Right".focus-column-or-monitor-right = {};
 
-      # ---- Fokus: Fenster in der Spalte ----
-      # Gleiche Umstellung wie bei den Spalten: am oberen/unteren Ende der
-      # Spalte geht es auf den Monitor darueber/darunter weiter. Auf meo-work
-      # ist das der Weg zum Laptop-Panel, das unter dem Dell liegt.
-      "Mod+J".focus-window-or-monitor-down = {};
-      "Mod+K".focus-window-or-monitor-up = {};
-      "Mod+Down".focus-window-or-monitor-down = {};
-      "Mod+Up".focus-window-or-monitor-up = {};
-
-      # ---- Fokus: Workspace (vertikal) ----
-      "Mod+U".focus-workspace-down = {};
-      "Mod+I".focus-workspace-up = {};
-      "Mod+Ctrl+Left".focus-workspace-up = {};
-      "Mod+Ctrl+Right".focus-workspace-down = {};
+      # ---- Fokus: Fenster in der Spalte, dann Workspace ----
+      # MODIFIED 2026-10-06, zweiter Durchgang am selben Tag:
+      # focus-window-or-MONITOR-* -> focus-window-or-WORKSPACE-*.
+      #
+      # Der erste Durchgang hatte heute frueh den Monitor als Ueberlaufziel.
+      # Das war eine Fehlkonstruktion, und zwar eine, die man nur im Betrieb
+      # sieht: die allermeisten Spalten enthalten genau EIN Fenster. Der
+      # "or"-Teil griff also praktisch immer sofort, womit Mod+J buchstaeblich
+      # dasselbe tat wie Mod+Ctrl+J weiter unten. Zwei Tasten, eine Funktion.
+      #
+      # Mit dem Workspace als Ueberlaufziel deckt sich die Tastengeometrie
+      # jetzt mit der Modellgeometrie: Workspaces sind in niri ein VERTIKALER
+      # Stapel pro Monitor, Monitore stehen nebeneinander. Also vertikal ->
+      # Workspace, horizontal -> Monitor, Ctrl -> expliziter Monitorsprung.
+      # Drei Achsen, drei Tastengruppen, keine Ueberschneidung.
+      #
+      # ERSETZT Mod+U/I (focus-workspace-down/up), die damit ersatzlos
+      # entfallen — sie waren der Grund, warum die vertikale Achse ueberhaupt
+      # auf zwei Tastenpaare verteilt lag.
+      "Mod+J".focus-window-or-workspace-down = {};
+      "Mod+K".focus-window-or-workspace-up = {};
+      "Mod+Down".focus-window-or-workspace-down = {};
+      "Mod+Up".focus-window-or-workspace-up = {};
 
       # cooldown-ms daempft das Hi-Res-Scrollrad des Keyball, sonst rauscht ein
       # Wisch durch mehrere Workspaces.
@@ -131,10 +143,19 @@ in {
       "Mod+Shift+L".move-column-right = {};
       "Mod+Shift+Left".move-column-left = {};
       "Mod+Shift+Right".move-column-right = {};
-      "Mod+Shift+J".move-window-down = {};
-      "Mod+Shift+K".move-window-up = {};
-      "Mod+Shift+Down".move-window-down = {};
-      "Mod+Shift+Up".move-window-up = {};
+      # MODIFIED 2026-10-06: move-window-* -> move-window-*-or-to-workspace-*,
+      # damit die Shift-Ebene die Fokus-Ebene spiegelt. Innerhalb der Spalte
+      # unveraendert; am Spaltenende wandert das Fenster jetzt auf den
+      # Nachbar-Workspace, statt stehenzubleiben.
+      "Mod+Shift+J".move-window-down-or-to-workspace-down = {};
+      "Mod+Shift+K".move-window-up-or-to-workspace-up = {};
+      "Mod+Shift+Down".move-window-down-or-to-workspace-down = {};
+      "Mod+Shift+Up".move-window-up-or-to-workspace-up = {};
+
+      # Mod+Shift+U/I BLEIBT, obwohl Mod+U/I weg ist. Das ist keine Schlamperei:
+      # die Zeilen daruber bewegen das FENSTER, diese hier die ganze SPALTE.
+      # Bei einer Spalte mit mehreren Fenstern (Mod+Comma) sind das zwei
+      # verschiedene Operationen, und nur diese kann die zweite.
       "Mod+Shift+U".move-column-to-workspace-down = {};
       "Mod+Shift+I".move-column-to-workspace-up = {};
 
@@ -163,6 +184,16 @@ in {
       "Mod+Ctrl+L".focus-monitor-right = {};
       "Mod+Ctrl+J".focus-monitor-down = {};
       "Mod+Ctrl+K".focus-monitor-up = {};
+
+      # MODIFIED 2026-10-06: Mod+Ctrl+Left/Right waren focus-workspace-up/down.
+      # Mit dem Workspace jetzt auf Mod+Up/Down (siehe oben) waere das doppelt
+      # gemoppelt gewesen UND haette als einziges Bind die Hausregel dieser
+      # Datei gebrochen, dass die Pfeile exakte Aliase der vi-Tasten sind:
+      # Mod+Ctrl+H ist Monitor, also muss Mod+Ctrl+Left es auch sein.
+      "Mod+Ctrl+Left".focus-monitor-left = {};
+      "Mod+Ctrl+Right".focus-monitor-right = {};
+      "Mod+Ctrl+Down".focus-monitor-down = {};
+      "Mod+Ctrl+Up".focus-monitor-up = {};
 
       # ---- Spalte auf anderen Monitor ----
       # ADDED 2026-10-06 (down/up): es gab nur left/right. Auf meo-work war
