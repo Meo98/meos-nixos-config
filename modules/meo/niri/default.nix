@@ -73,6 +73,11 @@ in {
       panelOff = vars.clamshellPanelOff or false;
     })
 
+    # Der Helfer liegt ohnehin ueber seinen Store-Pfad in der Closure des
+    # Toggles; hier steht er nur, damit er zum Nachmessen von Hand auf dem
+    # PATH liegt (`clamshell-screens off`).
+    (import ../scripts/clamshell-screens.nix {inherit pkgs;})
+
     pkgs.wl-color-picker
   ];
 
