@@ -87,9 +87,12 @@ If you want `flake-update.yml` PRs to auto-merge:
 
 ## What about Garnix.io?
 
-**Gone as of 2026-10.** `cache.garnix.io` no longer resolves, so it was removed from `cachix.nix` and `build.yml` (run #191 wasted five retries per store path on it). The affinity-nix fork's wine derivations are therefore built from source on CI. To make that fit, `build.yml` runs `wimpysworld/nothing-but-nix` first, which frees ~60 GB on the runner. magic-nix-cache then stores the results in the GitHub Actions cache, so later runs only rebuild after a lock bump.
+**Gone as of 2026-10.** `cache.garnix.io` no longer resolves, so it was removed from `cachix.nix` and `build.yml` (run #191 wasted five retries per store path on it). The affinity-nix fork's wine derivations are therefore in no binary cache at all, and compiling wine-wow64 on a 2-core runner takes more than 60 minutes (run 37601965808 hit the timeout mid-compile). So **CI does not build Affinity**: `build.yml` builds `nixosConfigurations.<host>-ci`, a variant defined in `flake.nix` with the `ci = true` specialArg, which `hosts/meo/affinity.nix` reads to disable itself. Everything else is identical to the real host.
 
-If CI build time becomes a problem, the next step is a Cachix cache for the fork (needs an account and a token secret).
+Consequences:
+- A broken Affinity change is only caught by a local `nh os build --hostname <host>`.
+- `wimpysworld/nothing-but-nix` stays as the first step; it is cheap and keeps the runner from filling up again.
+- If you ever want Affinity back in CI, the proper way is a Cachix cache for the fork (fork CI builds wine and pushes; this repo adds the substituter). Needs an account and a token secret.
 
 ## Cost (free tier)
 

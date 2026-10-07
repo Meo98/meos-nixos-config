@@ -19,11 +19,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1791365776,
-        "narHash": "sha256-qkmAaInjzk6JQvVvajd0wPZBrs2RQyYxcvUvP1vkPeE=",
+        "lastModified": 1791374203,
+        "narHash": "sha256-4D0Hym0gsEcKoeZA6LO5fw5i0wfoXRzB9YEw4/y0kx4=",
         "owner": "Meo98",
         "repo": "affinity-nix-fork",
-        "rev": "c730f617a53ce04a78360fb63bd28d631f6aae26",
+        "rev": "b0e835086ff9daa7c36b3b846fa78883d38bd365",
         "type": "github"
       },
       "original": {

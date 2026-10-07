@@ -181,12 +181,15 @@
       config.allowUnfree = true;
     };
 
-    mkNixosConfig = { host ? defaultHost, profile ? defaultProfile, nixosTarget ? profile }:
+    # `ci = true` builds the same host minus pieces that no binary cache serves
+    # and that take hours on a GitHub runner (currently only Affinity/wine, see
+    # hosts/meo/affinity.nix). The `-ci` outputs below are what build.yml builds.
+    mkNixosConfig = { host ? defaultHost, profile ? defaultProfile, nixosTarget ? profile, ci ? false }:
       lib.nixosSystem {
         inherit system;
 
         specialArgs = {
-          inherit inputs username host profile nixosTarget;
+          inherit inputs username host profile nixosTarget ci;
         };
 
         modules = [
@@ -204,6 +207,10 @@
 
       # Arbeitslaptop: Intel i7-1165G7 + Intel Iris Xe (kein dedizierter GPU)
       meo-work = mkNixosConfig { host = "meo-work"; profile = "intel"; nixosTarget = "meo-work"; };
+
+      # CI variants (build.yml): identical except Affinity is off. Never `fr` these.
+      meo-ci      = mkNixosConfig { profile = "nvidia-laptop"; nixosTarget = "meo"; ci = true; };
+      meo-work-ci = mkNixosConfig { host = "meo-work"; profile = "intel"; nixosTarget = "meo-work"; ci = true; };
     };
 
     devShells.${system}.default = pkgs.mkShell {

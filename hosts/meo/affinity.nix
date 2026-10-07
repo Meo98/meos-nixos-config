@@ -1,4 +1,4 @@
-{ pkgs, inputs, username, lib, host, ... }:
+{ pkgs, inputs, username, lib, host, ci ? false, ... }:
 
 let
   # Resolve variables.nix relative to the actual host being built. The `host`
@@ -6,7 +6,10 @@ let
   # importing affinity.nix from a different host directory still picks up the
   # right variables.nix.
   hostVars = import (../. + "/${host}/variables.nix");
-  enabled = (hostVars.enableAffinity or false);
+  # `ci` (specialArg from flake.nix) is true for the `*-ci` configurations that
+  # build.yml builds. Affinity's wine-wow64 is in no binary cache and takes
+  # hours on a GitHub runner, so CI skips it. Local `fr` builds are unaffected.
+  enabled = (hostVars.enableAffinity or false) && !ci;
 in
 lib.mkIf enabled {
 
