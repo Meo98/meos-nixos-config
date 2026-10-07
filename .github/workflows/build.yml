@@ -39,7 +39,7 @@ jobs:
       # wine-wow64 from the affinity-nix fork (run #191 died with 6 MB left).
       # This wipes preinstalled toolchains and hands the space to /nix.
       - name: Free disk space for Nix
-        uses: wimpysworld/nothing-but-nix@main
+        uses: wimpysworld/nothing-but-nix@687c797a730352432950c707ab493fcc951818d7 # v10
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
         with:
