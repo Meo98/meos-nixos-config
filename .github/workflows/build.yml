@@ -28,7 +28,10 @@ jobs:
   build:
     name: Build ${{ matrix.host }}
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    # wine-wow64 from the affinity-nix fork is not in any binary cache and
+    # takes well over 60 min on a 2-core runner (run 37601965808 was killed
+    # mid-compile at exactly 60 min). Cached runs still finish in minutes.
+    timeout-minutes: 240
     strategy:
       fail-fast: false   # if meo breaks, still try meo-work — diagnostic value
       matrix:
