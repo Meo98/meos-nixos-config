@@ -57,7 +57,7 @@ Dry-building both hosts before pushing is still good practice, but there is no l
 
 ### Affinity v3 setup
 
-Lives in `hosts/meo/affinity.nix`. Imported by BOTH hosts (meo-work imports `../meo/affinity.nix`). Controlled by `enableAffinity = true|false` in respective `variables.nix`. Uses `pkgs.affinity-v3` from `inputs.affinity-nix` — pinned to **`github:Meo98/affinity-nix-fork`** (Fork von mrshmllow/affinity-nix mit iGPU-Fixes: DXVK 2.4.1, d2d1 bezier safety patches, CanvaSignInPatch entfernt). Requires Garnix cache (already configured in `modules/upstream/core/cachix.nix`) — Fork-Derivations sind NICHT in Garnix gecached, müssen einmalig lokal kompiliert werden (wine, base-prefix-4 ≈ 20-30 Min beim ersten Build pro Host).
+Lives in `hosts/meo/affinity.nix`. Imported by BOTH hosts (meo-work imports `../meo/affinity.nix`). Controlled by `enableAffinity = true|false` in respective `variables.nix`. Uses `pkgs.affinity-v3` from `inputs.affinity-nix` — pinned to **`github:Meo98/affinity-nix-fork`** (Fork von mrshmllow/affinity-nix mit iGPU-Fixes: DXVK 2.4.1, d2d1 bezier safety patches, CanvaSignInPatch entfernt). Garnix (`cache.garnix.io`) ist seit 2026-10 tot (NXDOMAIN) und wurde aus `cachix.nix` und `build.yml` entfernt. Fork-Derivations liegen in keinem Binary-Cache, müssen einmalig lokal kompiliert werden (wine, base-prefix-4 ≈ 20-30 Min beim ersten Build pro Host). CI baut sie ebenfalls selbst; dafür räumt `wimpysworld/nothing-but-nix` den Runner vorher frei (sonst läuft die Disk voll, siehe Run #191).
 
 ## Common tasks
 

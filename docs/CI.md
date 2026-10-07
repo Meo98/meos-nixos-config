@@ -87,9 +87,9 @@ If you want `flake-update.yml` PRs to auto-merge:
 
 ## What about Garnix.io?
 
-Garnix is already in our substituter list (`modules/upstream/core/cachix.nix`). It serves cached builds for affinity-nix's wine derivations. Our CI uses Garnix as a binary cache — that's why `build.yml` finishes in minutes instead of hours.
+**Gone as of 2026-10.** `cache.garnix.io` no longer resolves, so it was removed from `cachix.nix` and `build.yml` (run #191 wasted five retries per store path on it). The affinity-nix fork's wine derivations are therefore built from source on CI. To make that fit, `build.yml` runs `wimpysworld/nothing-but-nix` first, which frees ~60 GB on the runner. magic-nix-cache then stores the results in the GitHub Actions cache, so later runs only rebuild after a lock bump.
 
-If you want to **publish** to Garnix (let Garnix serve your custom builds to others), add `garnix-io/garnix-action@v1` to `build.yml`. Not needed for personal use.
+If CI build time becomes a problem, the next step is a Cachix cache for the fork (needs an account and a token secret).
 
 ## Cost (free tier)
 
