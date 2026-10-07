@@ -33,16 +33,53 @@
 }: let
   vars = import ../../../hosts/${host}/variables.nix;
 
-  # Werte, die beim ersten Start stimmen MUESSEN. Sie gewinnen auch dann,
-  # wenn eine aeltere Konfiguration uebernommen wird (siehe Aktivierung).
+  # Darf DMS die Schirme per DPMS abschalten? Auf meo nein (eDP-OLED-Freeze).
+  screenOff = vars.dmsScreenOff or false;
+
+  # Werte, die IMMER gelten — sie werden bei jeder Aktivierung in eine
+  # bestehende settings.json hineingemischt, nicht nur beim ersten Start.
+  # Alles, was hier NICHT steht, gehoert weiterhin DMS (Widget-Layouts,
+  # Theme-Zustand, was der User in der GUI klickt).
   overrides = {
     # Sperre nach 10 Minuten Untaetigkeit, wie zuvor unter Noctalia.
     # DMS' Werkseinstellung ist 0 = NIE sperren.
     acLockTimeout = 600;
     batteryLockTimeout = 600;
 
-    # Bildschirm-Abschaltung. Auf meo AUS gegen den eDP-OLED-Freeze.
-    fadeToDpmsEnabled = vars.dmsScreenOff or false;
+    # --- Bildschirm-Abschaltung ---
+    # MODIFIED 2026-10-07. Bis hierher stand hier NUR fadeToDpmsEnabled, und
+    # das war der falsche Schalter: die Schirme gingen nie aus (bemerkt, als
+    # die Kiste eine Mittagspause lang mit Lockscreen durchleuchtete).
+    #
+    # DMS' Kette, nachgelesen in der Quelle von dms-shell 1.7-beta:
+    #   IdleService.qml:20  monitorTimeout = isOnBattery ? batteryMonitorTimeout
+    #                                                    : acMonitorTimeout
+    #   IdleService.qml:43  monitorOffMonitor.enabled = base
+    #                                 && monitorTimeout > 0 && ...
+    #   IdleService.qml:86  erst DANN wird fadeToDpmsEnabled ueberhaupt gelesen
+    #
+    # fadeToDpmsEnabled entscheidet also nur, ob vor dem Abschalten
+    # ueberblendet wird. Der EINSCHALTER sind die *MonitorTimeout-Werte, und
+    # deren Werkseinstellung ist 0 = nie (SettingsSpec.js:915/933). Ein
+    # Timeout von 0 laesst den IdleMonitor gar nicht erst scharf werden.
+    #
+    # 660 liegt bewusst HINTER acLockTimeout (600): erst sperren, dann dunkel.
+    # Auf Akku frueher, da zaehlt jede Minute Panel.
+    #
+    # Auf meo bleiben beide auf 0 — dmsScreenOff ist dort false wegen des
+    # eDP-OLED-Freeze (DPMS-off->on wedged die i915-Pipe, nur Reboot hilft).
+    # Das ist dieselbe Sperre wie bei idleScreenOff, siehe variables.nix.
+    acMonitorTimeout =
+      if screenOff
+      then 660
+      else 0;
+    batteryMonitorTimeout =
+      if screenOff
+      then 300
+      else 0;
+
+    # Nur Kosmetik: sanftes Abblenden statt hartem Schwarz, bevor DPMS greift.
+    fadeToDpmsEnabled = screenOff;
     fadeToDpmsGracePeriod = 5;
 
     # DMS' Dock ist per Default AUS; Noctalia hatte eines.
@@ -103,8 +140,51 @@ in {
         fi
       }
 
+      # Wie dmsSeed, aber fuer Werte, die bei JEDER Aktivierung gelten sollen.
+      #
+      # ADDED 2026-10-07. dmsSeed allein war zu wenig und das auf die
+      # unauffaelligste denkbare Art: es steigt bei einer bestehenden echten
+      # Datei sofort aus. DMS legt seine settings.json aber schon beim ersten
+      # Start selbst an (hier: .firstlaunch vom 2026-10-05 17:15). Jeder Wert,
+      # der NACH diesem Zeitpunkt in overrides landete, erreichte die Datei
+      # also nie — ohne Fehler, ohne Warnung, ohne Spur. Genau so blieb die
+      # Bildschirm-Abschaltung monatelang unbemerkt wirkungslos.
+      #
+      # Gemischt wird mit `. * $ov`: NUR die Schluessel aus overrides werden
+      # gesetzt, alles andere in der Datei bleibt unangetastet (Widget-
+      # Layouts, Theme-Zustand, GUI-Klicks). Der Preis ist ehrlich: was in
+      # overrides steht, gehoert ab jetzt Nix — eine Aenderung in der
+      # DMS-Oberflaeche daran haelt bis zum naechsten `fr`. Wer einen Wert
+      # beweglich haben will, nimmt ihn aus overrides raus.
+      #
+      # Der Vergleich vorweg verhindert, dass die Datei bei jedem Rebuild neu
+      # geschrieben wird — DMS beobachtet sie und wuerde sonst grundlos neu
+      # laden.
+      dmsEnforce() {
+        local target="$1" json="$2"
+        local tmp="$target.hm-new"
+
+        mkdir -p "$(dirname "$target")"
+        if [[ -L "$target" ]]; then
+          rm -f "$target"
+        fi
+
+        if [[ -f "$target" ]] && ${jq} -e . "$target" >/dev/null 2>&1; then
+          if ${jq} --argjson ov "$json" -e '. * $ov == .' "$target" >/dev/null 2>&1; then
+            return 0
+          fi
+          ${jq} --argjson ov "$json" '. * $ov' "$target" > "$tmp"
+          mv "$tmp" "$target"
+          echo "DMS: erzwungene Werte in $target aktualisiert"
+        else
+          printf '%s\n' "$json" > "$target"
+          echo "DMS: $target neu angelegt"
+        fi
+      }
+
       # ---- settings.json ----
-      dmsSeed "$HOME/.config/DankMaterialShell/settings.json" "$(cat ${overrideFile})"
+      # dmsEnforce statt dmsSeed, Begruendung direkt darueber.
+      dmsEnforce "$HOME/.config/DankMaterialShell/settings.json" "$(cat ${overrideFile})"
 
       # ---- session.json ----
       wp="${repoWallpaper}"
