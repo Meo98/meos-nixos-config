@@ -45,11 +45,30 @@ in {
     #
     # Rueckweg: `focus-follows-mouse = {};` hier wieder einfuegen.
 
-    # Zeiger springt zum neu fokussierten Fenster. Bei drei Monitoren mit
-    # unterschiedlicher Skalierung spart das viel Sucherei — und wird durch
-    # das Abschalten von focus-follows-mouse ERST richtig nuetzlich: vorher
-    # konnte der Warp selbst wieder einen Hover-Fokus ausloesen, jetzt folgt
-    # der Zeiger dem Fokus nur noch in eine Richtung.
-    warp-mouse-to-focus = {};
+    # warp-mouse-to-focus: AUS (= niri-Default; die Zeile fehlt bewusst).
+    #
+    #   2026-08-27  eingeschaltet: "spart bei mehreren Monitoren Sucherei"
+    #   2026-10-06  beibehalten, als focus-follows-mouse rausflog — mit dem
+    #               Argument, der Warp werde dadurch ERST nuetzlich
+    #   2026-10-08  RAUS. Das Argument war falsch herum.
+    #
+    # WARUM RAUS: der Warp haengt am FOKUSWECHSEL, nicht am Monitorwechsel.
+    # Jeder Workspace-Wechsel ist aber ein Fokuswechsel — und mit Mod+Rad
+    # (binds-nav.nix) passiert das den ganzen Tag. Der Zeiger sprang also bei
+    # jedem Scrollen irgendwohin, und die "gesparte Sucherei" war in Wahrheit
+    # die Hauptquelle davon: nach einem Warp liegt der Zeiger dort, wo das
+    # neue Fenster ist, nicht dort, wo die Hand ihn zuletzt hatte.
+    #
+    # GEPRUEFT, OB ES EINE ABSTUFUNG GIBT (2026-10-08, gegen `niri validate`
+    # von niri 26.04): gueltig sind nur `warp-mouse-to-focus`,
+    # mode="center-xy" und mode="center-xy-always". Alle drei steuern, WOHIN
+    # gewarpt wird — nicht, BEI WELCHEM Anlass. Ein "nur bei Monitorwechsel"
+    # gibt es nicht, also ist es alles oder nichts.
+    #
+    # Was an seine Stelle tritt: der Zeiger bleibt schlicht liegen, wo er war
+    # — vorhersagbar statt hilfreich-gemeint. Zum Orientieren auf dem neuen
+    # Monitor dient der Fokusring (layout.nix, Gradient base08 -> base0C).
+    #
+    # Rueckweg: `warp-mouse-to-focus = {};` hier wieder einfuegen.
   };
 }
