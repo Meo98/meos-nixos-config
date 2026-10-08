@@ -64,6 +64,7 @@
     insync                    # Synchronisations-Client für Google Drive und OneDrive
     masterpdfeditor           # PDF-Editor mit Annotationen, Formularen und Seitenbearbeitung (PDF-XChange-Alternative)
     kicad                     # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
+    qelectrotech              # Elektro-Schaltplan-/Stromlaufplan-Editor (Installations- und Steuerungstechnik, Symbolbibliothek nach IEC)
 
     # --- Entwicklung & System-Tools ---
     nodejs                    # JavaScript-Laufzeitumgebung für Server- und Frontend-Entwicklung
