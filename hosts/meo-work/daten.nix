@@ -12,10 +12,17 @@
 #   (Restore der alten Tabelle: sgdisk --load-backup=<datei> /dev/nvme0n1 —
 #   bringt nur die Tabelle zurueck, die NTFS-Daten sind durch mkfs weg.)
 #
-# Vorher gesicherte Windows-Nutzerdaten: ~/win-rescue (Desktop, Documents,
+# Vorher gesicherte Windows-Nutzerdaten: /daten/win-rescue (Desktop, Documents,
 # Downloads, Pictures, .claude, .gitconfig). Der Technorama-Ordner wurde
-# bewusst nicht gesichert — liegt in der Cloud. Nach dem ersten Mount nach
-# /daten verschieben und /daten dem User uebereignen (chown meo:users).
+# bewusst nicht gesichert — liegt in der Cloud.
+#
+# 2026-10-08: /daten dem User uebereignet (chown meo:users) und ~/win-rescue
+# (26G) sowie ~/_trash-staging-meo-work-2026-10-05 (21G, winboat-Image) nach
+# /daten verschoben; ~/win-rescue ist jetzt ein Symlink. Grund: / (263G) war
+# zu 81% voll, /daten (204G) praktisch leer. Groesster verbleibender Posten
+# auf / ist ~/Insync (57G) — Umzug nach /daten nur ueber die Insync-App
+# (Basisordner aendern), nie per mv/rm, sonst spiegelt Insync Loeschungen
+# in die Cloud.
 { ... }:
 {
   fileSystems."/daten" = {

@@ -9,6 +9,9 @@
     # Dual-GPU-Setup auf meo); auf meo-work mit reiner Intel-iGPU laeuft es damit
     # unter Xwayland auf der iGPU — harmlos, nur ggf. nicht noetig.
     (import ../../modules/meo/orcastudio.nix)
+    # ADDED 2026-10-08: ArtCraft Suite (storytold) — native Rust-Apps als
+    # Affinity-Ersatz ohne Wine. Alle 7 Pakete + Bump-Rezept in der Datei.
+    (import ../../modules/meo/artcraft.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
     (import ../../modules/meo/masterpdfeditor-fix.nix)  # 5.9.98->5.9.99 (Upstream-404)
@@ -72,6 +75,14 @@
     ferdium
 
     # --- Grafik & Gaming ---
+    # ArtCraft Suite (AppImage via modules/meo/artcraft.nix overlay) — early alpha!
+    photocraft                # ≙ Affinity Photo: Bildeditor, oeffnet/speichert PSD/PSB
+    vectorcraft               # ≙ Affinity Designer: Vektor-Illustration
+    designcraft               # ≙ Affinity Publisher: Seitenlayout / Publishing
+    lightcraft                # Lightroom-Pendant: Fotobibliothek + RAW-Entwicklung
+    pdfcraft                  # Acrobat-Pendant: PDF-Bearbeitung
+    filmcraft                 # Premiere-Pendant: Videoschnitt
+    effectcraft               # After-Effects-Pendant: Motion Graphics / VFX
     vulkan-tools              # Diagnose-Tools für die Vulkan-Grafik-Schnittstelle (z.B. vulkaninfo)
     mesa-demos                # Enthält Tools wie glxinfo, um die GPU-Beschleunigung zu prüfen
     gamescope                 # Micro-Compositor von Valve für stabileres Gaming und Upscaling
