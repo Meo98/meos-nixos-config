@@ -80,12 +80,20 @@ in
       cp usr/share/icons/hicolor/scalable/apps/com.realvnc.rvncconnect.svg \
          $out/share/icons/hicolor/scalable/apps/
 
-      # Desktop-Eintraege: absolute /usr/lib-Pfade auf $out umbiegen,
-      # Icon auf den Namen reduzieren (liegt im Standard-hicolor-Pfad).
+      # Desktop-Eintraege reparieren. RealVNC liefert sie fehlerhaft aus, und
+      # strikte Parser (quickshell/DMS-Spotlight, im Gegensatz zum laxen GTK)
+      # werfen sie dann still raus -> Eintrag fehlt im App-Launcher:
+      #   - CRLF statt LF (Windows-Zeilenenden)          -> sed 's/\r$//'
+      #   - Version=8.5.0 ist ungueltig (meint Spec-Ver)  -> 1.5
+      #   - Categories=Application;... (veralteter Wert)   -> Network;RemoteAccess;
+      # Ausserdem absolute /usr/lib-Pfade auf $out, Icon auf den Namen reduzieren.
       mkdir -p $out/share/applications
       for d in usr/share/applications/*.desktop; do
-        sed -e "s#/usr/lib/rvncconnect/rvncconnect#$out/lib/rvncconnect/rvncconnect#g" \
-            -e "s#Icon=/usr/share/icons/hicolor/scalable/apps/com.realvnc.rvncconnect.svg#Icon=com.realvnc.rvncconnect#g" \
+        sed -e 's/\r$//' \
+            -e "s#/usr/lib/rvncconnect/rvncconnect#$out/lib/rvncconnect/rvncconnect#g" \
+            -e "s#^Icon=.*#Icon=com.realvnc.rvncconnect#" \
+            -e "s#^Version=8\.5\.0#Version=1.5#" \
+            -e "s#^Categories=.*#Categories=Network;RemoteAccess;#" \
             "$d" > "$out/share/applications/$(basename "$d")"
       done
 
