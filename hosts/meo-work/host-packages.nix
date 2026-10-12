@@ -21,6 +21,9 @@
     # Hi-Res-Tick des Keyballs auf einen vollen Wheel-Klick hoch und 1.5 waere
     # dreimal zu schnell. Analyse in der Overlay-Datei.
     (import ../../modules/meo/ghostty-scroll-fix.nix)
+    # ADDED 2026-10-12: RealVNC Connect Viewer 8.5.0 (requireFile-Overlay).
+    # nixpkgs-Paket baut nicht (Upstream-404 + Cloudflare). Siehe Datei.
+    (import ../../modules/meo/realvnc.nix)
   ];
 
   services.flatpak.enable = true; # Ermöglicht die Installation von Flatpaks (GUI-Apps außerhalb des Nix-Stores)
@@ -66,12 +69,21 @@
     kicad                     # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
     qelectrotech              # Elektro-Schaltplan-/Stromlaufplan-Editor (Installations- und Steuerungstechnik, Symbolbibliothek nach IEC)
 
-    # --- Remote-Zugriff (VNC-Client) --- ADDED 2026-10-12
+    # --- Remote-Zugriff (RealVNC Viewer) --- ADDED 2026-10-12
     # Nur Client-Seite: von meo-work auf andere Rechner verbinden.
-    # Fuer die Server-Seite (meo-work selbst fernsteuern) waere unter niri/Wayland
-    # wayvnc noetig — bewusst NICHT installiert.
-    tigervnc                  # vncviewer: schlanker VNC-Client, Aufruf: vncviewer <host>:<display>
-    remmina                   # GUI-Remote-Client (VNC, RDP, SSH, SPICE) mit Verbindungsprofilen
+    #
+    # realvnc-vnc-viewer: ZWINGEND fuer die Technorama/SSC-Server. Die sprechen
+    # RealVNCs proprietaere Verschluesselung (RFB 5.0 mit RA2/RA2ne, Security-
+    # Typen 5/6/130/192). libvncclient — also Remmina UND TigerVNC — kann die
+    # NICHT; dort bleibt das Bild schwarz ("Unable to connect"). Nur RealVNC
+    # Viewer selbst spricht RA2ne. Gleicher Client wie unter Windows.
+    # Start: Desktop-Eintrag "VNC Viewer" bzw. Binary vncviewer.
+    # (TigerVNC/Remmina bewusst NICHT installiert — RealVNC reicht. 2026-10-12)
+    #
+    # Build via Overlay modules/meo/realvnc.nix (requireFile, 8.5.0). Das
+    # nixpkgs-Paket 7.15.1 baut nicht (Upstream-404 + Cloudflare). Binary heisst
+    # offiziell `rvncconnect`; es gibt zusaetzlich den Alias `vncviewer`.
+    realvnc-vnc-viewer
 
     # --- Entwicklung & System-Tools ---
     nodejs                    # JavaScript-Laufzeitumgebung für Server- und Frontend-Entwicklung

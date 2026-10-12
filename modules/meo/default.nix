@@ -18,5 +18,6 @@
     ./dev-tools.nix
     ./doc-convert.nix
     ./claude-tools-path.nix
+    ./claude-code.nix
   ];
 }

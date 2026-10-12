@@ -59,6 +59,21 @@ Dry-building both hosts before pushing is still good practice, but there is no l
 
 Lives in `hosts/meo/affinity.nix`. Imported by BOTH hosts (meo-work imports `../meo/affinity.nix`). Controlled by `enableAffinity = true|false` in respective `variables.nix`. Uses `pkgs.affinity-v3` from `inputs.affinity-nix` — pinned to **`github:Meo98/affinity-nix-fork`** (Fork von mrshmllow/affinity-nix mit iGPU-Fixes: DXVK 2.4.1, d2d1 bezier safety patches, CanvaSignInPatch entfernt). Garnix (`cache.garnix.io`) ist seit 2026-10 tot (NXDOMAIN) und wurde aus `cachix.nix` und `build.yml` entfernt. Fork-Derivations liegen in keinem Binary-Cache, müssen einmalig lokal kompiliert werden (wine, base-prefix-4 ≈ 20-30 Min beim ersten Build pro Host). CI baut Affinity **nicht**: `build.yml` baut die `nixosConfigurations.<host>-ci`-Varianten (flake.nix, `ci = true` specialArg), in denen `affinity.nix` sich selbst deaktiviert. Grund: wine-wow64 braucht auf dem 2-Core-Runner über 60 Min (Run #191 lief zusätzlich voll, Run 37601965808 ins Timeout). Affinity-Änderungen also immer lokal mit `nh os build` prüfen.
 
+### Claude Code integration (`modules/meo/claude-code.nix`)
+
+Since 2026-10-12 the home-manager module `programs.claude-code` is enabled on both hosts:
+
+- **mcp-nixos** MCP server (`pkgs.mcp-nixos`, tools `nix` / `nix_versions`) for live
+  lookup of nixpkgs packages, NixOS/home-manager options and package version history.
+  Use it instead of guessing package or option names. It does NOT know this config;
+  use `nix eval .#nixosConfigurations.<host>.config.<option>` for local values.
+- **Global `~/.claude/CLAUDE.md`** is a store symlink to `modules/meo/claude-global.md`
+  (rebuild rules, declarative-only policy). Edit it in the repo, not in `~/.claude/`.
+- `package = null` on purpose: the `claude-code` binary stays in `hosts/*/host-packages.nix`.
+- `settings`, `plugins`, `marketplaces` are intentionally NOT managed by home-manager.
+  Setting any of them turns `~/.claude/settings.json` into a read-only store symlink and
+  breaks the imperative `/plugin install` workflow the user relies on.
+
 ## Common tasks
 
 ### "Add a package to system"
