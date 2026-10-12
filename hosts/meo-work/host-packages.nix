@@ -66,6 +66,13 @@
     kicad                     # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
     qelectrotech              # Elektro-Schaltplan-/Stromlaufplan-Editor (Installations- und Steuerungstechnik, Symbolbibliothek nach IEC)
 
+    # --- Remote-Zugriff (VNC-Client) --- ADDED 2026-10-12
+    # Nur Client-Seite: von meo-work auf andere Rechner verbinden.
+    # Fuer die Server-Seite (meo-work selbst fernsteuern) waere unter niri/Wayland
+    # wayvnc noetig — bewusst NICHT installiert.
+    tigervnc                  # vncviewer: schlanker VNC-Client, Aufruf: vncviewer <host>:<display>
+    remmina                   # GUI-Remote-Client (VNC, RDP, SSH, SPICE) mit Verbindungsprofilen
+
     # --- Entwicklung & System-Tools ---
     nodejs                    # JavaScript-Laufzeitumgebung für Server- und Frontend-Entwicklung
     glab                      # GitLab CLI - Ermöglicht GitLab-Aktionen (wie Login/Push) im Terminal
