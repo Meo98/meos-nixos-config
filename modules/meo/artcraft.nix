@@ -67,8 +67,8 @@ self: super: let
 in {
   photocraft = mkCraft {
     pname = "photocraft";
-    version = "0.3.0";
-    sha256 = "29e3011f49a52ea25c8fe404258a6c5fadb02094dbb40a884d69e6ba808e6136";
+    version = "0.7.0";
+    sha256 = "87ebce36bcdf6b31d16a9ca22ce29f9ad8db68185e4d98118800d1c2de78ac42";
     description = "Image editor (Photoshop reimplementation in Rust, PSD/PSB)";
   };
 
@@ -81,39 +81,37 @@ in {
 
   designcraft = mkCraft {
     pname = "designcraft";
-    version = "0.2.1";
-    sha256 = "78141184d4ebc0183fe9c2609611d2a33e67668738548cc022b6778398ec8340";
+    version = "0.6.0";
+    sha256 = "fb62e7e7a9adee2fd7f400b2ba26093b96a803470a7d8d476e39196f05c4c034";
     description = "Page layout and publishing (InDesign reimplementation in Rust)";
   };
 
   lightcraft = mkCraft {
     pname = "lightcraft";
-    version = "0.2.1";
-    sha256 = "c2f39adaa8a6536d5014a7ba102ff785e1a323a02e089d01db1f85378dc0fc53";
+    version = "0.6.0";
+    sha256 = "577ef018dceec8d4980d2f9b20782ec37848158b8e6419cc90d31c2b580c1919";
     description = "Photo library and raw developer (Lightroom reimplementation in Rust)";
   };
 
   filmcraft = mkCraft {
     pname = "filmcraft";
-    version = "0.2.1";
-    sha256 = "7891c9b24c8e165a54906f8ee6a6973e051dd3c2cc1fa2729a78269fec481188";
+    version = "0.6.0";
+    sha256 = "c0b5a5d0f0e71176aa806c895f8ca513f2d505b70fef85b874bbe23c91232bc7";
     description = "Video editor (Premiere Pro reimplementation in Rust)";
   };
 
   effectcraft = mkCraft {
     pname = "effectcraft";
-    version = "0.4.0";
-    sha256 = "994c374c54e920a12ff20fbe443199acaf49c03b30380e7a5c17b60208743d71";
+    version = "0.8.0";
+    sha256 = "31221dab631fef3a38d140546ffc2a6955459b859877845a8282d9a97239b373";
     description = "Motion graphics and VFX (After Effects reimplementation in Rust)";
   };
 
   pdfcraft = mkCraft {
     pname = "pdfcraft";
-    version = "0.2.1";
-    # Repo heisst pdfcraft, das v0.2.1-Asset (und die Desktop-Datei darin)
-    # noch printcraft. Beim naechsten Bump pruefen, ob asset entfallen kann.
-    asset = "printcraft";
-    sha256 = "401735c646bc5884cf1ff799d46913bce7dc3d29d06ff5a2902697e65465f584";
+    version = "0.6.0";
+    # Seit v0.6.0 heisst auch das Asset pdfcraft (vorher printcraft).
+    sha256 = "17314af5443f581f4516deaefdabc1e70f83199a61412a10deaf673adaef028c";
     description = "PDF workbench (Acrobat reimplementation in Rust)";
   };
 }
