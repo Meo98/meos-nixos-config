@@ -74,8 +74,8 @@ in {
 
   vectorcraft = mkCraft {
     pname = "vectorcraft";
-    version = "0.4.0";
-    sha256 = "ff473f200b0103602d4e83e00bb565284d2ab03445a9ad2f76bf8ffdb302d850";
+    version = "0.9.0";
+    sha256 = "77eefa2c1ca7681e4b9aede638db314636da8d504aea107d48fb3367b6f61238";
     description = "Vector graphics editor (Illustrator reimplementation in Rust)";
   };
 
