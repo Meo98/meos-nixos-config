@@ -118,7 +118,15 @@
   };
 
   systemd.services.kanata-meo-config = {
+    # Kanata beendet sich mit Exit 1, wenn eine Tastatur mitten im Lesen
+    # verschwindet (USB-Reconnect der Charybdis -> "failed read: No such
+    # device"). Das nixpkgs-Modul setzt kein Restart, der Dienst bliebe
+    # dann dauerhaft auf "failed". Darum: immer neu starten, ohne Start-Limit,
+    # damit auch ein laengeres Abstecken der Tastatur den Dienst nicht sperrt.
+    unitConfig.StartLimitIntervalSec = 0;
     serviceConfig = {
+      Restart = "always";
+      RestartSec = 1;
       DynamicUser = pkgs.lib.mkForce false;
       User = pkgs.lib.mkForce "root";
       Group = pkgs.lib.mkForce "root";
