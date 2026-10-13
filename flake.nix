@@ -149,14 +149,15 @@
       inputs.home-manager.follows = "home-manager";
     };
 
-    # Fork of mrshmllow/affinity-nix mit fixes für Intel Iris Xe (meo-work):
-    # - CanvaSignInPatch entfernt (fixt 0xC06D007E Startup-Crash)
-    # - d2d1.dll native lib aus v0.3.0 mit Bezier recursion/split-budget patches
-    #   (fixt Double-Click-Hang auf SVG-importierten Symbolen)
-    # - DXVK 2.4.1 zusammen mit vkd3d-proton (fixt WARP-Software-Renderer-
-    #   Fallback der CPU sättigt)
+    # MODIFIED 2026-10-13: zurueck auf upstream mrshmllow/affinity-nix.
+    # Upstream baut Wine seit 9d2534b (2026-09-11) aus dem Host-nixpkgs
+    # (wine-wow64 11.0, glibc 2.44). Der Fork Meo98/affinity-nix-fork pinnte
+    # ein nixpkgs-wine von 2025-01 (glibc 2.40); dadurch konnte Wine die
+    # Host-Mesa/Vulkan-Libs (glibc 2.44) nicht laden -> kein D3D-Device,
+    # schwarze Canvas (0x887A0004) und d2d1-Ladefehler (0xC06D007E).
+    # Mit upstream: vkd3d-proton findet den D3D12-Adapter, Canvas rendert.
     affinity-nix = {
-      url = "github:Meo98/affinity-nix-fork";
+      url = "github:mrshmllow/affinity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
