@@ -8,7 +8,6 @@
     ../../modules/meo/niri-gpu-smart.nix
     ../../modules/meo/android-dev.nix
     ../../modules/meo/dns-override.nix
-    ../../modules/meo/synology-mount.nix
     ../../modules/meo/backups.nix
     ../../modules/meo/lock-before-sleep.nix
   ];
