@@ -123,6 +123,8 @@
     # device"). Das nixpkgs-Modul setzt kein Restart, der Dienst bliebe
     # dann dauerhaft auf "failed". Darum: immer neu starten, ohne Start-Limit,
     # damit auch ein laengeres Abstecken der Tastatur den Dienst nicht sperrt.
+    # (Am 11.10.2026 auf meo passiert: Charybdis mehrfach geflasht,
+    # kanata lag danach neun Stunden tot.)
     unitConfig.StartLimitIntervalSec = 0;
     serviceConfig = {
       Restart = "always";
