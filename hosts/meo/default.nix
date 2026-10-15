@@ -6,6 +6,7 @@
     ./affinity.nix
     ../../modules/meo/hyprland-gpu-smart.nix
     ../../modules/meo/niri-gpu-smart.nix
+    ../../modules/meo/dgpu-power.nix
     ../../modules/meo/android-dev.nix
     ../../modules/meo/dns-override.nix
     ../../modules/meo/backups.nix
@@ -205,6 +206,15 @@
   # Units mit VRAM-Preservation entfallen). Falls je nochmal probiert:
   # open=true + kernelSuspendNotifier=false waere die naechste Variante.
   # Bis dahin: proprietaeres Modul = known-good.
+  # KORREKTUR 2026-10-14: das mkForce false schaltet RTD3 NICHT ab. Der
+  # Treiber-Default NVreg_DynamicPowerManagement=3 aktiviert auf Ada fein-
+  # granulares RTD3 von selbst (/proc/driver/nvidia/gpus/*/power: "Runtime D3
+  # status: Enabled (fine-grained)", power/control=auto). finegrained=true
+  # haette nur 0x02 + udev-Regeln ergaenzt. Der Fix kostet also keine Akku-
+  # laufzeit; ob er je etwas am Freeze geaendert hat, ist damit offen (seit
+  # der niri-Migration 27.08. kein Suspend-Fehler mehr im Journal, 46 Zyklen).
+  # Bleibt so, um nichts anzufassen, was laeuft. Details + Werkzeuge
+  # (dgpu-status, on-nvidia, supergfxctl): modules/meo/dgpu-power.nix.
 
 
   services.pipewire = {
