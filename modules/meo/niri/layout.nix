@@ -72,6 +72,13 @@ in {
     # bisher per exec-once mitlief.
     overview.zoom = 0.5;
 
+    # Hot Corner AUS. niri oeffnet seit 25.05 standardmaessig die Overview,
+    # sobald der Zeiger die obere linke Ecke beruehrt. Mit drei Monitoren
+    # nebeneinander streift man die Ecke des Nachbarschirms beim blossen
+    # Rueberfahren, und die Overview geht dann auf ALLEN Schirmen auf.
+    # Rendert zu `gestures { hot-corners { off } }`. Mod+Tab bleibt.
+    gestures.hot-corners.off = {};
+
     animations.slowdown = 1.0;
   };
 }
