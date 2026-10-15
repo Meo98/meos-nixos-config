@@ -18,6 +18,10 @@
     # ADDED 2026-09-07: JLCPCB-Desktop-Client (App-Rabatte fuer
     # PicoStack-Bestellungen), .deb via AUR-Quelle, s. Datei.
     (import ../../modules/meo/jlcone.nix)
+    # ADDED 2026-10-15: ArtCraft Suite (storytold) — native Rust-Apps als
+    # Affinity-Ersatz ohne Wine, gleicher Stand wie auf meo-work. Alle 12
+    # Pakete + Bump-Rezept in der Datei.
+    (import ../../modules/meo/artcraft.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
   ];
@@ -90,6 +94,19 @@
     dos2unix # Werkzeug zum Umwandeln von Windows-Zeilenumbrüchen in Linux-Format
     thonny
     # --- Grafik & Gaming ---
+    # ArtCraft Suite (AppImage via modules/meo/artcraft.nix overlay) — early alpha!
+    photocraft # ≙ Affinity Photo: Bildeditor, oeffnet/speichert PSD/PSB
+    vectorcraft # ≙ Affinity Designer: Vektor-Illustration
+    designcraft # ≙ Affinity Publisher: Seitenlayout / Publishing
+    lightcraft # Lightroom-Pendant: Fotobibliothek + RAW-Entwicklung
+    pdfcraft # Acrobat-Pendant: PDF-Bearbeitung
+    filmcraft # Premiere-Pendant: Videoschnitt
+    effectcraft # After-Effects-Pendant: Motion Graphics / VFX
+    wordcraft # Word-Pendant: Textverarbeitung (DOCX)
+    gridcraft # Excel-Pendant: Tabellenkalkulation (XLSX)
+    deckcraft # PowerPoint-Pendant: Praesentationen (PPTX)
+    soundcraft # Pro-Tools-Pendant: Audio-Workstation (DAW)
+    cadcraft # AutoCAD-Pendant: 2D-CAD / technisches Zeichnen
     vulkan-tools # Diagnose-Tools für die Vulkan-Grafik-Schnittstelle (z.B. vulkaninfo)
     # mesa-demos — in core/packages.nix (systemweit verfügbar)
     gamescope # Micro-Compositor von Valve für stabileres Gaming und Upscaling

@@ -69,6 +69,16 @@ in {
       # Bambu. 0.75 per Screenshot-Vergleich auf Vivaldi-UI-Textgroesse
       # kalibriert. Zum Testen anderer Werte: GDK_DPI_SCALE=0.9 bambu-studio
       export GDK_DPI_SCALE="''${GDK_DPI_SCALE:-0.75}"
+      # ADDED 2026-10-15: Startseite (Library/Online Models/Print History) ist
+      # eine WebKitGTK-Webview. Auf meo (niri rendert auf der RTX, Bambu laeuft
+      # unter Xwayland) malte sie nur rote Umrisse auf Schwarz: WebKits
+      # DMA-BUF-Renderer holt sich ueber DRI3 den NVIDIA-Render-Node, Mesa-EGL
+      # kennt dafuer keinen Treiber ("pci id for fd: 10de:27e0, driver (null)",
+      # "failed to create dri2 screen") und die Texturen kommen kaputt an.
+      # Ohne DMA-BUF-Renderer faellt WebKit auf den klassischen Pfad zurueck,
+      # Seite rendert korrekt (A/B-Vergleich per Screenshot, 15.10.). Auf der
+      # Intel-iGPU (meo-work) ist der Schalter wirkungslos-harmlos.
+      export WEBKIT_DISABLE_DMABUF_RENDERER="''${WEBKIT_DISABLE_DMABUF_RENDERER:-1}"
     '';
     
     extraPkgs = pkgs: with pkgs; [
