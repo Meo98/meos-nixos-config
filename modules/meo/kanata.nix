@@ -11,6 +11,16 @@
       "meo-config" = {
         extraDefCfg = ''
           process-unmapped-keys yes
+          ;; Custom-Boards mit eigener Firmware (Vial/QMK) nicht anfassen:
+          ;; Laptop-Tastatur und normale Tastaturen (z. B. Logitech) bleiben
+          ;; unter kanata, die Split-Boards liefern ihre Layouts selbst.
+          ;; Namen exakt wie in /proc/bus/input/devices (N: Name=...).
+          linux-dev-names-exclude (
+            "Pilot W-CORNE"
+            "Pilot W-CORNE System Control"
+            "Pilot W-CORNE Consumer Control"
+            "Charybdis Mini Keyboard"
+          )
         '';
 
         config = ''
