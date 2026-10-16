@@ -59,6 +59,8 @@
       inline_height = 20;
       show_preview = true;
       keymap_mode = "vim-insert";
+      # Atuin AI: "?" auf leerem Prompt -> Sprache zu Shell-Befehl (Cloud-Dienst von Atuin).
+      ai.enabled = true;
     };
   };
 }
