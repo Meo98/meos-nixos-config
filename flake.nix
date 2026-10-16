@@ -72,7 +72,15 @@
       # Lock- und Idle-Zeiten waeren GUI-Zustand geworden, samt der
       # eDP-Freeze-Sperre (idleScreenOff) auf meo. Deshalb zuerst die billige
       # Erklaerung ausschliessen: veralteter Pin statt falscher Shell.
-      url = "github:noctalia-dev/noctalia/v5.0.0-beta.10";
+      #
+      # MODIFIED 2026-10-15: beta.10 -> v5.3.0 (erstes stabiles v5, Release
+      # vom 2026-10-15). Release-Notes v5.1.0 bis v5.3.0 geprueft: keine
+      # Schema-Aenderung, nur neue optionale Keys (capsule_border_width,
+      # notification.width, osd.hide_delay_ms) und ein entfernter
+      # Triad-Compositor-Support, der hier nie benutzt wurde. Seit beide
+      # Hosts barChoice = "dms" fahren, wird noctalia.nix nicht mehr
+      # importiert; der Pin ist nur noch der Rueckweg und wird nicht gebaut.
+      url = "github:noctalia-dev/noctalia/v5.3.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -125,8 +133,14 @@
     # keine git-Abhaengigkeiten im Cargo.lock, statische Konfiguration und
     # gelernter Zustand getrennt (config.toml wird nur gelesen, state.json
     # allein vom Daemon geschrieben). Zuletzt bewegt am 2026-09-06.
+    #
+    # MODIFIED 2026-10-15: v0.2.1 -> v0.3.2. v0.3.0 bringt `niripip ui`
+    # (lokale Settings-Anwendung auf axum-Basis, kein GUI-Toolkit, weiterhin
+    # keine Systembibliotheken und keine git-Abhaengigkeiten im Cargo.lock,
+    # 106 Crates). Die hier genutzten Subcommands pin/unpin/reload und
+    # config/config.example.toml gibt es unveraendert.
     niri-pip = {
-      url = "github:t1ktakdev/niri-pip/v0.2.1";
+      url = "github:t1ktakdev/niri-pip/v0.3.2";
       flake = false;
     };
 

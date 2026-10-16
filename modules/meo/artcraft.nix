@@ -58,6 +58,14 @@ self: super: let
         for f in ${contents}/*.png; do
           install -Dm444 "$f" "$out/share/pixmaps/$(basename "$f")"
         done
+        # ADDED 2026-10-15: Jedes AppImage bringt unter usr/bin auch `<app>-cli`
+        # mit (Headless-Engine, Skripte, MCP-Server fuer Claude Code:
+        # `<app>-cli mcp`, bzw. `--connect 7979` gegen die mit
+        # `<app> --control 7979` gestartete GUI). Das CLI braucht keine
+        # FHS-Sandbox: reines Rust-Binary, laeuft dank nix-ld direkt.
+        if [ -e "${contents}/usr/bin/${pname}-cli" ]; then
+          ln -s "${contents}/usr/bin/${pname}-cli" "$out/bin/${pname}-cli"
+        fi
       '';
 
       meta = with super.lib; {
@@ -71,51 +79,56 @@ self: super: let
 in {
   photocraft = mkCraft {
     pname = "photocraft";
-    version = "0.7.0";
-    sha256 = "87ebce36bcdf6b31d16a9ca22ce29f9ad8db68185e4d98118800d1c2de78ac42";
+    version = "0.9.0";
+    sha256 = "483a9a79200e0c0864bb54cf3faa6a55e2b79c1433dacfcb153d3862e78f32bc";
     description = "Image editor (Photoshop reimplementation in Rust, PSD/PSB)";
   };
 
   vectorcraft = mkCraft {
     pname = "vectorcraft";
-    version = "0.9.0";
-    sha256 = "77eefa2c1ca7681e4b9aede638db314636da8d504aea107d48fb3367b6f61238";
+    version = "0.11.0";
+    sha256 = "0ab5126f9b2f9591bc27a10e20ea1b2f239384b1a16fec88288ed3de6dbf831c";
     description = "Vector graphics editor (Illustrator reimplementation in Rust)";
   };
 
   designcraft = mkCraft {
     pname = "designcraft";
-    version = "0.6.0";
-    sha256 = "fb62e7e7a9adee2fd7f400b2ba26093b96a803470a7d8d476e39196f05c4c034";
+    # 0.8.0 (2026-10-14): strikter spread-Check (PR #662), Parent-Page-Items
+    # nach Seitenindex (PR #523). Der Fix "Create Guides auf der Seite in
+    # Ansicht statt immer Seite 1" (Commit 524166f5) liegt nur auf main und
+    # kommt erst mit dem naechsten Release; Workaround: im Dialog `spread`
+    # = Spread-Index der Zielseite eintragen (Seite 2 -> 1).
+    version = "0.8.0";
+    sha256 = "88d57710f56c9fb7d8e33e046061eff839117971b402a4103c4b332b5ca3b5df";
     description = "Page layout and publishing (InDesign reimplementation in Rust)";
   };
 
   lightcraft = mkCraft {
     pname = "lightcraft";
-    version = "0.6.0";
-    sha256 = "577ef018dceec8d4980d2f9b20782ec37848158b8e6419cc90d31c2b580c1919";
+    version = "0.8.0";
+    sha256 = "81d54b09e60b448c05517f1dea3422bea5998692a8a1a84060466385b9dfd9c3";
     description = "Photo library and raw developer (Lightroom reimplementation in Rust)";
   };
 
   filmcraft = mkCraft {
     pname = "filmcraft";
-    version = "0.6.0";
-    sha256 = "c0b5a5d0f0e71176aa806c895f8ca513f2d505b70fef85b874bbe23c91232bc7";
+    version = "0.8.0";
+    sha256 = "41955e97c8932435f2b6bb8245783c668786b33d2b7df962bd097641da68211e";
     description = "Video editor (Premiere Pro reimplementation in Rust)";
   };
 
   effectcraft = mkCraft {
     pname = "effectcraft";
-    version = "0.8.0";
-    sha256 = "31221dab631fef3a38d140546ffc2a6955459b859877845a8282d9a97239b373";
+    version = "0.10.0";
+    sha256 = "d0e4016f6e5915bf847465fcfa4053a1607e0afa16b35fed156a78c75e88b650";
     description = "Motion graphics and VFX (After Effects reimplementation in Rust)";
   };
 
   pdfcraft = mkCraft {
     pname = "pdfcraft";
-    version = "0.6.0";
+    version = "0.8.0";
     # Seit v0.6.0 heisst auch das Asset pdfcraft (vorher printcraft).
-    sha256 = "17314af5443f581f4516deaefdabc1e70f83199a61412a10deaf673adaef028c";
+    sha256 = "6b89397ec10ad505e732f18982b6ad171aab085d938ca0c3034a00d4199e38f7";
     description = "PDF workbench (Acrobat reimplementation in Rust)";
   };
 
