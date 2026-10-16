@@ -1,4 +1,5 @@
 {
+  config,
   profile,
   nixosTarget,
   pkgs,
@@ -11,7 +12,10 @@
 
   programs.zsh = {
     enable = true;
-    dotDir = ".config/zsh";
+    # MODIFIED 2026-10-16: home-manager (ab Commit 6407259, 2026-10-15) verlangt
+    # fuer dotDir einen absoluten Pfad; der relative Wert ".config/zsh" aus
+    # zaneyos liess den Prewarm-Build mit einer Assertion scheitern.
+    dotDir = "${config.home.homeDirectory}/.config/zsh";
     autosuggestion.enable = true;
     syntaxHighlighting = {
       enable = true;
