@@ -21,8 +21,9 @@
     # Hi-Res-Tick des Keyballs auf einen vollen Wheel-Klick hoch und 1.5 waere
     # dreimal zu schnell. Analyse in der Overlay-Datei.
     (import ../../modules/meo/ghostty-scroll-fix.nix)
-    # ADDED 2026-10-12: RealVNC Connect Viewer 8.5.0 (requireFile-Overlay).
-    # nixpkgs-Paket baut nicht (Upstream-404 + Cloudflare). Siehe Datei.
+    # ADDED 2026-10-12: RealVNC Viewer (requireFile-Overlay), seit 2026-10-19
+    # 7.13.1 aus dem Internet Archive. nixpkgs-Paket baut nicht (Upstream-404).
+    # 8.x verlangt fuer Direktverbindungen einen bezahlten Plan. Siehe Datei.
     (import ../../modules/meo/realvnc.nix)
   ];
 
@@ -80,9 +81,10 @@
     # Start: Desktop-Eintrag "VNC Viewer" bzw. Binary vncviewer.
     # (TigerVNC/Remmina bewusst NICHT installiert — RealVNC reicht. 2026-10-12)
     #
-    # Build via Overlay modules/meo/realvnc.nix (requireFile, 8.5.0). Das
-    # nixpkgs-Paket 7.15.1 baut nicht (Upstream-404 + Cloudflare). Binary heisst
-    # offiziell `rvncconnect`; es gibt zusaetzlich den Alias `vncviewer`.
+    # Build via Overlay modules/meo/realvnc.nix (requireFile, 7.13.1). Das
+    # nixpkgs-Paket 7.15.1 baut nicht (Upstream-404). 8.x ("Connect Viewer")
+    # bewusst NICHT: Direktverbindung nur mit bezahltem Plan. Ohne Konto
+    # nutzen ("without signing in"), Adresse direkt eingeben.
     realvnc-vnc-viewer
 
     # --- Entwicklung & System-Tools ---
