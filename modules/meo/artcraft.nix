@@ -79,91 +79,90 @@ self: super: let
 in {
   photocraft = mkCraft {
     pname = "photocraft";
-    version = "0.9.0";
-    sha256 = "483a9a79200e0c0864bb54cf3faa6a55e2b79c1433dacfcb153d3862e78f32bc";
+    version = "0.10.0";
+    sha256 = "cd1a33c979e8a5da94ded81d7648e779cb8069b77e4aca743c8d177ca5270d77";
     description = "Image editor (Photoshop reimplementation in Rust, PSD/PSB)";
   };
 
   vectorcraft = mkCraft {
     pname = "vectorcraft";
-    version = "0.11.0";
-    sha256 = "0ab5126f9b2f9591bc27a10e20ea1b2f239384b1a16fec88288ed3de6dbf831c";
+    version = "0.13.1";
+    sha256 = "95457bb9b48bc6344124c2bf32a106006548aa594b1b8d1d8ca47d52a30e577e";
     description = "Vector graphics editor (Illustrator reimplementation in Rust)";
   };
 
   designcraft = mkCraft {
     pname = "designcraft";
-    # 0.8.0 (2026-10-14): strikter spread-Check (PR #662), Parent-Page-Items
-    # nach Seitenindex (PR #523). Der Fix "Create Guides auf der Seite in
-    # Ansicht statt immer Seite 1" (Commit 524166f5) liegt nur auf main und
-    # kommt erst mit dem naechsten Release; Workaround: im Dialog `spread`
-    # = Spread-Index der Zielseite eintragen (Seite 2 -> 1).
-    version = "0.8.0";
-    sha256 = "88d57710f56c9fb7d8e33e046061eff839117971b402a4103c4b332b5ca3b5df";
+    # 0.9.0 (2026-10-18): Create Guides nimmt die Seite in Ansicht und hat
+    # "Apply to: This page / Spread" (vorher immer Seite 1, Workaround war das
+    # spread-Feld). Parent-Page-Guides werden auf Body-Seiten noch NICHT
+    # gezeichnet (inherited_guides fehlt im Release).
+    version = "0.9.0";
+    sha256 = "e5ab60399b923271235940118918d6f0c460a3082a090b0f6fe4d9d0490da9b5";
     description = "Page layout and publishing (InDesign reimplementation in Rust)";
   };
 
   lightcraft = mkCraft {
     pname = "lightcraft";
-    version = "0.8.0";
-    sha256 = "81d54b09e60b448c05517f1dea3422bea5998692a8a1a84060466385b9dfd9c3";
+    version = "0.9.1";
+    sha256 = "bd002851a9524349c9d8922ae2b85c98c257de16480d3b7f885801a3b64b6d18";
     description = "Photo library and raw developer (Lightroom reimplementation in Rust)";
   };
 
   filmcraft = mkCraft {
     pname = "filmcraft";
-    version = "0.8.0";
-    sha256 = "41955e97c8932435f2b6bb8245783c668786b33d2b7df962bd097641da68211e";
+    version = "0.9.0";
+    sha256 = "784e4cdbd8982f17b4ec81caf5367fd308d70a123a7aa74bccd7420214c0c447";
     description = "Video editor (Premiere Pro reimplementation in Rust)";
   };
 
   effectcraft = mkCraft {
     pname = "effectcraft";
-    version = "0.10.0";
-    sha256 = "d0e4016f6e5915bf847465fcfa4053a1607e0afa16b35fed156a78c75e88b650";
+    version = "0.11.1";
+    sha256 = "231e60f367334d7e85891fe653c4a434aa093c21313e1ecc8fe1459b6fd58379";
     description = "Motion graphics and VFX (After Effects reimplementation in Rust)";
   };
 
   pdfcraft = mkCraft {
     pname = "pdfcraft";
-    version = "0.8.0";
+    version = "0.9.0";
     # Seit v0.6.0 heisst auch das Asset pdfcraft (vorher printcraft).
-    sha256 = "6b89397ec10ad505e732f18982b6ad171aab085d938ca0c3034a00d4199e38f7";
+    sha256 = "f8568c87906d968461052f0b57097c0b84b70b37bf649c9b504d8c1eb7ad0cfa";
     description = "PDF workbench (Acrobat reimplementation in Rust)";
   };
 
   wordcraft = mkCraft {
     pname = "wordcraft";
-    version = "0.7.0";
-    sha256 = "7dc86ff3025f185be39bf19822af24f2c504ddead3f52ed99c3d6960bce58d4d";
+    version = "0.8.0";
+    sha256 = "7df7b3a50172ba0ede85a2c4b83c360af92b1c3767c8b30c3963ebf05d36ab9c";
     description = "Word processor (Microsoft Word reimplementation in Rust, DOCX)";
   };
 
   gridcraft = mkCraft {
     pname = "gridcraft";
-    version = "0.7.0";
-    sha256 = "2daace8be3719afee727d2e353aa4bd0ac22798c312c92c2c6d5e42f27f70812";
+    version = "0.8.0";
+    sha256 = "942096a29a534aa2503e9e7aa1816e952f7250e73d55f8f32afd077547617f77";
     description = "Spreadsheet (Microsoft Excel reimplementation in Rust, XLSX)";
   };
 
   deckcraft = mkCraft {
     pname = "deckcraft";
-    version = "0.7.0";
-    sha256 = "535afd1e7f6d389ecfe78f4a702b5a36719217c4cec556ae5d7f0fd775ae5584";
+    version = "0.8.0";
+    sha256 = "5c24e0c3d52c710219fb6b897cbf2e856e0f6dd4dc79b7a2cefc1d2d55134ed0";
     description = "Presentations (Microsoft PowerPoint reimplementation in Rust, PPTX)";
   };
 
   soundcraft = mkCraft {
     pname = "soundcraft";
-    version = "0.7.0";
-    sha256 = "80f2fecd132b9a9c3ac2391664b0a0214169c8cc0e27be917a3704553a914d81";
+    version = "0.8.0";
+    sha256 = "9c38f8d1a5c818f673a17f68a952ea8972cea4ab4720590bdb7e393504866768";
     description = "Digital audio workstation (Avid Pro Tools reimplementation in Rust)";
   };
 
   cadcraft = mkCraft {
     pname = "cadcraft";
-    version = "0.7.0";
-    sha256 = "b2aa2807c886e1bae7b0064f47688a62ed6fe1fa05f05b352e362cdc698f0b77";
+    version = "0.8.0";
+    sha256 = "24f77e372bf07233f72672458bc69135d54bc9f6bb6379ed737870a7c1152bd2";
     description = "2D CAD and drafting (AutoCAD reimplementation in Rust, DXF/DWG)";
   };
 }
