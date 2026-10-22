@@ -21,16 +21,19 @@ self: super: let
   # wrapType2 liefert libc/Mesa/Vulkan/Wayland aus der FHS-Sandbox. Dieselbe
   # Basis wie appimage-run, deshalb keine extraPkgs noetig.
   #
-  # Bei Version-Bump pro App:
-  #   gh release view --repo storytold/<app>
-  #   curl -sL https://github.com/storytold/<app>/releases/download/v<ver>/SHA256SUMS.txt \
-  #     | grep linux-x86_64.AppImage
-  # und den Hex-Hash unten eintragen (sha256 = "<hex>" wird von fetchurl
-  # direkt akzeptiert).
+  # VERSIONEN: stehen NICHT hier, sondern in artcraft-versions.json
+  # (version + sha256 pro App). Gepflegt vom Skript `artcraft-update`
+  # (modules/meo/scripts/artcraft-update.nix): holt pro App das neueste
+  # GitHub-Release + Hash aus dessen SHA256SUMS.txt. Laeuft automatisch in
+  # `fu` und im naechtlichen update-prewarm, d.h. ArtCraft folgt immer Latest,
+  # aber nur, wenn das System damit auch baut (fu rollt sonst zurueck).
+  # Von Hand: `artcraft-update` (ohne Argument -> ~/nixos-config).
+  versions = builtins.fromJSON (builtins.readFile ./artcraft-versions.json);
+
   mkCraft = {
     pname,
-    version,
-    sha256,
+    version ? versions.${pname}.version,
+    sha256 ? versions.${pname}.sha256,
     description,
     repo ? pname,
     asset ? pname,
@@ -79,15 +82,11 @@ self: super: let
 in {
   photocraft = mkCraft {
     pname = "photocraft";
-    version = "0.10.0";
-    sha256 = "cd1a33c979e8a5da94ded81d7648e779cb8069b77e4aca743c8d177ca5270d77";
     description = "Image editor (Photoshop reimplementation in Rust, PSD/PSB)";
   };
 
   vectorcraft = mkCraft {
     pname = "vectorcraft";
-    version = "0.13.1";
-    sha256 = "95457bb9b48bc6344124c2bf32a106006548aa594b1b8d1d8ca47d52a30e577e";
     description = "Vector graphics editor (Illustrator reimplementation in Rust)";
   };
 
@@ -97,72 +96,52 @@ in {
     # "Apply to: This page / Spread" (vorher immer Seite 1, Workaround war das
     # spread-Feld). Parent-Page-Guides werden auf Body-Seiten noch NICHT
     # gezeichnet (inherited_guides fehlt im Release).
-    version = "0.9.0";
-    sha256 = "e5ab60399b923271235940118918d6f0c460a3082a090b0f6fe4d9d0490da9b5";
     description = "Page layout and publishing (InDesign reimplementation in Rust)";
   };
 
   lightcraft = mkCraft {
     pname = "lightcraft";
-    version = "0.9.1";
-    sha256 = "bd002851a9524349c9d8922ae2b85c98c257de16480d3b7f885801a3b64b6d18";
     description = "Photo library and raw developer (Lightroom reimplementation in Rust)";
   };
 
   filmcraft = mkCraft {
     pname = "filmcraft";
-    version = "0.9.0";
-    sha256 = "784e4cdbd8982f17b4ec81caf5367fd308d70a123a7aa74bccd7420214c0c447";
     description = "Video editor (Premiere Pro reimplementation in Rust)";
   };
 
   effectcraft = mkCraft {
     pname = "effectcraft";
-    version = "0.11.1";
-    sha256 = "231e60f367334d7e85891fe653c4a434aa093c21313e1ecc8fe1459b6fd58379";
     description = "Motion graphics and VFX (After Effects reimplementation in Rust)";
   };
 
   pdfcraft = mkCraft {
     pname = "pdfcraft";
-    version = "0.9.0";
     # Seit v0.6.0 heisst auch das Asset pdfcraft (vorher printcraft).
-    sha256 = "f8568c87906d968461052f0b57097c0b84b70b37bf649c9b504d8c1eb7ad0cfa";
     description = "PDF workbench (Acrobat reimplementation in Rust)";
   };
 
   wordcraft = mkCraft {
     pname = "wordcraft";
-    version = "0.8.0";
-    sha256 = "7df7b3a50172ba0ede85a2c4b83c360af92b1c3767c8b30c3963ebf05d36ab9c";
     description = "Word processor (Microsoft Word reimplementation in Rust, DOCX)";
   };
 
   gridcraft = mkCraft {
     pname = "gridcraft";
-    version = "0.8.0";
-    sha256 = "942096a29a534aa2503e9e7aa1816e952f7250e73d55f8f32afd077547617f77";
     description = "Spreadsheet (Microsoft Excel reimplementation in Rust, XLSX)";
   };
 
   deckcraft = mkCraft {
     pname = "deckcraft";
-    version = "0.8.0";
-    sha256 = "5c24e0c3d52c710219fb6b897cbf2e856e0f6dd4dc79b7a2cefc1d2d55134ed0";
     description = "Presentations (Microsoft PowerPoint reimplementation in Rust, PPTX)";
   };
 
   soundcraft = mkCraft {
     pname = "soundcraft";
-    version = "0.8.0";
-    sha256 = "9c38f8d1a5c818f673a17f68a952ea8972cea4ab4720590bdb7e393504866768";
     description = "Digital audio workstation (Avid Pro Tools reimplementation in Rust)";
   };
 
   cadcraft = mkCraft {
     pname = "cadcraft";
-    version = "0.8.0";
-    sha256 = "24f77e372bf07233f72672458bc69135d54bc9f6bb6379ed737870a7c1152bd2";
     description = "2D CAD and drafting (AutoCAD reimplementation in Rust, DXF/DWG)";
   };
 }

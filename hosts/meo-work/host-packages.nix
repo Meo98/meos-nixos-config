@@ -12,6 +12,12 @@
     # ADDED 2026-10-08: ArtCraft Suite (storytold) — native Rust-Apps als
     # Affinity-Ersatz ohne Wine. Alle 7 Pakete + Bump-Rezept in der Datei.
     (import ../../modules/meo/artcraft.nix)
+    # ADDED 2026-10-22: khal (DMS-Kalender) baut am Kanal-Kopf nicht ohne
+    # diesen Fix (man-Output). Entfernen, sobald nixpkgs repariert ist.
+    (import ../../modules/meo/khal-man-fix.nix)
+    # ADDED 2026-10-22: insync baut am Kanal-Kopf nicht ohne diesen Fix
+    # (.debug-Datei vs. autoPatchelf). Entfernen, sobald nixpkgs repariert ist.
+    (import ../../modules/meo/insync-debug-fix.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
     (import ../../modules/meo/masterpdfeditor-fix.nix)  # 5.9.98->5.9.99 (Upstream-404)

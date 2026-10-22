@@ -118,12 +118,28 @@
         git -C ~/nixos-config pull --rebase --autostash || { echo "✗ Git pull failed"; return 1; }
         echo "→ nix flake update..."
         (cd ~/nixos-config && nix flake update) || return 1
+        # MODIFIED 2026-10-22: ArtCraft-Apps auf neuestes GitHub-Release heben
+        # (artcraft-versions.json). Zweistufig: scheitert der Build mit neuem
+        # nixpkgs, wird nur flake.lock zurueckgerollt und ArtCraft allein auf
+        # dem bisherigen nixpkgs versucht. So blockiert ein kaputter
+        # nixpkgs-Kanal nicht die ArtCraft-Updates.
+        echo "→ ArtCraft-Versionen pruefen..."
+        artcraft-update ~/nixos-config || echo "⚠ artcraft-update fehlgeschlagen, alte Versionen bleiben"
         echo "→ Building mit neuer flake.lock (Update zaehlt erst bei Erfolg)..."
         if ! nh os build --hostname ${nixosTarget}; then
           echo "✗ Build mit neuen Inputs fehlgeschlagen — flake.lock wird zurueckgerollt."
           git -C ~/nixos-config checkout HEAD -- flake.lock
-          echo "→ Rollback done. System und GitHub unveraendert."
-          return 1
+          if git -C ~/nixos-config diff --quiet HEAD -- modules/meo/artcraft-versions.json; then
+            echo "→ Rollback done. System und GitHub unveraendert."
+            return 1
+          fi
+          echo "→ Zweiter Versuch: nur ArtCraft-Updates auf bisherigem nixpkgs..."
+          if ! nh os build --hostname ${nixosTarget}; then
+            git -C ~/nixos-config checkout HEAD -- modules/meo/artcraft-versions.json
+            echo "✗ Auch ArtCraft allein baut nicht — komplett zurueckgerollt."
+            return 1
+          fi
+          echo "✓ ArtCraft-Updates bauen; nixpkgs bleibt auf dem alten Stand."
         fi
         _zpush || return 1
         nh os switch --hostname ${nixosTarget}

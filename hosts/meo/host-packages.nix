@@ -22,6 +22,12 @@
     # Affinity-Ersatz ohne Wine, gleicher Stand wie auf meo-work. Alle 12
     # Pakete + Bump-Rezept in der Datei.
     (import ../../modules/meo/artcraft.nix)
+    # ADDED 2026-10-22: khal (DMS-Kalender) baut am Kanal-Kopf nicht ohne
+    # diesen Fix (man-Output). Entfernen, sobald nixpkgs repariert ist.
+    (import ../../modules/meo/khal-man-fix.nix)
+    # ADDED 2026-10-22: insync baut am Kanal-Kopf nicht ohne diesen Fix
+    # (.debug-Datei vs. autoPatchelf). Entfernen, sobald nixpkgs repariert ist.
+    (import ../../modules/meo/insync-debug-fix.nix)
     # oder wenn im Repo relativ:
     # (import ../overlays/bambu.nix)
   ];

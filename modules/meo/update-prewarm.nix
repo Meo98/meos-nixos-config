@@ -1,4 +1,7 @@
 {pkgs, ...}: let
+  # ADDED 2026-10-22: ArtCraft-Versionen folgen Latest (siehe artcraft.nix).
+  artcraftUpdate = import ./scripts/artcraft-update.nix {inherit pkgs;};
+
   # Prio 1 — Update-Pre-warm (lokal-first). Baut nachts die NEUE Generation
   # (mit frischer flake.lock) OHNE zu switchen, und benachrichtigt:
   #   Erfolg → "Update baut sauber, 'fu' aktiviert es schnell (vorgebaut)."
@@ -9,7 +12,7 @@
   # NIE an (die wuerde 'fr' sonst committen/pushen). Kein switch, kein push.
   prewarm = pkgs.writeShellApplication {
     name = "update-prewarm";
-    runtimeInputs = with pkgs; [git nix jq coreutils libnotify];
+    runtimeInputs = (with pkgs; [git nix jq coreutils libnotify]) ++ [artcraftUpdate];
     text = ''
       set -uo pipefail
 
@@ -37,6 +40,9 @@
         git -C "$SCRATCH" checkout --quiet -- . 2>/dev/null || true
       fi
       nix flake update --flake "$SCRATCH" >>"$LOG" 2>&1 || true
+      # ArtCraft-Apps auf Latest heben (nur in der Scratch-Kopie), damit der
+      # Test genau das baut, was `fu` gleich einspielen wuerde.
+      artcraft-update "$SCRATCH" >>"$LOG" 2>&1 || true
 
       # nixpkgs-Datum der neuen Lock ermitteln (fuer die Meldung)
       npnode="$(jq -r '.nodes.root.inputs.nixpkgs' "$SCRATCH/flake.lock" 2>/dev/null)"
@@ -58,7 +64,7 @@
     '';
   };
 in {
-  home.packages = [prewarm];
+  home.packages = [prewarm artcraftUpdate];
 
   systemd.user.services.update-prewarm = {
     Unit = {
