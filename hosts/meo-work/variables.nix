@@ -33,7 +33,13 @@
   #
   #   HP Z24n      1920x1200@60, 0x0,       1     ->  1920x1200 bei (0, 0)
   #   Dell U2422H  1920x1080@60, 1920x0,    1     ->  1920x1080 bei (1920, 0)
-  #   LG (Laptop)  1920x1080@60, 2280x1080, 1.2   ->  1600x900  bei (2280, 1080)
+  #   LG (Laptop)  1920x1080@60, 2240x1080, 1.5   ->  1280x720  bei (2240, 1080)
+  #
+  # GEAENDERT 2026-10-22: Laptop-Scale 1.2 -> 1.5, damit Schrift/UI physisch
+  # gleich gross ist wie auf den externen Schirmen. Pixeldichte nachgerechnet
+  # aus `niri msg outputs` (Physical size): LG 1920px/340mm = 5.6 px/mm,
+  # Dell 1920/530 = 3.6, HP 1920/520 = 3.7 -> Verhaeltnis ~1.53 -> Scale 1.5.
+  # x neu zentriert unter dem Dell: 1920 + (1920 - 1280)/2 = 2240.
   #
   # ANSCHLUSSNAMEN SIND EINE ANNAHME. Hyprland adressiert die externen Monitore
   # per EDID (desc:), niri kann beides. Die tatsaechlichen Namen zeigt
@@ -67,8 +73,8 @@
     {
       # LG Laptop-Panel - darunter, zentriert unter dem rechten Monitor
       name = "LG Display 0x06B8 Unknown";
-      scale = 1.2;
-      x = 2280;
+      scale = 1.5;
+      x = 2240;
       y = 1080;
     }
   ];
