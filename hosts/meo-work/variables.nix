@@ -114,6 +114,8 @@
 
   # Keyboard Layout (Schweizer Deutsch)
   keyboardLayout = "ch";
+  # Ohne Tottasten: GTK 4.20+ verschluckt sie unter niri (~ ` ^ in Ghostty)
+  keyboardVariant = "de_nodeadkeys";
   consoleKeyMap = "sg";
 
   # GPU IDs (nicht benötigt für Intel-only, Platzhalter)

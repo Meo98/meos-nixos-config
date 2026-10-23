@@ -3,10 +3,13 @@
 {host, ...}: let
   vars = import ../../../hosts/${host}/variables.nix;
   inherit (vars) keyboardLayout;
+  # Optional: z. B. "de_nodeadkeys", leer = Standardvariante
+  keyboardVariant = vars.keyboardVariant or "";
 in {
   wayland.windowManager.niri.settings.input = {
     keyboard = {
       xkb.layout = keyboardLayout;
+      xkb.variant = keyboardVariant;
       repeat-delay = 400;
       repeat-rate = 40;
     };

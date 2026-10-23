@@ -28,3 +28,9 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 ## Log
 
 - 2026-10-22: Lernmodus eingeführt.
+- 2026-10-23: Aufgabe "Änderung mit `fr` live bringen" selbständig gelöst (ohne Hinweis).
+  Offen: herausfinden, wo `_zsync` definiert ist und wie es neue Dateien mitnimmt
+  (Doku in CLAUDE.md sagt `commit -am`, stimmt offenbar nicht).
+- 2026-10-23: Tilde ging in Ghostty nicht (GTK 4.20 + niri verschluckt Tottasten).
+  Eingegrenzt per Test Browser vs. Terminal (User). Fix `de_nodeadkeys` hat Claude gemacht
+  (User: "zu mühsam gerade"). Später als Übung: `rg`, `let … in`, `or`-Default nochmals.

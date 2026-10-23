@@ -125,6 +125,8 @@
   terminal = "ghostty"; # Set Default System Terminal
 
   keyboardLayout = "ch";
+  # Ohne Tottasten: GTK 4.20+ verschluckt sie unter niri (~ ` ^ in Ghostty)
+  keyboardVariant = "de_nodeadkeys";
   consoleKeyMap = "sg";
 
   # For hybrid support (Intel/NVIDIA Prime or AMD/NVIDIA)
