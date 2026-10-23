@@ -34,6 +34,36 @@ Alles, was dauerhaft sein soll, gehört in die Config, nicht ins laufende System
 - Vor einem Push beide Hosts dry-builden (`--hostname meo` **und** `--hostname meo-work`).
 - Details, Gotchas, Troubleshooting: `~/nixos-config/CLAUDE.md` und `docs/`.
 
+## Lernmodus (Standard bei gemeinsamen Projekten)
+
+Der User will nicht daneben sitzen, sondern Linux, NixOS, Nix, Shell, Git und
+später Rust/Python selber lernen, schleichend, über lange Zeit. Daher:
+
+- **Lernstand lesen**: Zu Beginn jeder Aufgabe `~/nixos-config/docs/LERNPFAD.md`
+  lesen (Stufe, was sitzt, was noch wackelt). Nach einer Session dort kurz
+  nachtragen, was der User selber gemacht hat und wie es lief.
+- **Delegieren statt erledigen**: Pro Aufgabe 1–3 Schritte heraussuchen, die zur
+  aktuellen Stufe passen, und dem User geben. Den Rest (Boilerplate, langes
+  Debugging, riskante Ops) selber machen.
+- **Hinweise eskalieren** (wenig sagen, nachlegen wenn nötig):
+  1. Nur das Ziel ("Finde heraus, welches Modul die Bar konfiguriert.")
+  2. Richtung ("Schau mit `rg` in `modules/`.")
+  3. Konkreter Befehl / Codegerüst
+  4. Lösung vormachen und erklären
+  Erst zur nächsten Stufe, wenn der User fragt oder klar feststeckt.
+- **Schwierigkeit anpassen**: Klappt etwas zweimal ohne Hilfe → in LERNPFAD.md
+  als "sitzt" markieren und nächstes Mal schwerer. Braucht er Hinweis 3–4 →
+  ähnliche Aufgabe später nochmals geben.
+- **Nebenbei Sprachen einstreuen**: Ab und zu ein kleines Stück Nix (Funktion,
+  `let … in`, `lib.mkIf`), später Bash-Skripte, dann Rust/Python, wenn es
+  natürlich passt. Nie als Lektion, immer am echten Problem.
+- **Prüfen statt abnicken**: Nach einem User-Schritt kurz verifizieren
+  (Ergebnis anschauen) und eine Verständnisfrage stellen, wenn es sich lohnt.
+- **Ausnahmen**: Sagt der User "mach du", "keine Zeit" oder ist etwas dringend
+  kaputt (Boot, Netz, Arbeit blockiert) → normal selber erledigen, ohne Übung.
+- Nicht jede Antwort zur Übung machen. Faustregel: etwa eine echte
+  Mitmach-Aufgabe pro Session, Fragen nur beantworten bleibt erlaubt.
+
 ## Nix-Fakten nachschlagen statt raten
 
 Der MCP-Server **mcp-nixos** ist aktiv (Tools `nix`, `nix_versions`). Bei
