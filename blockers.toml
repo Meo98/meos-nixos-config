@@ -51,3 +51,22 @@ last_checked = "2026-09-15"
 # Belegte Messung vom 15.09. (nix build --dry-run, Wegwerf-Kopie):
 #   ohne Pin -> 24 Derivations (ifcopenshell, freecad, ghostty + 21x Glue)
 #   mit Pin  -> 22 Derivations (ghostty + 21x Glue)
+
+[blocker.mcp-nixos]
+package  = "mcp-nixos"
+strategy = "fallback"
+input    = "nixpkgs-fallback"
+rev      = "34ab99075ac4f7e40cf037eef32cb1c360bb85e9"   # nixos-unstable 2026-08-31
+
+reason = """
+python3.14-fastmcp-slim 3.4.7 ist am Kanal-Kopf (nixpkgs 3ec6363, 2026-10-23)
+als broken markiert: `meta.broken = lib.versionAtLeast mcp.version "2"`.
+mcp 2.x ist API-inkompatibel, broken erlauben bringt also nichts. Zieht ueber
+mcp-nixos -> modules/meo/claude-code.nix die ganze HM-Config runter (fu-Build rot).
+"""
+
+release_when = "mcp-nixos ist am nixos-unstable-Kopf substituierbar (fastmcp-slim nicht mehr broken)"
+decision = "pin statt patch: nur ein MCP-Server, Version 3.0.1 aus dem Pin ist gecacht"
+
+since        = "2026-10-26"
+last_checked = "2026-10-26"

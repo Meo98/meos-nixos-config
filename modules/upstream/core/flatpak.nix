@@ -1,7 +1,15 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   xdg.portal = {
     enable = true;
-    extraPortals = [pkgs.xdg-desktop-portal-hyprland];
+    # MODIFIED 2026-10-26: dasselbe Portal wie programs.hyprland verwenden.
+    # Seit nixpkgs 3ec6363 baut programs.hyprland ein eigenes Portal-Derivat;
+    # zusammen mit pkgs.xdg-desktop-portal-hyprland kollidierte
+    # xdg-desktop-portal-hyprland.service in user-units ("File exists").
+    extraPortals = [config.programs.hyprland.portalPackage];
     configPackages = [pkgs.hyprland];
   };
   services = {

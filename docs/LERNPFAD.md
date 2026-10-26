@@ -34,3 +34,7 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 - 2026-10-23: Tilde ging in Ghostty nicht (GTK 4.20 + niri verschluckt Tottasten).
   Eingegrenzt per Test Browser vs. Terminal (User). Fix `de_nodeadkeys` hat Claude gemacht
   (User: "zu mühsam gerade"). Später als Übung: `rg`, `let … in`, `or`-Default nochmals.
+- 2026-10-26: `fu` scheiterte (3 Fehler nacheinander: fastmcp-slim broken, RealVNC-RPM
+  weg-gegarbage-collected, doppeltes Hyprland-Portal). Claude hat gefixt (User: "einfach
+  schnell lösen"). Gelernt: Rollback von `fu` schützt; Nix-Fehler von unten lesen.
+  Offene Übung: Fehlerausgabe selbst lesen (welches Paket, welche eigene Datei).

@@ -1,5 +1,6 @@
 {
   host,
+  inputs,
   lib,
   pkgs,
   ...
@@ -124,8 +125,10 @@ in {
     # konkrete Config (dafuer ist ~/.claude/CLAUDE.md bzw. das Repo-CLAUDE.md da).
     mcpServers =
       {
+        # Aus nixpkgs-fallback: am Kanal-Kopf (2026-10-23) ist fastmcp-slim
+        # broken (mcp >= 2). Siehe blockers.toml [blocker.mcp-nixos].
         nixos = {
-          command = "${pkgs.mcp-nixos}/bin/mcp-nixos";
+          command = "${inputs.nixpkgs-fallback.legacyPackages.${pkgs.stdenv.hostPlatform.system}.mcp-nixos}/bin/mcp-nixos";
         };
       }
       # ArtCraft Suite (siehe craftApps oben): zwoelf Server, nur auf meo-work.
