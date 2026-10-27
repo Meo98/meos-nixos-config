@@ -9,6 +9,9 @@
   services.tailscale = {
     enable = true;
     openFirewall = true; # UDP 41641 für direkte Verbindungen statt DERP-Relay
+    # Tailscale SSH: Anmeldung über die Tailnet-Identität statt SSH-Key.
+    # Wird beim Start von tailscaled per `tailscale set` gesetzt.
+    extraSetFlags = [ "--ssh" ];
   };
 
   # Port 22 nicht mehr global öffnen (Default wäre true)

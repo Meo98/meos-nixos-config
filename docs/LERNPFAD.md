@@ -44,3 +44,9 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   fremdem Git-Zugriff?" **richtig beantwortet** (fr → git pull holt fremden Code).
   `_zincoming` (fr/fu zeigen eingehende Commits, fremde Autoren → Rückfrage) hat Claude
   gebaut (User: "mach du"). Übung später: Funktion lesen + erklären (`HEAD..@{u}`, `grep -vF`).
+- 2026-10-27: Megger PAT420 (Prüfgerät, Display defekt = Hardware). User hat USB-Stick in
+  yazi gesucht und mkfs per `:`-Shell versucht; Fehler: Platzhalter `/dev/sdX1` wörtlich
+  getippt → **wackelt: Gerätenamen aus `lsblk` ablesen**. Formatieren hat Claude per udisks
+  gemacht. Projekt `~/megger-tool` (PAT-Manager, Python+Qt) von Claude gebaut, Teil 1 fertig.
+  **Offene Übung (Python, Stufe 5 vorgezogen):** `naechste_pruefung()` in
+  `pat_manager/faelligkeit.py` selber schreiben (Tests in `tests/test_faelligkeit.py`).
