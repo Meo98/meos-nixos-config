@@ -7,7 +7,6 @@
     ../../modules/meo/niri-gpu-smart.nix
     ../../modules/meo/dgpu-power.nix
     ../../modules/meo/android-dev.nix
-    ../../modules/meo/dns-override.nix
     ../../modules/meo/backups.nix
     ../../modules/meo/lock-before-sleep.nix
     ../../modules/meo/tailscale.nix
@@ -26,6 +25,12 @@
   # die SDDM-Session "Hyprland (Smart GPU)" haette nichts mehr zu starten.
 
   programs.kdeconnect.enable = true;
+
+  # Exit-Node (2026-10-27): meo bietet sich im Tailnet als Heim-VPN an.
+  # Nur meo, nicht meo-work (sonst liefe privater Verkehr übers Firmennetz).
+  # Freigabe zusätzlich in der Admin-Konsole: Machines → meo → Edit route
+  # settings → "Use as exit node". Ergänzt die Liste aus modules/meo/tailscale.nix.
+  services.tailscale.extraSetFlags = ["--advertise-exit-node"];
 
   # --- niri (Migration 2026-08-27) ---
   # Spec: docs/superpowers/specs/2026-08-27-niri-migration-design.md

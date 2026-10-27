@@ -12,6 +12,10 @@
     # Tailscale SSH: Anmeldung über die Tailnet-Identität statt SSH-Key.
     # Wird beim Start von tailscaled per `tailscale set` gesetzt.
     extraSetFlags = [ "--ssh" ];
+    # Exit-Nodes: "both" = IP-Forwarding (anbieten, siehe hosts/meo/default.nix)
+    # + loser Reverse-Path-Filter (nutzen). Auf beiden Hosts gleich, damit
+    # meo-work unterwegs meo als Exit-Node verwenden kann.
+    useRoutingFeatures = "both";
   };
 
   # Port 22 nicht mehr global öffnen (Default wäre true)
