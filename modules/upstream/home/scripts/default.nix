@@ -37,7 +37,7 @@
     (import ./qs-docs.nix {inherit pkgs;})
     (import ./docs-parser.nix {inherit pkgs;})
     (import ./launch-nwg-menu.nix {inherit pkgs;})
-    (import ./hyprland-dock.nix {inherit pkgs;})
+    # hyprland-dock raus (2026-10-27): nwg-dock-hyprland ist Hyprland-only
     (import ./zcli.nix {
       inherit pkgs profile;
       backupFiles = [

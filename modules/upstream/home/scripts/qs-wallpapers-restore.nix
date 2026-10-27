@@ -98,7 +98,7 @@ pkgs.writeShellScriptBin "qs-wallpapers-restore" ''
       echo "ipc=on"
       echo "splash=false"
     } > "$_CFG"
-    ${pkgs.hyprland}/bin/hyprctl monitors -j | ${pkgs.jq}/bin/jq -r '.[].name' | while read -r mon; do
+    hyprctl monitors -j | ${pkgs.jq}/bin/jq -r '.[].name' | while read -r mon; do
       echo "preload = $PATH_J" >> "$_CFG"
       echo "wallpaper = $mon,$PATH_J" >> "$_CFG"
     done

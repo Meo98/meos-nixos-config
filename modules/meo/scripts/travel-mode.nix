@@ -4,7 +4,8 @@ pkgs.writeShellApplication {
   name = "travel-mode";
   runtimeInputs = with pkgs; [
     coreutils
-    hyprland
+    # hyprland raus (2026-10-27): Hyprland ist auf beiden Hosts aus; der
+    # hyprctl-Zweig unten bleibt als stiller No-op ueber das ambiente PATH.
   ];
   text = ''
     STATE_FILE="''${XDG_STATE_HOME:-$HOME/.local/state}/travel-mode-active"

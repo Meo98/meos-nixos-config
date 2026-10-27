@@ -105,4 +105,38 @@ in {
         --replace-fail 'Exec=AppRun %U' 'Exec=bambu-studio %U'
     '';
   };
+
+  # ADDED 2026-10-15: Offline-Starter als Workaround gegen den Slicing-Crash.
+  # Befund (5 Coredumps am 15.10., Thread bbl_BgSlcPcs, zwei verschiedene
+  # Projekte, auch mit den alten Libs aus Generation 355 reproduziert):
+  # waehrend der Slicing-Thread rechnet, wendet der GUI-Hauptthread aus einem
+  # GLib-Idle-Callback die Druckkonfiguration neu auf den Print an
+  # (DynamicPrintConfig-Diff im Core). Ausloeser sind Status-Updates des
+  # verbundenen X2D (MQTT, LAN + Cloud). Dieselben Projekte slicen ueber die
+  # CLI 12x fehlerfrei, und in der GUI ohne Netz (WLAN aus 22:24-22:29,
+  # alle 22 Kerne) ebenfalls. Upstream-Verwandte: BambuStudio #11807, #12623.
+  #
+  # `unshare -rn` gibt Bambu einen leeren Netz-Namespace (nur lo, down): kein
+  # Drucker, keine Cloud, kein Sync -> kein Re-Apply waehrend des Slicings.
+  # Geprueft: der innere bwrap des Wrappers laeuft im User-Namespace sauber
+  # (bambu-studio --help darin ok). Zum Senden das fertige 3MF im normalen
+  # bambu-studio oeffnen. Memory: bambu-gui-slicing-crash-nach-nixpkgs-bump.
+  bambu-studio-offline = super.symlinkJoin {
+    name = "bambu-studio-offline";
+    paths = [
+      (super.writeShellScriptBin "bambu-studio-offline" ''
+        exec ${super.util-linux}/bin/unshare -rn ${self.bambu-studio}/bin/bambu-studio "$@"
+      '')
+      (super.makeDesktopItem {
+        name = "bambu-studio-offline";
+        desktopName = "BambuStudio (offline slicen)";
+        comment = "Bambu Studio ohne Netz: kein Drucker-Sync, kein Slicing-Crash (Workaround 2026-10-15)";
+        exec = "bambu-studio-offline %U";
+        icon = "BambuStudio";
+        categories = [ "Graphics" "3DGraphics" "Engineering" ];
+        startupWMClass = "bambu-studio";
+        terminal = false;
+      })
+    ];
+  };
 }

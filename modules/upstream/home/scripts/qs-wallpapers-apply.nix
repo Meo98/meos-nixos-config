@@ -167,7 +167,7 @@ pkgs.writeShellScriptBin "qs-wallpapers-apply" ''
         echo "splash=false"
       } > "$_CFG"
       # Add preload/wallpaper lines for each monitor
-      ${pkgs.hyprland}/bin/hyprctl monitors -j | ${pkgs.jq}/bin/jq -r '.[].name' | while read -r mon; do
+      hyprctl monitors -j | ${pkgs.jq}/bin/jq -r '.[].name' | while read -r mon; do
         echo "preload = $sel" >> "$_CFG"
         echo "wallpaper = $mon,$sel" >> "$_CFG"
       done

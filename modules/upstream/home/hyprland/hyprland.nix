@@ -17,7 +17,7 @@ in {
     swappy
     ydotool
     hyprpolkitagent
-    hyprshot
+    # hyprshot raus (2026-10-27): braucht hyprctl/Hyprland; niri hat Screenshots eingebaut
     hyprpicker
   ];
   
@@ -35,7 +35,8 @@ in {
   };
 
   wayland.windowManager.hyprland = {
-    enable = true;
+    # MODIFIED 2026-10-27: aus, siehe modules/upstream/core/packages.nix
+    enable = false;
     package = pkgs.hyprland;
     
     systemd = {

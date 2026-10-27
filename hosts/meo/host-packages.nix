@@ -50,7 +50,6 @@
     slurp
     swappy
     wl-clipboard
-    hyprshot
     jq
     # libnotify — in core/packages.nix
     # --- Multimedia & Kommunikation ---
@@ -62,6 +61,7 @@
     morgen # All-in-one Calendars, Tasks and Scheduler
     orca-slicer # Open-Source Slicer (Bambu-Studio-Fork), native from-source
     bambu-studio # Offizieller BambuLab-Slicer (AppImage via modules/meo/bambu.nix overlay)
+    bambu-studio-offline # Bambu im leeren Netz-Namespace: Workaround gegen den Slicing-Crash bei verbundenem Drucker (15.10.2026)
     orca-studio # Community-Fork: Bambu Studio + Orca-Features + Cloud-Senden (AppImage via modules/meo/orcastudio.nix overlay)
     jlcone # JLCPCB-Desktop-Client für Bestellungen mit App-Rabatt (.deb via modules/meo/jlcone.nix overlay)
 

@@ -38,8 +38,9 @@ in {
     };
     portal = {
       enable = true;
-      extraPortals = [pkgs.xdg-desktop-portal-hyprland];
-      configPackages = [pkgs.hyprland];
+      # MODIFIED 2026-10-27: Hyprland-Portal raus (Hyprland auf beiden Hosts
+      # aus); die Portale fuer niri (gnome + gtk) liefert programs.niri.
+      extraPortals = [];
     };
   };
 }

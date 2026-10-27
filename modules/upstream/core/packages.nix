@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   host,
   ...
 }: let
@@ -22,8 +23,13 @@ in {
       defaultEditor = true;
     };
     firefox.enable = false; # Firefox is not installed by default
+    # MODIFIED 2026-10-27: auf beiden Hosts aus -- meo (2026-08-27) und meo-work
+    # (2026-08-31) laufen auf niri. Anlass: nh os build kompilierte Hyprland
+    # 0.56.2 lokal (nicht im Binary-Cache) und zog auf Akku ~52 W. Die
+    # Hyprland-Module bleiben im Repo; Rueckweg = hier und in
+    # modules/upstream/home/hyprland/hyprland.nix wieder enable = true.
     hyprland = {
-      enable = true; # set this so desktop file is created
+      enable = false;
       withUWSM = false;
     };
     dconf.enable = true;
@@ -114,7 +120,7 @@ in {
       nixfmt-rfc-style # Nix Formatter
       nwg-displays # configure monitor configs via GUI
       nwg-drawer # Application launcher for wayland
-      nwg-dock-hyprland # Dock for hyprland
+      # nwg-dock-hyprland raus (2026-10-27): Hyprland-only, Hyprland ist aus
       nwg-menu # App menu for waybar
       onefetch # provides zsaneyos build info on current system
       pandoc # format MD to HTML for cheatsheet parser
@@ -144,4 +150,10 @@ in {
       # python3 — python3.withPackages(...) in host-packages.nix verwenden
       bitwarden-cli # CLI for Bitwarden – used by setup-secrets.sh
     ];
+
+  # MODIFIED 2026-10-27: programs.hyprlock zieht per Default services.hypridle
+  # mit ein. Das war auf beiden Hosts nur per wantedBy = mkForce [] in den
+  # Hosts stillgelegt (Noctalia macht idle + lock) -- und die Unit zog trotzdem
+  # Hyprland in den Closure. Jetzt sauber aus; hyprlock bleibt als Fallback.
+  services.hypridle.enable = lib.mkForce false;
 }

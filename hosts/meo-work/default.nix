@@ -25,16 +25,16 @@
   # mkForce nagelt die Session explizit fest und sichert sie gegen das
   # mkDefault "niri" des niri-Moduls ab (Grund laut dessen Quellkommentar:
   # verhindert eine GDM-Login-Schleife bei reinen niri-Setups). Hyprland
-  # selbst setzt defaultSession nicht. Hyprland bleibt installiert und im
-  # SDDM-Menue waehlbar — das ist der Rueckweg ohne Rebuild.
+  # selbst setzt defaultSession nicht. Seit 2026-10-27 ist Hyprland nicht
+  # mehr installiert (modules/upstream/core/packages.nix) -- kein Rueckweg
+  # ohne Rebuild mehr.
   programs.niri.enable = true;
   services.displayManager.defaultSession = lib.mkForce "niri";
 
   programs.kdeconnect.enable = true;
 
-  # MODIFIED 2026-06-12: hypridle Auto-Start kappen — Noctalia v5 macht idle
-  # alleine, sonst race. Siehe Begründung in hosts/meo/default.nix.
-  systemd.user.services.hypridle.wantedBy = lib.mkForce [];
+  # hypridle: seit 2026-10-27 zentral abgeschaltet, siehe
+  # services.hypridle.enable in modules/upstream/core/packages.nix.
 
   # --- AUTOMOUNTING ---
   services.udisks2.enable = true;

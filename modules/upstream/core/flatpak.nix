@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: {
@@ -9,8 +10,11 @@
     # Seit nixpkgs 3ec6363 baut programs.hyprland ein eigenes Portal-Derivat;
     # zusammen mit pkgs.xdg-desktop-portal-hyprland kollidierte
     # xdg-desktop-portal-hyprland.service in user-units ("File exists").
-    extraPortals = [config.programs.hyprland.portalPackage];
-    configPackages = [pkgs.hyprland];
+    # MODIFIED 2026-10-27: nur wenn Hyprland aktiv ist -- beide Eintraege
+    # ziehen sonst das Hyprland-Paket in den Closure (meo hat es abgeschaltet,
+    # dort liefert programs.niri die Portale gnome + gtk).
+    extraPortals = lib.optional config.programs.hyprland.enable config.programs.hyprland.portalPackage;
+    configPackages = lib.optional config.programs.hyprland.enable pkgs.hyprland;
   };
   services = {
     flatpak = {

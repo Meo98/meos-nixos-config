@@ -9,9 +9,17 @@
 
     keyboards = {
       "meo-config" = {
+        # Die Charybdis hat eigene Home-Row-Mods, Combos und Ebenen in der
+        # RMK-Firmware (per Vial aenderbar). Ohne diese Ausnahme lief jeder
+        # Anschlag ZUSAETZLICH durch kanata: a s d f g h j k l u o n und die
+        # Leertaste kamen erst beim Loslassen (tap-hold), i/p warteten bis zu
+        # 80 ms und w/e bis zu 40 ms auf einen Akkord. Das war die spuerbare
+        # Verzoegerung beim Tippen (2026-10-16). kanata vergleicht die Namen
+        # EXAKT; die Liste deckt USB ("BastardKB ...") und Bluetooth ab.
+        # Namen nachschlagen: journalctl -u kanata-meo-config | grep registering
         extraDefCfg = ''
           process-unmapped-keys yes
-          ;; Custom-Boards mit eigener Firmware (Vial/QMK) nicht anfassen:
+          ;; Custom-Boards mit eigener Firmware (Vial/QMK/RMK) nicht anfassen:
           ;; Laptop-Tastatur und normale Tastaturen (z. B. Logitech) bleiben
           ;; unter kanata, die Split-Boards liefern ihre Layouts selbst.
           ;; Namen exakt wie in /proc/bus/input/devices (N: Name=...).
@@ -19,7 +27,16 @@
             "Pilot W-CORNE"
             "Pilot W-CORNE System Control"
             "Pilot W-CORNE Consumer Control"
+            "BastardKB Charybdis Mini"
+            "BastardKB Charybdis Mini Keyboard"
+            "BastardKB Charybdis Mini Mouse"
+            "BastardKB Charybdis Mini Consumer Control"
+            "BastardKB Charybdis Mini System Control"
+            "Charybdis Mini"
             "Charybdis Mini Keyboard"
+            "Charybdis Mini Mouse"
+            "Charybdis Mini Consumer Control"
+            "Charybdis Mini System Control"
           )
         '';
 

@@ -4,7 +4,6 @@
     ./host-packages.nix
     ../../modules/meo/kanata.nix
     ./affinity.nix
-    ../../modules/meo/hyprland-gpu-smart.nix
     ../../modules/meo/niri-gpu-smart.nix
     ../../modules/meo/dgpu-power.nix
     ../../modules/meo/android-dev.nix
@@ -21,6 +20,10 @@
   # denselben Import eigenstaendig — jeder Host entscheidet fuer sich selbst,
   # statt es zentral von modules/meo/default.nix zu erben.
   home-manager.users.${username}.imports = [ ../../modules/meo ../../modules/meo/niri ];
+
+  # MODIFIED 2026-10-27: hyprland-gpu-smart.nix nicht mehr importiert --
+  # Hyprland ist auf beiden Hosts abgeschaltet (modules/upstream/core/packages.nix),
+  # die SDDM-Session "Hyprland (Smart GPU)" haette nichts mehr zu starten.
 
   programs.kdeconnect.enable = true;
 
@@ -254,13 +257,8 @@
     ACTION=="add|change", SUBSYSTEM=="power_supply", KERNEL=="BAT1", ATTR{charge_control_end_threshold}="80"
   '';
 
-  # MODIFIED 2026-06-12: hypridle ist als pkgs.hypridle über einen flake-input
-  # in environment.systemPackages drin (Quelle nicht eindeutig — vermutlich
-  # hyprland-meta-default). Das Package shipt sein Unit mit [Install]
-  # WantedBy=graphical-session.target, NixOS legt automatisch den wants-Symlink
-  # an → ohne Override würde hypridle bei jedem Boot wieder hochkommen und mit
-  # Noctalia v5's idle daemon racen. mkForce [] kappt nur den Auto-Start.
-  systemd.user.services.hypridle.wantedBy = lib.mkForce [];
+  # hypridle: seit 2026-10-27 zentral abgeschaltet, siehe
+  # services.hypridle.enable in modules/upstream/core/packages.nix.
 
   # --- LOGIND: Zuklappen -> Suspend, IMMER ---
   # MODIFIED 2026-10-06: lidSwitchDocked "ignore" -> "suspend". Das revidiert

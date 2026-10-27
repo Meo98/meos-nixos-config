@@ -13,7 +13,8 @@ in {
     ./binds.nix
     ./env.nix
     ./exec-once.nix
-    ./hypridle.nix
+    # MODIFIED 2026-10-27: ./hypridle.nix raus -- war auf beiden Hosts per
+    # wantedBy = [] stillgelegt und zog nur noch Hyprland in den Closure.
     ./hyprland.nix
     ./hyprlock.nix
     ./windowrules.nix
