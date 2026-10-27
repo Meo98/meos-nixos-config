@@ -6,6 +6,7 @@
     ../../modules/meo/kanata.nix
     ../meo/affinity.nix
     ../../modules/meo/lock-before-sleep.nix
+    ../../modules/meo/tailscale.nix
   ];
 
   # Add our custom home-manager modules on top of modules/upstream/home/.

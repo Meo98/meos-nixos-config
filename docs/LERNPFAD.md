@@ -42,4 +42,5 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   User: "setz du"). Übungsfrage "was heisst `upstream/core` für die Hosts?" offen geblieben.
   Sicherheits-Gespräch: Verständnisfrage "warum schützt der read-only Store nicht vor
   fremdem Git-Zugriff?" **richtig beantwortet** (fr → git pull holt fremden Code).
-  Später als Bash-Übung: `_zsync` zeigt eingehende Commits vor dem Pull an.
+  `_zincoming` (fr/fu zeigen eingehende Commits, fremde Autoren → Rückfrage) hat Claude
+  gebaut (User: "mach du"). Übung später: Funktion lesen + erklären (`HEAD..@{u}`, `grep -vF`).

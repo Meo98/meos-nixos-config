@@ -80,6 +80,36 @@
         echo "✓ Sync done"
       }
 
+      # MODIFIED 2026-10-27: Vor dem Pull zeigen, was von GitHub kommt. Wer das
+      # Repo kontrolliert, kontrolliert beide Hosts (fr baut + aktiviert als root).
+      # Commits von fremden Autoren -> Rueckfrage. ACHTUNG: Die Autor-Mail ist
+      # faelschbar, das ist ein Warnlicht, kein Schutz (der waere: signierte Commits).
+      _zincoming() {
+        git -C ~/nixos-config fetch --quiet || { echo "✗ Git fetch failed"; return 1; }
+        local incoming foreign
+        incoming=$(git -C ~/nixos-config log --format='%h  %<(14)%ar  %an: %s' HEAD..@{u} 2>/dev/null)
+        if [ -z "$incoming" ]; then
+          echo "→ Keine neuen Commits auf GitHub."
+          return 0
+        fi
+        echo "→ Neu auf GitHub:"
+        echo "$incoming" | sed 's/^/    /'
+        # Vertraut: eigene Git-Identitaet + Update-Bot (flake-update.yml)
+        foreign=$(git -C ~/nixos-config log --format='%h %an <%ae>' HEAD..@{u} \
+          | grep -vF -e "<$(git -C ~/nixos-config config user.email)>" \
+                     -e '<41898282+github-actions[bot]@users.noreply.github.com>')
+        if [ -n "$foreign" ]; then
+          echo "⚠ Commits von FREMDEN Autoren:"
+          echo "$foreign" | sed 's/^/    /'
+          if ! read -q "?Trotzdem uebernehmen und bauen? [y/N] "; then
+            echo
+            echo "→ Abgebrochen, nichts gepullt. Pruefen mit: git -C ~/nixos-config log -p HEAD..@{u}"
+            return 1
+          fi
+          echo
+        fi
+      }
+
       # fr: pull -> BUILD -> erst bei Erfolg commit+push+switch.
       # Kernel-Bump-Guard (2026-07-01) bleibt: bringt der pull eine neue
       # flake.lock (z.B. gemergter Update-PR), steckt evtl. ein neuer Kernel
@@ -88,6 +118,7 @@
       fr() {
         local before after
         before=$(git -C ~/nixos-config rev-parse HEAD:flake.lock 2>/dev/null)
+        _zincoming || return 1
         echo "→ Pulling nixos-config..."
         git -C ~/nixos-config pull --rebase --autostash || { echo "✗ Git pull failed - resolve conflicts first"; return 1; }
         after=$(git -C ~/nixos-config rev-parse HEAD:flake.lock 2>/dev/null)
@@ -114,6 +145,7 @@
       # Alternative ohne lokales Bauen: den woechentlichen CI-Update-PR
       # (flake-update.yml) mergen, wenn build.yml beide Hosts gruen zeigt.
       fu() {
+        _zincoming || return 1
         echo "→ Pulling nixos-config..."
         git -C ~/nixos-config pull --rebase --autostash || { echo "✗ Git pull failed"; return 1; }
         echo "→ nix flake update..."

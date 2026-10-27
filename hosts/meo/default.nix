@@ -11,6 +11,7 @@
     ../../modules/meo/dns-override.nix
     ../../modules/meo/backups.nix
     ../../modules/meo/lock-before-sleep.nix
+    ../../modules/meo/tailscale.nix
   ];
 
   # Add our custom home-manager modules on top of modules/upstream/home/.

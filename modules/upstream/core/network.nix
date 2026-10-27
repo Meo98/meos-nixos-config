@@ -18,9 +18,9 @@ in {
       # totes Cruft: auf meo ist `programs.kdeconnect.enable = true` gesetzt,
       # dessen NixOS-Modul die korrekten Ports selbst oeffnet. meo-work nutzt
       # KDE Connect nicht → braucht die Ports gar nicht.
-      allowedTCPPorts = [
-        22 # SSH
-      ];
+      # MODIFIED 2026-10-27: Port 22 nicht mehr global offen. SSH nur noch
+      # übers Tailscale-Netz (modules/meo/tailscale.nix, tailscale0).
+      allowedTCPPorts = [ ];
     };
   };
 
