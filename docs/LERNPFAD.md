@@ -38,3 +38,8 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   weg-gegarbage-collected, doppeltes Hyprland-Portal). Claude hat gefixt (User: "einfach
   schnell lösen"). Gelernt: Rollback von `fu` schützt; Nix-Fehler von unten lesen.
   Offene Übung: Fehlerausgabe selbst lesen (welches Paket, welche eigene Datei).
+- 2026-10-27: Syncthing in `modules/upstream/core/syncthing.nix` eingeschaltet (Claude,
+  User: "setz du"). Übungsfrage "was heisst `upstream/core` für die Hosts?" offen geblieben.
+  Sicherheits-Gespräch: Verständnisfrage "warum schützt der read-only Store nicht vor
+  fremdem Git-Zugriff?" **richtig beantwortet** (fr → git pull holt fremden Code).
+  Später als Bash-Übung: `_zsync` zeigt eingehende Commits vor dem Pull an.
