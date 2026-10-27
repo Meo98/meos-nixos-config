@@ -73,7 +73,7 @@
     {
       # LG Laptop-Panel - darunter, zentriert unter dem rechten Monitor
       name = "LG Display 0x06B8 Unknown";
-      scale = 1.5;
+      scale = 1.3;
       x = 2240;
       y = 1080;
     }
@@ -144,20 +144,20 @@
   # Default Applications (Vivaldi für alles Web-bezogene)
   mimeDefaultApps = {
     # Browser
-    "x-scheme-handler/http"         = "vivaldi-stable.desktop";
-    "x-scheme-handler/https"        = "vivaldi-stable.desktop";
-    "x-scheme-handler/ftp"          = "vivaldi-stable.desktop";
-    "x-scheme-handler/chrome"       = "vivaldi-stable.desktop";
-    "x-scheme-handler/about"        = "vivaldi-stable.desktop";
-    "x-scheme-handler/unknown"      = "vivaldi-stable.desktop";
-    "text/html"                     = "vivaldi-stable.desktop";
-    "text/xml"                      = "vivaldi-stable.desktop";
-    "text/xhtml+xml"                = "vivaldi-stable.desktop";
-    "application/xhtml+xml"         = "vivaldi-stable.desktop";
-    "application/xml"               = "vivaldi-stable.desktop";
+    "x-scheme-handler/http" = "vivaldi-stable.desktop";
+    "x-scheme-handler/https" = "vivaldi-stable.desktop";
+    "x-scheme-handler/ftp" = "vivaldi-stable.desktop";
+    "x-scheme-handler/chrome" = "vivaldi-stable.desktop";
+    "x-scheme-handler/about" = "vivaldi-stable.desktop";
+    "x-scheme-handler/unknown" = "vivaldi-stable.desktop";
+    "text/html" = "vivaldi-stable.desktop";
+    "text/xml" = "vivaldi-stable.desktop";
+    "text/xhtml+xml" = "vivaldi-stable.desktop";
+    "application/xhtml+xml" = "vivaldi-stable.desktop";
+    "application/xml" = "vivaldi-stable.desktop";
     # PDF
-    "application/pdf"               = "onlyoffice-desktopeditors.desktop";
-    "application/x-pdf"             = "onlyoffice-desktopeditors.desktop";
+    "application/pdf" = "onlyoffice-desktopeditors.desktop";
+    "application/x-pdf" = "onlyoffice-desktopeditors.desktop";
   };
 
   # hostId (muss eindeutig sein, für ZFS)
