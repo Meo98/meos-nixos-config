@@ -1,0 +1,159 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  # Matrix-Server + Messenger-Brücken (2026-10-28, Probelauf auf meo).
+  # Spec: docs/superpowers/specs/2026-10-28-matrix-messenger-design.md
+  #
+  # Host-lokal (nur hosts/meo importiert das), weil es eine Server-Rolle ist:
+  # Dauerbetrieb kommt später auf meo-server. Umzug = Import dorthin verschieben,
+  # die öffentliche Adresse folgt dem Hostnamen automatisch.
+  #
+  # Nur im Tailnet erreichbar: Synapse hört auf 127.0.0.1, `tailscale serve`
+  # reicht HTTPS von https://<host>.tailec8a46.ts.net weiter. Keine Föderation.
+
+  # ENDGÜLTIG: steckt in jeder Adresse (@meo:meo-server), nie mehr ändern.
+  serverName = "meo-server";
+  oeffentlicheAdresse = "https://${config.networking.hostName}.tailec8a46.ts.net/";
+  ich = "@meo:${serverName}";
+
+  # Geheimnisse liegen nicht im (öffentlichen) Repo, sondern hier auf der Platte.
+  geheim = "/var/lib/matrix-geheim";
+
+  # Telegram braucht api_id/api_hash von https://my.telegram.org (dein Login).
+  # Erst auf true setzen, wenn ${geheim}/telegram.env existiert, sonst startet
+  # Synapse nicht (es erwartet die Registrierungsdatei der Brücke).
+  telegramBereit = false;
+in {
+  services.postgresql = {
+    enable = true;
+    # Läuft nur beim allerersten Anlegen des Datenbank-Clusters (meo hatte keinen).
+    # Synapse verlangt die Sortierung "C".
+    initialScript = pkgs.writeText "synapse-init.sql" ''
+      CREATE ROLE "matrix-synapse";
+      CREATE DATABASE "matrix-synapse" WITH OWNER "matrix-synapse"
+        TEMPLATE template0
+        LC_COLLATE = "C"
+        LC_CTYPE = "C";
+    '';
+  };
+
+  services.matrix-synapse = {
+    enable = true;
+    # registration_shared_secret für register_new_matrix_user (siehe unten)
+    extraConfigFiles = ["${geheim}/synapse-registrierung.yaml"];
+    settings = {
+      server_name = serverName;
+      public_baseurl = oeffentlicheAdresse;
+      listeners = [
+        {
+          port = 8008;
+          bind_addresses = ["127.0.0.1"];
+          type = "http";
+          tls = false;
+          x_forwarded = true;
+          # nur Client-API, keine Föderation
+          resources = [
+            {
+              names = ["client"];
+              compress = true;
+            }
+          ];
+        }
+      ];
+      # Föderation ganz aus: mit niemandem ausserhalb reden
+      federation_domain_whitelist = [];
+      trusted_key_servers = [];
+      enable_registration = false;
+      report_stats = false;
+    };
+  };
+
+  # Erzeugt die Geheimnisse einmalig, bevor Synapse startet. Bleiben bei jedem
+  # Neustart gleich (nur anlegen, wenn sie fehlen).
+  systemd.services.matrix-geheimnisse = {
+    description = "Matrix: Geheimnisse einmalig erzeugen";
+    wantedBy = ["matrix-synapse.service"];
+    before = ["matrix-synapse.service"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      install -d -m 0750 -o root -g matrix-synapse ${geheim}
+      f=${geheim}/synapse-registrierung.yaml
+      if [ ! -s "$f" ]; then
+        umask 0137
+        printf 'registration_shared_secret: "%s"\n' "$(${pkgs.openssl}/bin/openssl rand -hex 32)" > "$f"
+        chgrp matrix-synapse "$f"
+      fi
+    '';
+  };
+  systemd.services.matrix-synapse = {
+    requires = ["matrix-geheimnisse.service"];
+    after = ["matrix-geheimnisse.service"];
+  };
+
+  services.mautrix-signal = {
+    enable = true;
+    # goolm = Olm in Go statt der veralteten, als unsicher markierten libolm.
+    # Wird dadurch einmal lokal gebaut (Go-Teil, ein paar Minuten).
+    package = pkgs.mautrix-signal.override {withGoolm = true;};
+    settings = {
+      homeserver.address = "http://127.0.0.1:8008";
+      appservice.hostname = "127.0.0.1";
+      bridge = {
+        relay.enabled = false;
+        # niemand sonst darf die Brücke benutzen
+        permissions = {
+          "*" = "block";
+          ${ich} = "admin";
+        };
+      };
+      provisioning.shared_secret = "disable";
+    };
+  };
+
+  services.mautrix-telegram = lib.mkIf telegramBereit {
+    enable = true;
+    # MAUTRIX_TELEGRAM_TELEGRAM_API_ID=… und MAUTRIX_TELEGRAM_TELEGRAM_API_HASH=…
+    environmentFile = "${geheim}/telegram.env";
+    settings = {
+      homeserver = {
+        address = "http://127.0.0.1:8008";
+        domain = serverName;
+      };
+      appservice = {
+        hostname = "127.0.0.1";
+        port = 29317;
+        address = "http://127.0.0.1:29317";
+      };
+      bridge.permissions = {
+        "*" = "relaybot";
+        ${ich} = "admin";
+      };
+    };
+  };
+
+  # HTTPS im Tailnet: https://<host>.tailec8a46.ts.net → Synapse.
+  # Braucht in der Tailscale-Admin-Konsole DNS → "HTTPS Certificates" aktiviert.
+  # Die Weiterleitung merkt sich tailscaled selbst; abbauen mit `tailscale serve reset`.
+  systemd.services.matrix-tailscale-serve = {
+    description = "Matrix: HTTPS über tailscale serve";
+    wantedBy = ["multi-user.target"];
+    after = ["tailscaled.service" "matrix-synapse.service"];
+    wants = ["tailscaled.service"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      ${config.services.tailscale.package}/bin/tailscale serve --bg --https=443 http://127.0.0.1:8008
+    '';
+  };
+
+  # Chat-App am Laptop (am Handy: Element X)
+  environment.systemPackages = [pkgs.element-desktop];
+}

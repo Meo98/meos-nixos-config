@@ -10,6 +10,8 @@
     ../../modules/meo/backups.nix
     ../../modules/meo/lock-before-sleep.nix
     ../../modules/meo/tailscale.nix
+    # Matrix-Probelauf (2026-10-28), zieht später auf meo-server um
+    ../../modules/meo/matrix.nix
   ];
 
   # Add our custom home-manager modules on top of modules/upstream/home/.
