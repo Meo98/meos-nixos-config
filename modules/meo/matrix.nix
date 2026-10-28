@@ -30,14 +30,23 @@ in {
   services.postgresql = {
     enable = true;
     # Läuft nur beim allerersten Anlegen des Datenbank-Clusters (meo hatte keinen).
-    # Synapse verlangt die Sortierung "C".
+    # Synapse verlangt die Sortierung "C". CREATE ROLE ohne LOGIN darf sich
+    # nicht anmelden (das Beispiel in der nixpkgs-Doku vergisst das).
     initialScript = pkgs.writeText "synapse-init.sql" ''
-      CREATE ROLE "matrix-synapse";
+      CREATE ROLE "matrix-synapse" WITH LOGIN;
       CREATE DATABASE "matrix-synapse" WITH OWNER "matrix-synapse"
         TEMPLATE template0
         LC_COLLATE = "C"
         LC_CTYPE = "C";
     '';
+    # Repariert die Rolle auf meo (dort ohne LOGIN angelegt): ALTER USER … WITH LOGIN
+    # bei jedem Start von postgresql-setup.
+    ensureUsers = [
+      {
+        name = "matrix-synapse";
+        ensureClauses.login = true;
+      }
+    ];
   };
 
   services.matrix-synapse = {
