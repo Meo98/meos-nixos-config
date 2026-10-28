@@ -122,6 +122,8 @@ in {
         };
       };
       provisioning.shared_secret = "disable";
+      # Auf "info" schreibt die Brücke Namen und Nummern aller Kontakte ins Journal.
+      logging.min_level = "warn";
     };
   };
 

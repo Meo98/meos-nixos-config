@@ -50,3 +50,7 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   gemacht. Projekt `~/megger-tool` (PAT-Manager, Python+Qt) von Claude gebaut, Teil 1 fertig.
   **Offene Übung (Python, Stufe 5 vorgezogen):** `naechste_pruefung()` in
   `pat_manager/faelligkeit.py` selber schreiben (Tests in `tests/test_faelligkeit.py`).
+- 2026-10-28: Matrix-Probelauf (Synapse + Signal-Brücke, `modules/meo/matrix.nix`, Claude gebaut).
+  User selbst: Tailscale-HTTPS in der Admin-Konsole, `fr`, Konto per `register_new_matrix_user`,
+  Element-Login, Signal-Verknüpfung inkl. Fehlersuche am Handy (VPN/Daten/App-Version ausgeschlossen).
+  Offene Übung: api_id/api_hash von my.telegram.org holen, `telegramBereit` selbst umschalten.
