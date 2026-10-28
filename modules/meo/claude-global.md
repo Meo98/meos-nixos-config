@@ -71,3 +71,15 @@ Paketnamen, Optionsnamen, Home-Manager-Optionen oder "seit welcher nixpkgs-Versi
 gibt es X" immer dort nachschlagen, bevor etwas in die Config geschrieben wird.
 Er kennt die konkrete Config hier nicht; für lokale Werte `nix eval` verwenden,
 z. B. `nix eval ~/nixos-config#nixosConfigurations.meo-work.config.<option>`.
+
+## Notizen (`~/Notizen`)
+
+Der User führt seine Notizen als Markdown in `~/Notizen` (Syncthing auf meo, meo-work, Handy;
+Struktur und Regeln in `~/Notizen/Lies mich.md`). Jedes Projekt hat genau eine Datei unter
+`~/Notizen/Projekte/<Privat|Printbrigata|Technorama|Espace>/`, gefunden über die Frontmatter-Zeile `ordner:`.
+
+- **Nach Arbeit an einem Projekt** (etwas gebaut, entschieden, herausgefunden): am Ende der Sitzung die
+  Projektnotiz mit dem Skill `notiz` nachführen, ohne dass der User darum bittet. Bei reinen Fragen nicht.
+- **Eingang aufräumen** mit dem Skill `aufraeumen`, wenn der User es sagt oder der Eingang voll ist.
+- `~/Notizen/Persönlich/` nur auf ausdrücklichen Wunsch anfassen.
+- Dateien nie in die Notizen kopieren, nur verlinken. Notizen kurz halten.

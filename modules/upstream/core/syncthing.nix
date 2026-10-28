@@ -65,6 +65,17 @@ in {
             "(?d).thumbnails"
           ];
         };
+        # Notizen (Markdown, Obsidian-tauglich), Struktur siehe ~/Notizen/Lies mich.md
+        notizen = {
+          path = "~/Notizen";
+          devices = mitHandy;
+          versioning = papierkorb;
+          ignorePatterns = [
+            # Fenster-/Tab-Zustand ist pro Gerät verschieden → sonst Dauerkonflikte
+            ".obsidian/workspace*.json"
+            ".obsidian/cache"
+          ];
+        };
         handy-austausch = {
           path = "~/Handy-Austausch";
           devices = mitHandy;

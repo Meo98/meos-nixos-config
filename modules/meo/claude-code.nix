@@ -142,5 +142,13 @@ in {
     # Aenderungen deklarativ erfolgen. Wird als Store-Symlink angelegt; Aenderungen
     # also hier im Repo machen, nicht in ~/.claude/CLAUDE.md.
     context = ./claude-global.md;
+
+    # ADDED 2026-10-28: Skills für die Notizen in ~/Notizen (Syncthing-Ordner
+    # "notizen", Struktur in ~/Notizen/Lies mich.md). Landen als
+    # ~/.claude/skills/<name>/ auf beiden Hosts.
+    skills = {
+      notiz = builtins.readFile ./claude-skills/notiz.md;
+      aufraeumen = builtins.readFile ./claude-skills/aufraeumen.md;
+    };
   };
 }
