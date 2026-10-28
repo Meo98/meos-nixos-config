@@ -13,7 +13,6 @@
   #
   # Nur im Tailnet erreichbar: Synapse hört auf 127.0.0.1, `tailscale serve`
   # reicht HTTPS von https://<host>.tailec8a46.ts.net weiter. Keine Föderation.
-
   # ENDGÜLTIG: steckt in jeder Adresse (@meo:meo-server), nie mehr ändern.
   serverName = "meo-server";
   oeffentlicheAdresse = "https://${config.networking.hostName}.tailec8a46.ts.net/";
@@ -25,7 +24,7 @@
   # Telegram braucht api_id/api_hash von https://my.telegram.org (dein Login).
   # Erst auf true setzen, wenn ${geheim}/telegram.env existiert, sonst startet
   # Synapse nicht (es erwartet die Registrierungsdatei der Brücke).
-  telegramBereit = false;
+  telegramBereit = true;
 in {
   services.postgresql = {
     enable = true;
@@ -129,6 +128,10 @@ in {
 
   services.mautrix-telegram = lib.mkIf telegramBereit {
     enable = true;
+    # Ohne Matrix-Verschlüsselung (E2BE) gebaut: die Python-Brücke zöge sonst die
+    # als unsicher markierte libolm mit, eine goolm-Variante hat sie nicht.
+    # Die Brücken-Räume liegen ohnehin unverschlüsselt auf dem eigenen Server.
+    package = pkgs.mautrix-telegram.override {withE2BE = false;};
     # MAUTRIX_TELEGRAM_TELEGRAM_API_ID=… und MAUTRIX_TELEGRAM_TELEGRAM_API_HASH=…
     environmentFile = "${geheim}/telegram.env";
     settings = {
