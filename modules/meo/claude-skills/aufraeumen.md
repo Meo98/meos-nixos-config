@@ -16,8 +16,9 @@ Du sortierst. Regeln der Struktur: `~/Notizen/Lies mich.md`.
 | Inhalt | Ziel | Was du tust |
 |---|---|---|
 | gehört zu einem bestehenden Projekt | `Projekte/<Bereich>/<Projekt>.md` | Inhalt sinnvoll einarbeiten (Verlauf mit Datum der Notiz, Nächste Schritte oder Erkenntnisse), Eingangsdatei danach löschen |
-| neues Projekt | `Projekte/<Bereich>/` | aus `.vorlagen/Projekt.md` anlegen – vorher fragen |
-| Gedanken, Gefühle, Tagebuch, Diskussion | `Persönlich/Gedanken/` | **nur verschieben**, Inhalt nicht verändern; fehlt ein Titel, Dateinamen vergeben |
+| neues Projekt | `Projekte/<Bereich>/` | aus `Vorlagen/Projekt.md` anlegen – vorher fragen |
+| Tagebuch-Eintrag (eigener Tag, Befinden) | `Persönlich/Tagebuch/` | **nur verschieben**, Name `JJJJ-MM-TT Titel.md` |
+| Gedanken, Gefühle, Nachrichtenentwurf, Diskussion | `Persönlich/Gedanken/` | **nur verschieben**, Inhalt nicht verändern; fehlt ein Titel, Dateinamen vergeben |
 | eigener Text, Liedtext | `Persönlich/Texte & Lieder/` | nur verschieben, Dateinamen vergeben |
 | wiederverwendbares Wissen | `Wissen/<Thema>.md` | in bestehende Themen-Datei einarbeiten oder neue anlegen |
 | Kurioses, unnützes Wissen | `Wissen/Fundgrube.md` | als Stichpunkt anhängen |
@@ -28,9 +29,10 @@ Du sortierst. Regeln der Struktur: `~/Notizen/Lies mich.md`.
 
 ## Regeln
 
-- Inhalte aus `Persönlich/` nie umschreiben, zusammenfassen oder weiterverwenden – nur ablegen.
-  Bestehende Dateien in `Persönlich/` nicht öffnen, ausser zum Vermeiden von Namenskonflikten.
+- Inhalte aus `Persönlich/` nie umschreiben, zusammenfassen, zitieren oder weiterverwenden – nur ablegen,
+  taggen und verknüpfen (der User hat das Lesen dafür am 28.10.2026 erlaubt).
 - Nichts endgültig löschen, was nicht vollständig in eine andere Notiz eingearbeitet wurde.
 - Vor jeder Änderung die Zieldatei neu lesen (Syncthing, Handy).
 - Bei Projektnotizen die Regeln des Skills `notiz` einhalten (kurz, keine Befehlslisten, Übersicht nachführen).
+- Danach die einsortierten Notizen mit dem Skill `verknuepfen` taggen und verlinken.
 - Am Ende eine kurze Tabelle: Notiz → wohin. Danach die offenen Fragen zu unklaren Notizen in einer Liste.

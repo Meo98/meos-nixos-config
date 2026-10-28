@@ -81,5 +81,9 @@ Struktur und Regeln in `~/Notizen/Lies mich.md`). Jedes Projekt hat genau eine D
 - **Nach Arbeit an einem Projekt** (etwas gebaut, entschieden, herausgefunden): am Ende der Sitzung die
   Projektnotiz mit dem Skill `notiz` nachführen, ohne dass der User darum bittet. Bei reinen Fragen nicht.
 - **Eingang aufräumen** mit dem Skill `aufraeumen`, wenn der User es sagt oder der Eingang voll ist.
-- `~/Notizen/Persönlich/` nur auf ausdrücklichen Wunsch anfassen.
+- **Tags und Links** mit dem Skill `verknuepfen` (feste Tag-Liste in `Lies mich.md`, keine anderen Tags).
+- `~/Notizen/Persönlich/` darf zum Ordnen und Verknüpfen gelesen werden, der Inhalt wird nie verändert,
+  zusammengefasst oder zitiert.
+- Wöchentlich (So 18:00, nur meo) läuft `notizen-woche` headless: Eingang aufräumen, verknüpfen,
+  notizen-bom, Wochenbericht in den Eingang.
 - Dateien nie in die Notizen kopieren, nur verlinken. Notizen kurz halten.

@@ -20,5 +20,6 @@
     ./claude-tools-path.nix
     ./claude-code.nix
     ./notizen-bom.nix
+    ./notizen-woche.nix
   ];
 }

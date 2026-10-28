@@ -149,6 +149,7 @@ in {
     skills = {
       notiz = builtins.readFile ./claude-skills/notiz.md;
       aufraeumen = builtins.readFile ./claude-skills/aufraeumen.md;
+      verknuepfen = builtins.readFile ./claude-skills/verknuepfen.md;
     };
   };
 }

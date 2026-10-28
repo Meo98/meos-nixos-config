@@ -14,7 +14,7 @@ Datei unter `~/Notizen/Projekte/<Bereich>/`. Du hältst sie aktuell, damit der U
   Arbeitsverzeichnis bzw. dem Projektordner, an dem gearbeitet wurde (auch Unterordner zählen).
 - Sonst über den Namen (`ls ~/Notizen/Projekte/*/`).
 - Kein Treffer: kurz fragen, ob eine neue Notiz angelegt werden soll und in welchem Bereich
-  (Privat, Printbrigata, Technorama, Espace). Neue Notizen immer aus `~/Notizen/.vorlagen/Projekt.md`.
+  (Privat, Printbrigata, Technorama, Espace). Neue Notizen immer aus `~/Notizen/Vorlagen/Projekt.md`.
 
 ## 2. Aktualisieren
 
@@ -37,5 +37,6 @@ Datei **direkt vor dem Schreiben neu lesen** (der User kann sie am Handy geände
 - Kurz halten: eine Projektnotiz soll in einer Minute lesbar sein. Lieber kürzen als anhängen.
 - Dateien (CAD, Bilder, Code, Tabellen) nie in die Notizen kopieren, nur Pfade verlinken.
 - Keine Passwörter, Tokens, API-Keys.
-- `~/Notizen/Persönlich/` nie anfassen, ausser der User verlangt es ausdrücklich.
+- `~/Notizen/Persönlich/` hier nicht anfassen (dafür sind `aufraeumen` und `verknuepfen` zuständig).
+- Neue Projektnotizen mit dem Skill `verknuepfen` taggen und verlinken.
 - Am Ende in einer Zeile sagen, welche Notiz du wie geändert hast.
