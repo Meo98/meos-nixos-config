@@ -67,3 +67,7 @@ Brücken-Daten mitnehmen oder Messenger per QR neu verknüpfen. Clients neu anme
 - WhatsApp wirft ein verknüpftes Gerät nach ~14 Tagen ohne Kontakt raus.
 - Stories/Status, manche Umfragen fehlen.
 - Threema, iMessage: keine brauchbare Brücke.
+- Beim ersten Einschalten einer neuen Brücke scheitert Synapse einmal (Registrierungsdatei
+  fehlt noch, die Brücke legt sie erst beim eigenen Start an); `fr` meldet Exit 4, Synapse
+  startet per Restart von selbst. Beim Umzug auf meo-server einmal so erwarten.
+- Telegram-Brücke (Python) ohne E2BE gebaut (`withE2BE = false`), sonst libolm.

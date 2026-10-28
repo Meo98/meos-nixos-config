@@ -144,9 +144,15 @@ in {
         port = 29317;
         address = "http://127.0.0.1:29317";
       };
-      bridge.permissions = {
-        "*" = "relaybot";
-        ${ich} = "admin";
+      bridge = {
+        permissions = {
+          "*" = "relaybot";
+          ${ich} = "admin";
+        };
+        # Standard: nur 15 Gruppen beim Login, Direktchats erst bei neuer Nachricht.
+        # Hier: die 40 zuletzt aktiven Chats inkl. Direktchats sofort anlegen.
+        sync_create_limit = 40;
+        sync_direct_chats = true;
       };
     };
   };
