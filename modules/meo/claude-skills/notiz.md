@@ -28,6 +28,9 @@ Datei **direkt vor dem Schreiben neu lesen** (der User kann sie am Handy geände
   Kurz und menschenlesbar, keine Befehlslisten (Details gehören ins Repo bzw. in die Claude-Memory).
 - Frontmatter: `zuletzt:` auf heute, `status:` anpassen, falls sich das geändert hat.
 - `~/Notizen/Übersicht.md`: die Zeile dieses Projekts (Stand, nächster Schritt, zuletzt) angleichen.
+- Wurde am Schaltplan (`.kicad_sch`) gearbeitet: `notizen-bom` ausführen. Es schreibt den Abschnitt
+  `## Stückliste` (zwischen `<!-- notizen-bom:start/end -->`) und `Wissen/Bauteile.md` neu – diese Teile
+  nie von Hand bearbeiten. Bauteil-Wissen gehört in eine eigene Notiz `Wissen/<Bauteil>.md`.
 
 ## Regeln
 

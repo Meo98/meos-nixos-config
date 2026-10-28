@@ -19,5 +19,6 @@
     ./doc-convert.nix
     ./claude-tools-path.nix
     ./claude-code.nix
+    ./notizen-bom.nix
   ];
 }
