@@ -112,6 +112,15 @@ in {
     settings = {
       homeserver.address = "http://127.0.0.1:8008";
       appservice.hostname = "127.0.0.1";
+      # Namen wie im Handy-Adressbuch (nur ein Nutzer auf der Brücke, daher erlaubt)
+      network.displayname_template = "{{or .ContactName .ProfileName .PhoneNumber \"Unbekannt\"}}";
+      # Verlauf übernehmen: Signal liefert ihn nur EINMAL beim Verknüpfen
+      # ("Nachrichtenverlauf übertragen"). Ohne das entsteht ein Chat erst bei
+      # der nächsten neuen Nachricht.
+      backfill = {
+        enabled = true;
+        max_initial_messages = 200;
+      };
       bridge = {
         relay.enabled = false;
         # niemand sonst darf die Brücke benutzen
