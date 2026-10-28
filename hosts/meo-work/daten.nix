@@ -32,4 +32,16 @@
     # Daten-Partition scheitern — reine Nutzdaten, nichts Systemrelevantes.
     options = [ "noatime" "nofail" ];
   };
+
+  # 2026-10-28: Syncthing-Ordner handy-fotos (modules/upstream/core/syncthing.nix)
+  # liegt physisch auf /daten, weil / nach dem ersten Sync zu 98% voll war.
+  # Bind-Mount statt Symlink: Pfad bleibt /home/meo/Handy-Fotos wie auf meo,
+  # getcwd/Programme sehen keinen fremden Pfad. Fehlt /daten, bleibt der
+  # Mountpoint leer; Syncthing stoppt den Ordner dann wegen fehlendem
+  # .stfolder-Marker, statt Löschungen ans Handy zu melden.
+  fileSystems."/home/meo/Handy-Fotos" = {
+    device = "/daten/Handy-Fotos";
+    fsType = "none";
+    options = [ "bind" "nofail" "x-systemd.requires-mounts-for=/daten" ];
+  };
 }
