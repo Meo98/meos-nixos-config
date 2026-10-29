@@ -47,10 +47,28 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 - 2026-10-27: Megger PAT420 (Prüfgerät, Display defekt = Hardware). User hat USB-Stick in
   yazi gesucht und mkfs per `:`-Shell versucht; Fehler: Platzhalter `/dev/sdX1` wörtlich
   getippt → **wackelt: Gerätenamen aus `lsblk` ablesen**. Formatieren hat Claude per udisks
-  gemacht. Projekt `~/megger-tool` (PAT-Manager, Python+Qt) von Claude gebaut, Teil 1 fertig.
+  gemacht. Projekt `~/Dokumente/Technorama_Projekte/megger-tool` (PAT-Manager, Python+Qt) von Claude gebaut, Teil 1 fertig.
   **Offene Übung (Python, Stufe 5 vorgezogen):** `naechste_pruefung()` in
   `pat_manager/faelligkeit.py` selber schreiben (Tests in `tests/test_faelligkeit.py`).
 - 2026-10-28: Matrix-Probelauf (Synapse + Signal-Brücke, `modules/meo/matrix.nix`, Claude gebaut).
   User selbst: Tailscale-HTTPS in der Admin-Konsole, `fr`, Konto per `register_new_matrix_user`,
   Element-Login, Signal-Verknüpfung inkl. Fehlersuche am Handy (VPN/Daten/App-Version ausgeschlossen).
   Offene Übung: api_id/api_hash von my.telegram.org holen, `telegramBereit` selbst umschalten.
+- 2026-10-29: Charybdis-Firmware (RMK). User selbst: 10 neue Gerätenamen in `kanata.nix`
+  eingetragen + `fr` (ohne Hinweis, **sitzt: Modul finden + Liste ergänzen**), beide Hälften
+  per yazi geflasht (3×), in Vial Combos geleert und Prior-Idle gesetzt. Gute Rückfragen:
+  „kopiert yazi beim `y` oder beim `p`?“ (Antwort: Pfad bei `y`, Inhalt bei `p`) und „gilt der
+  Fix für alle Fälle?“ → deckte eine echte Lücke auf (zwei Mods auf verschiedenen Händen).
+  Claude: RMK-Patch + Simulator-Tests, Wine-hidraw-Leck gefunden (`ls -l /proc/<pid>/fd`).
+  Offene Übungsfrage: „BastardKB“ steht als Hersteller im USB-Namen – wo kommt das her?
+- 2026-10-29: PAT420-Team-Anleitung (User: „du kannst loslegen“, Claude hat alles gebaut:
+  `docs/anleitung/` im megger-tool, Markdown → pandoc → weasyprint). **Offene Übung (Stufe 1):**
+  einen Satz in `anleitung.md` ändern (z. B. Namen eines Standorts) und `./bauen.sh` laufen
+  lassen, dann im PDF nachschauen. Hinweis 1 genügt vermutlich. Übungsfrage: Warum liegt
+  `bauen.sh` im Projekt und nicht in der NixOS-Config?
+- 2026-10-29: PAT-Manager Teil 2 (Bearbeiten/Zurückspielen, neues Design, Fälligkeit, Mängel,
+  QR-Etiketten) komplett von Claude gebaut (User: «mach a bis e»), 257 Tests, Version 0.2.0.
+  Projekt liegt jetzt in `~/Dokumente/Technorama_Projekte/megger-tool`.
+  **Offene Übung bleibt:** `naechste_pruefung()` in `pat_manager/faelligkeit.py` (Tests
+  `tests/test_faelligkeit.py`, 4× xfail). Ohne sie zeigen Fällig-Seite und Kacheln «–».
+  Hinweisstufe 2: Monat hochzählen, Jahr übertragen, Tag mit `calendar.monthrange` deckeln.

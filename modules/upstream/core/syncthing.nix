@@ -90,19 +90,12 @@ in {
             "*~lock~*" # Affinity-Sperrdateien
             ".~lock.*#" # LibreOffice-Sperrdateien
             "(?d)target" # Rust-Builds (Charybdis-RMK ~8 GB), baut jeder Host selbst
-          ];
-        };
-        projekte = {
-          path = "~/Projekte";
-          devices = beide;
-          versioning = papierkorb;
-          # .git wird mitgesynct; nur Build-/Cache-Ordner raus
-          ignorePatterns = [
+            # Seit 2026-10-29 liegen auch die Code-Projekte hier (ehemals ~/Projekte):
+            # .git wird mitgesynct, nur Build-/Cache-Ordner raus
             "(?d)node_modules"
             "(?d)__pycache__"
             "(?d).pytest_cache"
             "(?d).venv"
-            "(?d)target"
             "(?d)build"
             "result" # nix-build-Symlinks zeigen in den lokalen Store
             "result-*"
