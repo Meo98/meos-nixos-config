@@ -103,7 +103,6 @@
     dos2unix # Werkzeug zum Umwandeln von Windows-Zeilenumbrüchen in Linux-Format
     claude-code
     ferdium
-    gemini-cli
 
     # --- Grafik & Gaming ---
     # ArtCraft Suite (AppImage via modules/meo/artcraft.nix overlay) — early alpha!
