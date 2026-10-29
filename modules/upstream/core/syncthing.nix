@@ -89,6 +89,7 @@ in {
             "(?d).DS_Store"
             "*~lock~*" # Affinity-Sperrdateien
             ".~lock.*#" # LibreOffice-Sperrdateien
+            "(?d)target" # Rust-Builds (Charybdis-RMK ~8 GB), baut jeder Host selbst
           ];
         };
         projekte = {
