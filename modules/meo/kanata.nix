@@ -1,8 +1,10 @@
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   hardware.uinput.enable = true;
-  services.udev.packages = [ pkgs.kanata ];
+  services.udev.packages = [pkgs.kanata];
 
   services.kanata = {
     enable = true;
@@ -37,6 +39,16 @@
             "Charybdis Mini Mouse"
             "Charybdis Mini Consumer Control"
             "Charybdis Mini System Control"
+            "BastardKB Charybdis USB"
+            "BastardKB Charybdis USB Keyboard"
+            "BastardKB Charybdis USB Mouse"
+            "BastardKB Charybdis USB Consumer Control"
+            "BastardKB Charybdis USB System Control"
+            "Charybdis BT"
+            "Charybdis BT Keyboard"
+            "Charybdis BT Mouse"
+            "Charybdis BT Consumer Control"
+            "Charybdis BT System Control"
           )
         '';
 
