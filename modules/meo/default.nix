@@ -21,5 +21,6 @@
     ./claude-code.nix
     ./notizen-bom.nix
     ./notizen-woche.nix
+    ./pat-manager.nix
   ];
 }
