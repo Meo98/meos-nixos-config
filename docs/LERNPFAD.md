@@ -62,7 +62,7 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   Claude: RMK-Patch + Simulator-Tests, Wine-hidraw-Leck gefunden (`ls -l /proc/<pid>/fd`).
   Offene Übungsfrage: „BastardKB“ steht als Hersteller im USB-Namen – wo kommt das her?
 - 2026-10-29: PAT420-Team-Anleitung (User: „du kannst loslegen“, Claude hat alles gebaut:
-  `docs/anleitung/` im megger-tool, Markdown → pandoc → weasyprint). **Offene Übung (Stufe 1):**
+  `docs/anleitung/` im megger-tool, Markdown → pandoc → Word → PDF via LibreOffice). **Offene Übung (Stufe 1):**
   einen Satz in `anleitung.md` ändern (z. B. Namen eines Standorts) und `./bauen.sh` laufen
   lassen, dann im PDF nachschauen. Hinweis 1 genügt vermutlich. Übungsfrage: Warum liegt
   `bauen.sh` im Projekt und nicht in der NixOS-Config?
