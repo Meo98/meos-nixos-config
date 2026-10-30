@@ -72,3 +72,8 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   **Offene Übung bleibt:** `naechste_pruefung()` in `pat_manager/faelligkeit.py` (Tests
   `tests/test_faelligkeit.py`, 4× xfail). Ohne sie zeigen Fällig-Seite und Kacheln «–».
   Hinweisstufe 2: Monat hochzählen, Jahr übertragen, Tag mit `calendar.monthrange` deckeln.
+- 2026-10-30: `naechste_pruefung()` hat Claude auf Wunsch geschrieben («warum kannst du diese
+  Funktion nicht implementieren?») – die Übung war dem User nicht als solche präsent, die
+  leere Fällig-Seite wirkte wie ein Fehler. Lehre: Lernaufgaben, die ein Feature blockieren,
+  nicht offen lassen; lieber kleine, folgenlose Übungen (z. B. ein Test, eine Konstante).
+  Übung aus Teil 2 damit zu; die Stufe-1-Übung an der Anleitung (`bauen.sh`) bleibt offen.
