@@ -77,3 +77,15 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   leere Fällig-Seite wirkte wie ein Fehler. Lehre: Lernaufgaben, die ein Feature blockieren,
   nicht offen lassen; lieber kleine, folgenlose Übungen (z. B. ein Test, eine Konstante).
   Übung aus Teil 2 damit zu; die Stufe-1-Übung an der Anleitung (`bauen.sh`) bleibt offen.
+- 2026-11-02: Prüfkonzept (Dokument für den SiBe) hat Claude geschrieben, Megger-Ordner in
+  `~/Dokumente/Technorama_Projekte/Elektropruefung_Exponate/` verschoben. **Offene Übung (Stufe 1–2):**
+  der Launcher-Starter zeigt noch auf den alten Pfad; in `modules/meo/pat-manager.nix` die Zeile
+  `projekt = …` auf den neuen Ordner ändern, `nh os build` zur Probe, dann `fr`. Hinweis 2 gegeben
+  (Datei genannt). Danach prüfen: Starter im Launcher öffnet die App.
+- 2026-11-02: moOde-Radio (192.168.2.182). Mi-Soul spielte nicht, weil die TuneIn-Seite statt
+  des Streams eingetragen war; Claude hat den Eintrag über die Web-Schnittstelle korrigiert, 29
+  eigene Einträge mit Genre versehen und ~155 geprüfte Sender ergänzt (User: «leg du an»).
+  SSH-Login (Benutzer `PI-999-EWS`) hat der User selbst getestet, Ausgang offen.
+  **Offene Übung (Stufe 1):** einmal selbst einen Sender über die Radio-Ansicht anlegen
+  (Stream-URL statt Webseite; Prüfung: Inhaltstyp `audio/mpeg` mit `curl -sI <url>`).
+  Übungsfrage: Warum reicht die TuneIn-Adresse dem Player nicht?

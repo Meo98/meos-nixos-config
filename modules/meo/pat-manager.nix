@@ -7,7 +7,7 @@
 # nach einer Code-Änderung dauert darum etwa eine Minute (Build), danach ist
 # er sofort da. Der Ordner liegt per Syncthing auf beiden Hosts gleich.
 let
-  projekt = "/home/meo/Dokumente/Technorama_Projekte/megger-tool";
+  projekt = "/home/meo/Dokumente/Technorama_Projekte/Elektropruefung_Exponate/megger-tool";
   starter = pkgs.writeShellScriptBin "pat-manager-start" ''
     exec ${pkgs.nix}/bin/nix run "path:${projekt}" -- "$@"
   '';
