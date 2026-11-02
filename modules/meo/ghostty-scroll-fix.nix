@@ -46,8 +46,11 @@
 # Scroll-Deltas mitskaliert. Deshalb steht mouse-scroll-multiplier in
 # ghostty.nix auf discrete:1.5 -> 3 Zeilen pro Detent (Desktop-Konvention).
 #
-# Gegen Ghostty 1.3.1 (= nixpkgs-Stand). Beim naechsten Bump pruefen, ob der
-# Patch noch greift; faellt weg sobald upstream gefixt ist.
+# Stand 2026-11-02, gegen Ghostty 1.4.0: Fehler 1 (Klemmung) hat Upstream
+# selbst gefixt (Klemmung nur noch unter Darwin), der Hunk dazu ist aus dem
+# Patch raus. Fehler 2 und 3 sind in 1.4.0 noch drin, der Patch enthaelt nur
+# noch diese beiden. Beim naechsten Bump pruefen, ob er noch greift; faellt
+# weg sobald upstream alles gefixt hat.
 final: prev: {
   ghostty = prev.ghostty.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [ ./patches/ghostty-hires-scroll.patch ];

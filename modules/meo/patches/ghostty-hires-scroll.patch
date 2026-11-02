@@ -1,28 +1,6 @@
 --- a/src/Surface.zig
 +++ b/src/Surface.zig
-@@ -3407,10 +3407,17 @@
-             // magnitude of 0.1 which would normally require a few clicks
-             // before we register an actual scroll event (depending on cell
-             // height and the mouse_scroll_multiplier setting).
--            const yoff_max: f64 = if (yoff > 0)
--                @max(yoff, 1)
--            else
--                @min(yoff, -1);
-+            //
-+            // This is macOS-specific behavior and must not be applied
-+            // elsewhere: on Linux a non-precision wheel offset below 1.0 is a
-+            // genuine high-resolution tick (REL_WHEEL_HI_RES, forwarded as
-+            // wl_pointer.axis_value120), and clamping it up to a full tick
-+            // both discards the added resolution and makes the scroll speed
-+            // depend on the device's event rate instead of on how far the
-+            // wheel or trackball actually moved.
-+            const yoff_max: f64 = if (comptime builtin.os.tag == .macos) macos: {
-+                break :macos if (yoff > 0) @max(yoff, 1) else @min(yoff, -1);
-+            } else yoff;
- 
-             break :yoff_adjusted yoff_max * cell_size * self.config.mouse_scroll_multiplier.discrete;
-         };
-@@ -3432,24 +3439,34 @@
+@@ -3644,24 +3644,34 @@
          // We scroll by the number of rows in the offset and save the remainder
          const amount = poff / cell_size;
          assert(@abs(amount) >= 1);
@@ -64,7 +42,7 @@
          if (@abs(poff) < cell_size) {
              self.mouse.pending_scroll_x = poff;
              break :x .{};
-@@ -3457,9 +3474,10 @@
+@@ -3669,9 +3679,10 @@
  
          const amount = poff / cell_size;
          assert(@abs(amount) >= 1);
