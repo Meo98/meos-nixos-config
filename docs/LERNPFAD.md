@@ -80,8 +80,8 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 - 2026-11-02: Prüfkonzept (Dokument für den SiBe) hat Claude geschrieben, Megger-Ordner in
   `~/Dokumente/Technorama_Projekte/Elektropruefung_Exponate/` verschoben. **Offene Übung (Stufe 1–2):**
   der Launcher-Starter zeigt noch auf den alten Pfad; in `modules/meo/pat-manager.nix` die Zeile
-  `projekt = …` auf den neuen Ordner ändern, `nh os build` zur Probe, dann `fr`. Hinweis 2 gegeben
-  (Datei genannt). Danach prüfen: Starter im Launcher öffnet die App.
+  `projekt = …` auf den neuen Ordner ändern, `nh os build` zur Probe, dann `fr`. User: «mach du die Übung»
+  → Claude hat den Pfad geändert; `fr` noch offen (Build-Probe vom User abgebrochen).
 - 2026-11-02: moOde-Radio (192.168.2.182). Mi-Soul spielte nicht, weil die TuneIn-Seite statt
   des Streams eingetragen war; Claude hat den Eintrag über die Web-Schnittstelle korrigiert, 29
   eigene Einträge mit Genre versehen und ~155 geprüfte Sender ergänzt (User: «leg du an»).
@@ -89,3 +89,6 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   **Offene Übung (Stufe 1):** einmal selbst einen Sender über die Radio-Ansicht anlegen
   (Stream-URL statt Webseite; Prüfung: Inhaltstyp `audio/mpeg` mit `curl -sI <url>`).
   Übungsfrage: Warum reicht die TuneIn-Adresse dem Player nicht?
+- 2026-11-02: Craft Anything (ArtCraft) deklarativ ergänzt (Claude, auf Zuruf). Noch offen als
+  kleine Übung: in `modules/meo/artcraft.nix` nachlesen, woher `mkCraft` Version und Hash holt
+  (`versions.${pname}`), und mit `fr` aktivieren.

@@ -144,4 +144,16 @@ in {
     pname = "cadcraft";
     description = "2D CAD and drafting (AutoCAD reimplementation in Rust, DXF/DWG)";
   };
+
+  # ADDED 2026-11-02: Craft Anything (Repo storytold/craft-anything, MIT oder
+  # Apache-2.0) — Reverse-Engineering-Werkbank: analysiert Websites, Apps,
+  # Spiele, Firmware und Dateien mit eigenen Decodern/Disassembler und laesst
+  # einen Coding-Agenten (zuerst Claude Code) eine eigene Version nachbauen.
+  # Gleiche Release-Struktur wie die Suite (AppImage + SHA256SUMS.txt), daher
+  # derselbe mkCraft und dieselbe Auto-Update-Kette (artcraft-update).
+  # pname hat einen Bindestrich; Repo, Asset und usr/bin-Name heissen gleich.
+  craft-anything = mkCraft {
+    pname = "craft-anything";
+    description = "Reverse-engineering workbench: study any software and rebuild it with a coding agent (Rust)";
+  };
 }

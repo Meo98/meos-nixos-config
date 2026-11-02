@@ -118,6 +118,7 @@
     deckcraft # PowerPoint-Pendant: Praesentationen (PPTX)
     soundcraft # Pro-Tools-Pendant: Audio-Workstation (DAW)
     cadcraft # AutoCAD-Pendant: 2D-CAD / technisches Zeichnen
+    craft-anything # Reverse-Engineering-Werkbank: Software analysieren + per Coding-Agent nachbauen
     vulkan-tools # Diagnose-Tools für die Vulkan-Grafik-Schnittstelle (z.B. vulkaninfo)
     mesa-demos # Enthält Tools wie glxinfo, um die GPU-Beschleunigung zu prüfen
     gamescope # Micro-Compositor von Valve für stabileres Gaming und Upscaling

@@ -83,6 +83,11 @@
       port = 7982;
       launch = "cadcraft --control 7982";
     };
+    # ADDED 2026-11-02: craft-anything 0.2.0: `craft-anything-cli mcp` kennt
+    # weder --connect noch --bridge (nur --project/--inbox/--deep) -> nur
+    # headless. Die GUI beantwortet Rueckfragen des Agenten ueber einen
+    # Inbox-Ordner (--inbox), nicht ueber einen Control-Port.
+    craft-anything = {connect = null;};
   };
 
   # `<app>-cli` ueber PATH (environment.systemPackages auf meo-work), nicht
@@ -131,7 +136,7 @@ in {
           command = "${inputs.nixpkgs-fallback.legacyPackages.${pkgs.stdenv.hostPlatform.system}.mcp-nixos}/bin/mcp-nixos";
         };
       }
-      # ArtCraft Suite (siehe craftApps oben): zwoelf Server, nur auf meo-work.
+      # ArtCraft Suite (siehe craftApps oben): dreizehn Server, nur auf meo-work.
       // lib.optionalAttrs (host == "meo-work") (lib.mapAttrs (name: a: {
           command = toString (craftMcp name a);
         })

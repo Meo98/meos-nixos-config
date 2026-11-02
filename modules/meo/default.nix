@@ -22,5 +22,6 @@
     ./notizen-bom.nix
     ./notizen-woche.nix
     ./pat-manager.nix
+    ./technorama-fonts.nix
   ];
 }

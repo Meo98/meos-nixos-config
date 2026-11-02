@@ -7,6 +7,7 @@
     ../meo/affinity.nix
     ../../modules/meo/lock-before-sleep.nix
     ../../modules/meo/tailscale.nix
+    ../../modules/meo/grafik-fonts.nix
   ];
 
   # Add our custom home-manager modules on top of modules/upstream/home/.

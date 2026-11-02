@@ -46,5 +46,9 @@
   "cadcraft": {
     "version": "0.16.0",
     "sha256": "0746fce592f8e6edfcce411590ae8e10f2f6846b35f765e63bb1071ee8c8eea8"
+  },
+  "craft-anything": {
+    "version": "0.2.0",
+    "sha256": "ba8423e6cc4e6725d867ae8a5e17b944d100801692251e309203ea0e7cef6988"
   }
 }
