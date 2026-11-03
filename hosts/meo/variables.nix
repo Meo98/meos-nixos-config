@@ -213,8 +213,7 @@
     "x-scheme-handler/about" = "vivaldi-stable.desktop";
     "x-scheme-handler/unknown" = "vivaldi-stable.desktop";
     "text/html" = "vivaldi-stable.desktop";
-    "application/pdf" = "onlyoffice-desktopeditors.desktop";
-    "application/x-pdf" = "onlyoffice-desktopeditors.desktop";
+    # PDF und alle ArtCraft-Typen: modules/meo/artcraft-mime.nix (2026-11-03)
   };
 
   # Set network hostId if required (needed for zfs)

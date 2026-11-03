@@ -155,9 +155,7 @@
     "text/xhtml+xml" = "vivaldi-stable.desktop";
     "application/xhtml+xml" = "vivaldi-stable.desktop";
     "application/xml" = "vivaldi-stable.desktop";
-    # PDF
-    "application/pdf" = "onlyoffice-desktopeditors.desktop";
-    "application/x-pdf" = "onlyoffice-desktopeditors.desktop";
+    # PDF und alle ArtCraft-Typen: modules/meo/artcraft-mime.nix (2026-11-03)
   };
 
   # hostId (muss eindeutig sein, für ZFS)

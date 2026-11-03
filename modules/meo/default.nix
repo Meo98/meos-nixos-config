@@ -23,5 +23,6 @@
     ./notizen-woche.nix
     ./pat-manager.nix
     ./technorama-fonts.nix
+    ./artcraft-mime.nix
   ];
 }
