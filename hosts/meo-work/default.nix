@@ -8,6 +8,7 @@
     ../../modules/meo/lock-before-sleep.nix
     ../../modules/meo/tailscale.nix
     ../../modules/meo/grafik-fonts.nix
+    ../../modules/meo/claude-werdegang-hook.nix # Werdegang nach Claude-Sitzungen (2026-10-29)
   ];
 
   # Add our custom home-manager modules on top of modules/upstream/home/.

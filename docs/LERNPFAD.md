@@ -54,6 +54,8 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   User selbst: Tailscale-HTTPS in der Admin-Konsole, `fr`, Konto per `register_new_matrix_user`,
   Element-Login, Signal-Verknüpfung inkl. Fehlersuche am Handy (VPN/Daten/App-Version ausgeschlossen).
   Offene Übung: api_id/api_hash von my.telegram.org holen, `telegramBereit` selbst umschalten.
+  → erledigt: Schalter selbst umgelegt (nvim, `:w`, `git diff` geprüft). Signal-Verlauf per
+  `relogin` selbst geholt (29.10.).
 - 2026-10-29: Charybdis-Firmware (RMK). User selbst: 10 neue Gerätenamen in `kanata.nix`
   eingetragen + `fr` (ohne Hinweis, **sitzt: Modul finden + Liste ergänzen**), beide Hälften
   per yazi geflasht (3×), in Vial Combos geleert und Prior-Idle gesetzt. Gute Rückfragen:
@@ -72,6 +74,10 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   **Offene Übung bleibt:** `naechste_pruefung()` in `pat_manager/faelligkeit.py` (Tests
   `tests/test_faelligkeit.py`, 4× xfail). Ohne sie zeigen Fällig-Seite und Kacheln «–».
   Hinweisstufe 2: Monat hochzählen, Jahr übertragen, Tag mit `calendar.monthrange` deckeln.
+- 2026-10-29: Obsidian „📝 Neue Notiz“ (QuickAdd-Makro + JS-Skript `Vorlagen/Skripte/neue-notiz.js`,
+  Claude gebaut). Knopf hat Claude eingebaut (User: "nächstes Mal"). Übung später nachholen: so einen Knopf/URL selbst bauen.
+- 2026-10-29: Werdegang-Hook (Claude gebaut). Einbinden war für Claude gesperrt (Selbstveränderung),
+  User führt es aus. Gelernt: `!`-Präfix gilt nur im Claude-Chat; in zsh heisst `!` „Ergebnis umkehren“.
 - 2026-10-30: `naechste_pruefung()` hat Claude auf Wunsch geschrieben («warum kannst du diese
   Funktion nicht implementieren?») – die Übung war dem User nicht als solche präsent, die
   leere Fällig-Seite wirkte wie ein Fehler. Lehre: Lernaufgaben, die ein Feature blockieren,
@@ -97,3 +103,7 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 - 2026-11-02: Craft Anything (ArtCraft) deklarativ ergänzt (Claude, auf Zuruf). Noch offen als
   kleine Übung: in `modules/meo/artcraft.nix` nachlesen, woher `mkCraft` Version und Hash holt
   (`versions.${pname}`), und mit `fr` aktivieren.
+- 2026-11-03: `fr` scheiterte an Autostash-Konflikten (uncommittete Werdegang-Änderungen auf meo gegen
+  neue Commits von meo-work). Claude hat aufgelöst (User: «mach du das»). **Wackelt: Konfliktmarker lesen
+  und auflösen**, ähnliche Übung beim nächsten Konflikt nochmals geben.
+  Offene Übungsfrage: Warum muss auch `hosts/meo-work/default.nix` sauber sein, wenn man auf meo baut?

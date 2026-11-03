@@ -24,5 +24,6 @@
     ./pat-manager.nix
     ./technorama-fonts.nix
     ./artcraft-mime.nix
+    ./werdegang.nix
   ];
 }

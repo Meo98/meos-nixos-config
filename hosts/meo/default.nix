@@ -11,6 +11,7 @@
     ../../modules/meo/lock-before-sleep.nix
     ../../modules/meo/tailscale.nix
     ../../modules/meo/grafik-fonts.nix
+    ../../modules/meo/claude-werdegang-hook.nix # Werdegang nach Claude-Sitzungen (2026-10-29)
     # Matrix-Probelauf (2026-10-28), zieht später auf meo-server um
     ../../modules/meo/matrix.nix
   ];
