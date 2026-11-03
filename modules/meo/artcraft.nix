@@ -30,6 +30,11 @@ self: super: let
   # Von Hand: `artcraft-update` (ohne Argument -> ~/nixos-config).
   versions = builtins.fromJSON (builtins.readFile ./artcraft-versions.json);
 
+  # ADDED 2026-11-03: Control-Ports je App (gemeinsam mit claude-code.nix).
+  # Der Starter `<app>` haengt `--control <port>` an, damit Claude Code sich
+  # jederzeit an die laufende GUI haengen kann (Dokument live bearbeiten).
+  control = import ./artcraft-control.nix;
+
   mkCraft = {
     pname,
     version ? versions.${pname}.version,
@@ -37,6 +42,8 @@ self: super: let
     description,
     repo ? pname,
     asset ? pname,
+    launchArgs ? control.${pname}.launchArgs or null,
+    controlPort ? control.${pname}.port or null,
   }:
     super.appimageTools.wrapType2 rec {
       inherit pname version;
@@ -69,6 +76,29 @@ self: super: let
         if [ -e "${contents}/usr/bin/${pname}-cli" ]; then
           ln -s "${contents}/usr/bin/${pname}-cli" "$out/bin/${pname}-cli"
         fi
+      ''
+      + super.lib.optionalString (launchArgs != null) ''
+        # ADDED 2026-11-03: Starter umhuellen, damit die GUI immer mit
+        # `${launchArgs}` laeuft (Ports: artcraft-control.nix). Eigenes
+        # --control auf der Kommandozeile gewinnt. Ist der Port schon belegt
+        # (zweite Instanz, z.B. zweite Datei aus dem Dateimanager), startet
+        # die GUI ohne Control-Port, statt am belegten Port zu scheitern.
+        real=$(readlink -f "$out/bin/${pname}")
+        rm "$out/bin/${pname}"
+        {
+          echo '#!${super.runtimeShell}'
+          echo "real=$real"
+          cat <<'EOF'
+for a in "$@"; do
+  case "$a" in --control|--control=*) exec "$real" "$@" ;; esac
+done
+if ${super.iproute2}/bin/ss -ltnH "sport = :${toString controlPort}" 2>/dev/null | ${super.gnugrep}/bin/grep -q . ; then
+  exec "$real" "$@"
+fi
+exec "$real" ${launchArgs} "$@"
+EOF
+        } > "$out/bin/${pname}"
+        chmod 555 "$out/bin/${pname}"
       '';
 
       meta = with super.lib; {
