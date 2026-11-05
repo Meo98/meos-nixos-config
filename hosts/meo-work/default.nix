@@ -94,7 +94,6 @@
   # Diese Liste MERGT mit der Basisliste in modules/upstream/core/packages.nix.
   # Host-lokal -> meo (Trading-Bot) bleibt unveraendert.
   programs.nix-ld.libraries = with pkgs; [
-    gtk2
     gtk3
     cairo
     pango

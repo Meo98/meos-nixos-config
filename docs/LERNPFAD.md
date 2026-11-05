@@ -23,7 +23,9 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 
 ## Wackelt / üben
 
-- (noch nichts eingetragen)
+- `!`-Präfix: gilt nur im Claude-Prompt; im zsh-Terminal heisst `! befehl` «Ergebnis umkehren»
+  und bricht `&&`-Ketten ab (passiert am 29.10. und 05.11.).
+- Gerätenamen aus `lsblk` ablesen statt Platzhalter tippen (27.10.).
 
 ## Log
 
@@ -95,6 +97,13 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   **Offene Übung (Stufe 1):** einmal selbst einen Sender über die Radio-Ansicht anlegen
   (Stream-URL statt Webseite; Prüfung: Inhaltstyp `audio/mpeg` mit `curl -sI <url>`).
   Übungsfrage: Warum reicht die TuneIn-Adresse dem Player nicht?
+- 2026-11-05: PAT-Manager auf GitHub (`Meo98/pat-manager`, privat). Vorbereitung (Commit,
+  `main` nachziehen, Push von `main`, Standard-Branch) hat Claude gemacht; **User selbst:
+  `gh repo create pat-manager --private --source=. --push`** (Hinweisstufe 3, Befehl erklärt).
+  Erster Versuch mit `! cd … && gh …` im zsh-Terminal: `cd` lief, `gh` nicht (dasselbe wie am
+  29.10., **wackelt: `!` gehört in den Claude-Prompt, nicht ins Terminal**). Zweiter Versuch sauber.
+  Übungsfrage «Push angekommen, ohne Browser?» gestellt, Antwort gegeben: `git ls-remote --heads origin`.
+  Nächste Übung in diesem Projekt: `git log --oneline origin/main -3` vs. lokal vergleichen.
   Nachtrag Abend: moOde-Update 9.2.2 → 10.3.7 per neuem Image (Claude: Backup per API, Image auf
   /dev/mmcblk0 via run0/polkit, Auto-Restore-Zip). User selbst am Pi-Bildschirm: Erstbenutzer angelegt
   (Grossbuchstaben im Namen abgelehnt → `pi-999-ews`), `nmcli dev status` gelesen («wifi unavailable»),
@@ -107,3 +116,11 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   neue Commits von meo-work). Claude hat aufgelöst (User: «mach du das»). **Wackelt: Konfliktmarker lesen
   und auflösen**, ähnliche Übung beim nächsten Konflikt nochmals geben.
   Offene Übungsfrage: Warum muss auch `hosts/meo-work/default.nix` sauber sein, wenn man auf meo baut?
+- 2026-11-03: Technorama2050-Ordner aufgeräumt und Dokumente auf die Technorama-Vorlagen
+  umgestellt (User: «kannst du …», also ohne Übung). Offene Mini-Aufgabe: Excel-Matrix in
+  Excel öffnen und prüfen, ob das Logo in der Kopfzeile erscheint (Seitenlayout-Ansicht);
+  Word-Datei in Word im Web öffnen (Bearbeitungsmodus muss gehen).
+- 2026-11-05: Update-Warnung (`gtk2` als broken markiert) und voller Speicher auf meo-work. Claude hat
+  `gtk2` aus der nix-ld-Liste entfernt und aufgeräumt (User: «A ist gut … kannst du alles machen»), ohne Übung.
+  **Offene Mini-Aufgabe:** `fr` ausführen, danach einmal MPLAB in `/opt/microchip` starten, falls noch gebraucht.
+  Übungsfrage: Warum gibt `nix-store --gc` erst nach dem Entfernen von `result` so viel Platz frei?
