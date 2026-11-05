@@ -4,7 +4,6 @@
     ./daten.nix # ADDED 2026-10-06: /daten-Partition (ex Windows-Dual-Boot), nur meo-work
     ./host-packages.nix
     ../../modules/meo/kanata.nix
-    ../meo/affinity.nix
     ../../modules/meo/lock-before-sleep.nix
     ../../modules/meo/tailscale.nix
     ../../modules/meo/grafik-fonts.nix

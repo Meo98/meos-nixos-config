@@ -145,10 +145,5 @@
       icon = "vivaldi";
       categories = ["Office"];
     })
-
-    # --- Platzhalter für optionale v2 (Affinity Suite via Nix) ---
-    # inputs.affinity-nix.packages.${pkgs.system}.designer
-    # inputs.affinity-nix.packages.${pkgs.system}.photo
-    # inputs.affinity-nix.packages.${pkgs.system}.publisher
   ];
 }

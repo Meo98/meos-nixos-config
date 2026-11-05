@@ -3,7 +3,6 @@
     ./hardware.nix
     ./host-packages.nix
     ../../modules/meo/kanata.nix
-    ./affinity.nix
     ../../modules/meo/niri-gpu-smart.nix
     ../../modules/meo/dgpu-power.nix
     ../../modules/meo/android-dev.nix

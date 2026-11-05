@@ -124,3 +124,6 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   `gtk2` aus der nix-ld-Liste entfernt und aufgeräumt (User: «A ist gut … kannst du alles machen»), ohne Übung.
   **Offene Mini-Aufgabe:** `fr` ausführen, danach einmal MPLAB in `/opt/microchip` starten, falls noch gebraucht.
   Übungsfrage: Warum gibt `nix-store --gc` erst nach dem Entfernen von `result` so viel Platz frei?
+- 2026-11-05: Affinity und das zugehörige Wine aus der Config entfernt (`affinity-nix`-Input, Overlay, `enableAffinity`,
+  Doku); ArtCraft ersetzt es. User hat den langen Update-Build selbst abgebrochen; Rest durch Claude auf Wunsch, ohne
+  Übung. **Mini-Aufgabe:** `fr` im normalen Terminal ausführen (nicht `! fr`, dort kennt die Shell die Funktion nicht).

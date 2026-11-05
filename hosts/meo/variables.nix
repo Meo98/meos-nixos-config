@@ -134,8 +134,6 @@
   amdgpuID = "PCI:5:0:0";
   nvidiaID = "PCI:1:0:0";
 
-  enableAffinity = true;
-
   # restic-Backups (modules/meo/backups.nix). Bleibt AUS bis der einmalige
   # Bootstrap gemacht ist (rclone config + /etc/nixos/restic-password) — siehe
   # Kommentarblock in backups.nix. Danach auf true setzen.

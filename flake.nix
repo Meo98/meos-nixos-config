@@ -163,18 +163,6 @@
       inputs.home-manager.follows = "home-manager";
     };
 
-    # MODIFIED 2026-10-13: zurueck auf upstream mrshmllow/affinity-nix.
-    # Upstream baut Wine seit 9d2534b (2026-09-11) aus dem Host-nixpkgs
-    # (wine-wow64 11.0, glibc 2.44). Der Fork Meo98/affinity-nix-fork pinnte
-    # ein nixpkgs-wine von 2025-01 (glibc 2.40); dadurch konnte Wine die
-    # Host-Mesa/Vulkan-Libs (glibc 2.44) nicht laden -> kein D3D-Device,
-    # schwarze Canvas (0x887A0004) und d2d1-Ladefehler (0xC06D007E).
-    # Mit upstream: vkd3d-proton findet den D3D12-Adapter, Canvas rendert.
-    affinity-nix = {
-      url = "github:mrshmllow/affinity-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     sddm-noctalia = {
       url = "github:mahaveergurjar/sddm/noctalia";
       flake = false;
@@ -197,8 +185,8 @@
     };
 
     # `ci = true` builds the same host minus pieces that no binary cache serves
-    # and that take hours on a GitHub runner (currently only Affinity/wine, see
-    # hosts/meo/affinity.nix). The `-ci` outputs below are what build.yml builds.
+    # and that take hours on a GitHub runner (currently none, Affinity/wine is gone).
+    # The `-ci` outputs below are what build.yml builds.
     mkNixosConfig = { host ? defaultHost, profile ? defaultProfile, nixosTarget ? profile, ci ? false }:
       lib.nixosSystem {
         inherit system;
@@ -223,7 +211,7 @@
       # Arbeitslaptop: Intel i7-1165G7 + Intel Iris Xe (kein dedizierter GPU)
       meo-work = mkNixosConfig { host = "meo-work"; profile = "intel"; nixosTarget = "meo-work"; };
 
-      # CI variants (build.yml): identical except Affinity is off. Never `fr` these.
+      # CI variants (build.yml): currently identical to the hosts. Never `fr` these.
       meo-ci      = mkNixosConfig { profile = "nvidia-laptop"; nixosTarget = "meo"; ci = true; };
       meo-work-ci = mkNixosConfig { host = "meo-work"; profile = "intel"; nixosTarget = "meo-work"; ci = true; };
     };

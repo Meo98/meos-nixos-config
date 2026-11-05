@@ -13,7 +13,7 @@ nixosConfigurations = {
 
 `mkNixosConfig` is a helper that wires up four module imports:
 1. `./hosts/${host}` — host-specific NixOS config (hardware, hostname, user services)
-2. `./modules/upstream/core/overlays.nix` — global overlays (antigravity, awww, affinity-nix)
+2. `./modules/upstream/core/overlays.nix` — global overlays (antigravity, awww)
 3. `./modules/upstream/profiles/${profile}` — driver profile (which selects more modules)
 4. `nix-flatpak.nixosModules.nix-flatpak`
 
@@ -30,7 +30,6 @@ flake.nix
     ├── ./hardware.nix
     ├── ./host-packages.nix    (imports ../../modules/meo/bambu.nix as overlay)
     ├── ./kanata.nix
-    ├── ./affinity.nix
     └── home-manager.users.${username}.imports = [ ../../modules/meo ]
                                                        │
                                                        ▼
@@ -81,7 +80,6 @@ NixOS module system merges these into a combined list, so the user's HM config =
 Overlays are wired in `modules/upstream/core/overlays.nix`:
 - `inputs.antigravity-nix.overlays.default` — `pkgs.google-antigravity`
 - `(final: prev: { awww = inputs.awww.packages.${prev.system}.default; })` — `pkgs.awww`
-- `inputs.affinity-nix.overlays.default` — `pkgs.affinity-v3`, `pkgs.affinity-{photo,designer,publisher}`
 
 Plus per-host overlays in `hosts/{meo,meo-work}/host-packages.nix`:
 - `(import ../../modules/meo/bambu.nix)` — `pkgs.bambu-studio`
@@ -109,7 +107,7 @@ This is **file-relative**, not `inputs.self`-relative or path-arg-based. The `..
 
 Each host has a `variables.nix` with the same schema (mostly inherited from zaneyos). Some keys are read by upstream modules directly:
 - `gitUsername`, `displayName`, `gitEmail` — used by `modules/upstream/core/user.nix`, `modules/upstream/home/cli/git.nix`
-- `enableNFS`, `enableAffinity`, `printEnable` — feature toggles
+- `enableNFS`, `printEnable` — feature toggles
 - `keyboardLayout`, `consoleKeyMap` — used by various modules
 - `intelID`, `amdgpuID`, `nvidiaID` — used by `modules/upstream/profiles/*` for PRIME setup
 - `waybarChoice`, `animChoice` — path to choice modules (e.g., `../../modules/upstream/home/waybar/waybar-ddubs.nix`)
@@ -132,7 +130,6 @@ When making changes, prefer host-specific via `variables.nix` over editing `modu
 | `antigravity-nix` | `modules/upstream/core/overlays.nix` |
 | `awww` | `modules/upstream/core/overlays.nix` (replaces deprecated swww) |
 | `zen-browser` | (referenced when enabled) |
-| `affinity-nix` | `modules/upstream/core/overlays.nix` |
 | `alejandra` | `flake.nix` formatter |
 | `sddm-noctalia` | `modules/upstream/core/sddm.nix` (theme) |
 
@@ -140,5 +137,4 @@ When making changes, prefer host-specific via `variables.nix` over editing `modu
 
 - **Wallpapers:** in `wallpapers/` — referenced via `../../../../wallpapers` from `modules/upstream/home/hyprland/hyprland.nix`. Path-relative; if you move this dir, that file breaks.
 - **Trading bot binary:** `/home/meo/quant-trading-bot/rust/target/release/matrix_quant_core` — hardcoded path in `modules/meo/trading-bot.nix`.
-- **Affinity user data:** `~/.local/share/affinity-v3/` — managed by `pkgs.affinity-v3` runtime.
 - **Bitwarden vault:** consumed by `setup-secrets.sh` for Kraken API keys etc.

@@ -23,8 +23,7 @@
 #      OrcaStudio geblankt (siehe modules/meo/orcastudio.nix) -> dann No-op.
 #      Vulkan-Apps sehen die RTX sowieso als Geraet 0 (ICD-Reihenfolge); die
 #      Variablen braucht es fuer GLX/EGL-Apps (Blender, Bambu, Orca, FreeCAD,
-#      KiCad). MESA_VK_DEVICE_SELECT zusaetzlich, damit der Affinity-Wrapper
-#      (hosts/meo/affinity.nix) die RTX statt des niri-Renderers nimmt.
+#      KiCad).
 #      Wayland-EGL-Offload mobil ist mit Stand 2026-10-14 noch NICHT
 #      verifiziert (Sitzung war gedockt) -- Pruefung: App ueber den
 #      "(NVIDIA)"-Eintrag starten, dann `dgpu-status` muss sie als
@@ -148,7 +147,6 @@ let
     { name = "freecad";      desktopName = "FreeCAD";      exec = "FreeCAD - --single-instance %F"; icon = "org.freecad.FreeCAD"; categories = [ "Graphics" "Engineering" ];          wmClass = "FreeCAD"; }
     { name = "kicad";        desktopName = "KiCad";        exec = "kicad %f";                     icon = "kicad";             categories = [ "Science" "Electronics" ];               wmClass = "kicad"; }
     { name = "plasticity";   desktopName = "Plasticity";   exec = "Plasticity %U";                icon = "Plasticity";        categories = [ "Graphics" ]; }
-    { name = "affinity";     desktopName = "Affinity";     exec = "affinity-v3 %U";               icon = "affinity-v3";       categories = [ "Graphics" ];                            wmClass = "affinity.exe"; }
   ];
 in {
   services.supergfxd.enable = true;

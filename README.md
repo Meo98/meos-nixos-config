@@ -73,9 +73,8 @@ nixos-config/                        # ~/nixos-config (renamed from ~/zaneyos)
 │   │   ├── host-packages.nix        # bambu overlay imported here
 │   │   ├── kanata.nix               # keyboard remapping
 │   │   ├── variables.nix            # host-specific settings
-│   │   └── affinity.nix             # Affinity v3 (Canva) via wine
 │   └── meo-work/                    # work laptop (Intel)
-│       └── ... (same structure, imports ../meo/affinity.nix shared)
+│       └── ... (same structure)
 ├── modules/
 │   ├── meo/                         # ✏️  ALL OUR CUSTOM CODE LIVES HERE
 │   │   ├── default.nix              # imports trading-bot + hyprland + scripts

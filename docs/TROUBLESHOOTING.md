@@ -129,64 +129,6 @@ grep -A1 "binary =" modules/meo/trading-bot.nix
 # Update if needed, then `fr`
 ```
 
-### 5b. Affinity v3 — can't sign in to Canva account
-
-**Cause:** Known upstream limitation in `seapear/AffinityOnLinux` (the base for `mrshmllow/affinity-nix`). Canva's OAuth login flow doesn't work in the Wine sandbox. Tracked in [seapear#83](https://github.com/seapear/AffinityOnLinux/issues/83), roadmap status: `[❌] Get Canva login fixed`.
-
-**Not a fix, but verify it's THIS issue (not DNS):**
-```bash
-# /etc/hosts should ONLY contain affinity-client-config-public.canva.com.
-# If canva.com or api.canva.com are blocked too, that's the DNS bug — see commit cfbc167.
-grep canva /etc/hosts | wc -l   # should be 1
-getent hosts canva.com           # should return real IPs
-```
-
-**Workarounds (pick one):**
-
-| # | Workaround | Notes |
-|---|---|---|
-| A | Install Affinity **v2** packages instead: `pkgs.affinity-photo`, `pkgs.affinity-designer`, `pkgs.affinity-publisher` | Pre-Canva era — uses Serif license-key auth, works in Wine. Requires v2 license. |
-| B | Wait for upstream fix | seapear maintainers are working on it. Subscribe to issue #83 for notification. |
-| C | Affinity in Windows VM | Works but heavy (GPU passthrough, license complexity). |
-| D | Use Canva Web Editor for now | Limited features but available immediately, no login issues. |
-
-To add v2 packages: edit `hosts/meo/affinity.nix` `home.packages` to include `pkgs.affinity-photo` etc.
-
-### 6. Affinity won't start / hangs ~30s
-
-**Likely causes:**
-- `enableAffinity` is false in `hosts/<host>/variables.nix` → flip to `true`, rebuild
-- Canva-DNS-Block not active → check `cat /etc/hosts | grep canva` shows the 3 entries
-- 32bit graphics stack missing → check `hardware.graphics.enable32Bit = true` is active (rebuild after enabling)
-- Wine prefix corrupted → `rm -rf ~/.local/share/affinity-v3` and retry (loses Affinity user data)
-
-**Diagnostic commands:**
-```bash
-which affinity-v3                           # should be /etc/profiles/per-user/meo/bin/affinity-v3
-affinity-v3 --version                       # should print "runner 0.1.0"
-affinity-v3 --verbose 2>&1 | head -50       # see what wine is doing
-```
-
-### 7. `nh os switch` builds Wine from source for hours
-
-**Cause:** Garnix substituter not being used.
-
-**Verify:**
-```bash
-nix show-config | grep substituter | grep garnix
-# Should show https://cache.garnix.io
-```
-
-**Fix:** Look at `modules/upstream/core/cachix.nix` — Garnix should already be there. If not, add it:
-```nix
-nix.settings.substituters = lib.mkAfter [ "https://cache.garnix.io" ];
-nix.settings.trusted-public-keys = lib.mkAfter [
-  "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
-];
-```
-
-Then rebuild. After activation, garnix is in your substituter list and the next Wine fetch is a cached download.
-
 ### 8. `_zsync` git pull fails with merge conflicts
 
 **Cause:** Someone (you, or another host's auto-sync) pushed conflicting changes between your `fr` calls.
@@ -415,7 +357,7 @@ nixos-version                                               # NixOS version
 systemctl --user is-active matrix-quant.service             # active
 
 # 5. Custom scripts in PATH?
-for cmd in affinity-v3 vol-smart bright-smart bt-audio-switch bt-audio-monitor travel-power; do
+for cmd in vol-smart bright-smart bt-audio-switch bt-audio-monitor travel-power; do
   printf "%-25s " "$cmd:"; which "$cmd" 2>/dev/null || echo "MISSING"
 done
 
@@ -449,7 +391,6 @@ If any of these is wrong → see the corresponding section above.
 | Add a personal package/script | `modules/meo/scripts/<name>.nix` + add to `modules/meo/scripts.nix` |
 | Add Hyprland binding | `modules/upstream/home/hyprland/binds.nix` (mark `# MODIFIED`) |
 | Change keyboard layout | `hosts/<host>/variables.nix` → `keyboardLayout` + `consoleKeyMap` |
-| Toggle Affinity | `hosts/<host>/variables.nix` → `enableAffinity = true/false` |
 | Add overlay | `modules/meo/<name>.nix` + import in `hosts/<host>/host-packages.nix` |
 | Change Trading Bot path | `modules/meo/trading-bot.nix` line 2-3 |
 | Update fr alias behavior | `modules/upstream/home/zsh/default.nix` line 76 (mark `# MODIFIED`) |
