@@ -36,6 +36,10 @@
     (import ../../modules/meo/realvnc.nix)
   ];
 
+  # ADDED 2026-11-05: Haelt das requireFile-RPM im System-Closure, sonst loescht
+  # jede Garbage Collection es und der naechste Rebuild scheitert (nur Build-Input).
+  system.extraDependencies = [pkgs.realvnc-vnc-viewer.src];
+
   services.flatpak.enable = true; # Ermöglicht die Installation von Flatpaks (GUI-Apps außerhalb des Nix-Stores)
 
   # 2. QMK & Vial Berechtigungen (Udev Rules)

@@ -127,3 +127,4 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 - 2026-11-05: Affinity und das zugehörige Wine aus der Config entfernt (`affinity-nix`-Input, Overlay, `enableAffinity`,
   Doku); ArtCraft ersetzt es. User hat den langen Update-Build selbst abgebrochen; Rest durch Claude auf Wunsch, ohne
   Übung. **Mini-Aufgabe:** `fr` im normalen Terminal ausführen (nicht `! fr`, dort kennt die Shell die Funktion nicht).
+  User hat `fr` selbst ausgeführt, lief. Danach: RealVNC-RPM per `system.extraDependencies` vor der Garbage Collection geschützt.
