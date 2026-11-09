@@ -148,3 +148,7 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   **User hat selbst mit `sudo tailscale down` / `up` getestet und Claude widerlegt** (Ursache: NextDNS-Filter
   über Tailscale-DNS). **Mini-Aufgabe (Stufe 1):** im NextDNS-Protokoll den gesperrten Namen finden und auf die
   Zulassungsliste setzen. Übungsfrage: Warum ändert sich die öffentliche Adresse bei `tailscale down` nicht?
+- 2026-11-09: DMS-Workspace-Anzeige pro Monitor (meo): Ursache `workspaceFollowFocus=true`
+  (Claude gefunden). User hat die Option selbst in der DMS-Oberfläche gefunden und
+  ausgeschaltet, mit Hinweis 1–2. Verständnisfrage «warum hilft Umschalten auf meo-work
+  nicht?» (settings.json gehört DMS, pro Host, nicht im Repo) unbeantwortet.
