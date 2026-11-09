@@ -104,6 +104,13 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   29.10., **wackelt: `!` gehört in den Claude-Prompt, nicht ins Terminal**). Zweiter Versuch sauber.
   Übungsfrage «Push angekommen, ohne Browser?» gestellt, Antwort gegeben: `git ls-remote --heads origin`.
   Nächste Übung in diesem Projekt: `git log --oneline origin/main -3` vs. lokal vergleichen.
+- 2026-11-05 (abends): **User selbst, Hinweisstufe 3 (Befehle genannt), alles im ersten Anlauf und ohne
+  `!`-Fehler:** `echo .git >> ~/Dokumente/.stignore` mit `cat`-Kontrolle; `gh repo create pat-daten
+  --private --add-readme`; erster eigener kompletter Git-Zyklus `clone → cp → status → add → commit →
+  push` im Daten-Repo; `git add docs/anleitung` + `commit` im Code-Repo. Verständnisfrage gestellt:
+  «Was macht `git add`, wenn die Datei schon geändert ist?» (Staging). Kandidat für «Sitzt»: Git-Grundzyklus,
+  sobald er es ein zweites Mal ohne Befehlsvorlage macht. Nächste Übung: `git checkout main && git merge
+  feat/teil3` (Fast-Forward) und Push, danach `git log --oneline -3` auf beiden Branches vergleichen.
   Nachtrag Abend: moOde-Update 9.2.2 → 10.3.7 per neuem Image (Claude: Backup per API, Image auf
   /dev/mmcblk0 via run0/polkit, Auto-Restore-Zip). User selbst am Pi-Bildschirm: Erstbenutzer angelegt
   (Grossbuchstaben im Namen abgelehnt → `pi-999-ews`), `nmcli dev status` gelesen («wifi unavailable»),
@@ -128,3 +135,16 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   Doku); ArtCraft ersetzt es. User hat den langen Update-Build selbst abgebrochen; Rest durch Claude auf Wunsch, ohne
   Übung. **Mini-Aufgabe:** `fr` im normalen Terminal ausführen (nicht `! fr`, dort kennt die Shell die Funktion nicht).
   User hat `fr` selbst ausgeführt, lief. Danach: RealVNC-RPM per `system.extraDependencies` vor der Garbage Collection geschützt.
+- 2026-11-05: PAT420-Anleitung: Versionstabelle entfernt, Ablagepfad eingetragen, neu gebaut (Claude, User hat den
+  Pfad direkt geliefert, ohne Übung). Die Stufe-1-Übung vom 29.10. (Satz in `anleitung.md` ändern, `./bauen.sh`) bleibt offen.
+  Danach Frage zu WordCraft: Tabellenzeilen im Prüfkonzept liessen sich «nicht löschen» (Entf leert nur den Inhalt, wie in
+  Word). **Mini-Aufgabe gegeben:** die 38 leeren Zeilen selbst markieren und mit Rücktaste bzw. «Delete Rows» entfernen. Ausgang offen.
+- 2026-11-05: Casambi-Projekt wieder aufgenommen (viel Fragen/Antworten zu Gateways, DALI, Home Assistant).
+  `casambi-bt` als Projekt-Umgebung eingerichtet (`Casambi/Auslesen/flake.nix`, Claude, User: «installiere mal»).
+  **Mini-Aufgabe (Stufe 1):** bei den Leuchten selbst `nix develop` und `python suchen.py` ausführen und die
+  Ausgabe mitbringen. Erste Begegnung mit `nix develop` (Umgebung pro Projekt statt Paket im System).
+  Übungsfrage: Warum steht `casambi-bt` in einer `flake.nix` im Projektordner und nicht in `host-packages.nix`?
+- 2026-11-05: SEW-Login gesperrt («NOT_ALLOWED_TO_ACCESS»). Claude hielt Tailscale zuerst für unschuldig;
+  **User hat selbst mit `sudo tailscale down` / `up` getestet und Claude widerlegt** (Ursache: NextDNS-Filter
+  über Tailscale-DNS). **Mini-Aufgabe (Stufe 1):** im NextDNS-Protokoll den gesperrten Namen finden und auf die
+  Zulassungsliste setzen. Übungsfrage: Warum ändert sich die öffentliche Adresse bei `tailscale down` nicht?
