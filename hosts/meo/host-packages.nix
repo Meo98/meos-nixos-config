@@ -98,7 +98,7 @@
     antigravity # Ein spezieller Port/Fork für VS Codium/VS Code optimiert
     claude-code # Anthropic Claude CLI – wird von der Claude Code VS Code-Extension benötigt
     dos2unix # Werkzeug zum Umwandeln von Windows-Zeilenumbrüchen in Linux-Format
-    thonny
+
     # --- Grafik & Gaming ---
     # ArtCraft Suite (AppImage via modules/meo/artcraft.nix overlay) — early alpha!
     photocraft # ≙ Affinity Photo: Bildeditor, oeffnet/speichert PSD/PSB
