@@ -20,8 +20,8 @@
     "sha256": "2f09cff6963b55bc2160158060af8de226b0ec8fc223a198b10145a58e238fe8"
   },
   "effectcraft": {
-    "version": "0.23.0",
-    "sha256": "8168f27327f2edb051e268475c37631479aa08893f1e88b0add717d5f82a158f"
+    "version": "0.23.1",
+    "sha256": "7905485d7e91999a0c19ecba447d0dfd11c13bddb132bdf9cca65cd8b60671fb"
   },
   "pdfcraft": {
     "version": "0.20.0",
