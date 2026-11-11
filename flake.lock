@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794294603,
-        "narHash": "sha256-0r5w6R7lZ2ONaaTrcuTpqqE6m4Erk4FNpfzvIEbrHGI=",
+        "lastModified": 1794381032,
+        "narHash": "sha256-S0BOrZsZBBClYkzA4gUw75kvSTbRkIQQEVLY2KgPySk=",
         "owner": "jacopone",
         "repo": "antigravity-nix",
-        "rev": "5cae4bcf109abd90dd84eeac84193c0676cfb393",
+        "rev": "84b163cc084e4a26bbec3cb264e6a9f304dad586",
         "type": "github"
       },
       "original": {
@@ -114,17 +114,18 @@
     "dank-material-shell": {
       "inputs": {
         "dank-qml-common": "dank-qml-common",
+        "dux-qt-base": "dux-qt-base",
         "flake-compat": "flake-compat_2",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1794297283,
-        "narHash": "sha256-WIcUNDMwiVWwRx+q+g8OC0fYFIvF8i3dK+ZuDl/DBsY=",
+        "lastModified": 1794371041,
+        "narHash": "sha256-cmh3TMu5pQdQQiBigb8sD35w1CBr4ebj78sUu5dExDk=",
         "owner": "AvengeMedia",
         "repo": "DankMaterialShell",
-        "rev": "e46ccbc1d58930d6a189cd1c90b276db2d64bf42",
+        "rev": "e09c2b06813d3205276167cb69e21d386c1f428f",
         "type": "github"
       },
       "original": {
@@ -136,16 +137,37 @@
     "dank-qml-common": {
       "flake": false,
       "locked": {
-        "lastModified": 1794150008,
-        "narHash": "sha256-04v9TZkFikV738/IQCqDqGj+ejT8R6/uwrsatDVlHdo=",
+        "lastModified": 1794333549,
+        "narHash": "sha256-FYXaBnvHH2JW4GJdgumPYwtnuRm2YgIATK9M42Cz66Q=",
         "owner": "duxlabs-dev",
         "repo": "dux-qml-common",
-        "rev": "0877466a25b8e191a865bf75d0e500de6351ae04",
+        "rev": "0e924de9e3282143cfa7f30e4ac55382b711882c",
         "type": "github"
       },
       "original": {
         "owner": "duxlabs-dev",
         "repo": "dux-qml-common",
+        "type": "github"
+      }
+    },
+    "dux-qt-base": {
+      "inputs": {
+        "nixpkgs": [
+          "dank-material-shell",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794333469,
+        "narHash": "sha256-+KdHzSYmzHYR2KsVXngINieun4A1NDgiu2MM1PP5Bas=",
+        "owner": "duxlabs-dev",
+        "repo": "dux-qt-base",
+        "rev": "bbf53e08d70b501f6b3c709c3c57718cb30dbf1c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "duxlabs-dev",
+        "repo": "dux-qt-base",
         "type": "github"
       }
     },
@@ -205,11 +227,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790898470,
-        "narHash": "sha256-zTwuwezD0w3hpga6a6P8emidzAZFyWqlNeRBlpWOOl8=",
+        "lastModified": 1793576659,
+        "narHash": "sha256-V1h85lUaJBQoHFrB2vpXZOE0Ju1MYSnIpsehoVZYlDo=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "024633cd702b10285db5cb19b40ad48d2399ba60",
+        "rev": "ea2630b7470978622c7689a1ff75d2b389175399",
         "type": "github"
       },
       "original": {
@@ -406,11 +428,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1792203519,
-        "narHash": "sha256-yJ072hxngo/srNdLTp4BlFeo0hedwnKicI3TGlSXLFE=",
+        "lastModified": 1794408140,
+        "narHash": "sha256-vS4BTt6CkLn2BLcYA7kZUxFNnZpPgW0GJ73s/VoPhWc=",
         "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "453dc9c5037e6d1bec81d2a51ddacd58a2f44e9c",
+        "rev": "44849d3d24b28d59fa963bd832ec59c60c56a34c",
         "type": "github"
       },
       "original": {
@@ -698,11 +720,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793999934,
-        "narHash": "sha256-2VbZROa77YEzzuUyRStmHdkrjV89YALYL566Ssij0Fk=",
+        "lastModified": 1794356940,
+        "narHash": "sha256-ML+0SjnxlkLAFclntmMJpUBs13IGQNb5BD14jrmWHsw=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "37ba4a650eaeeb5a086114da3a2cdf7593967d12",
+        "rev": "a7cac935fd58b6f177d2412ea00c566ed4f0abab",
         "type": "github"
       },
       "original": {
