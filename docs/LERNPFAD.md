@@ -152,3 +152,6 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   (Claude gefunden). User hat die Option selbst in der DMS-Oberfläche gefunden und
   ausgeschaltet, mit Hinweis 1–2. Verständnisfrage «warum hilft Umschalten auf meo-work
   nicht?» (settings.json gehört DMS, pro Host, nicht im Repo) unbeantwortet.
+- 2026-11-11: SolidCraft (tangency-labs, 3D-CAD) als eigenes Overlay `modules/meo/solidcraft.nix`, nur auf meo
+  (Claude, User: «mach du, keine Zeit»), ohne Übung. Offene Übungsfrage: Warum merkt meo-work beim Bauen nichts
+  von SolidCraft? (Overlay + Paket stehen nur in `hosts/meo/host-packages.nix`.)
