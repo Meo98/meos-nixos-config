@@ -152,6 +152,38 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   (Claude gefunden). User hat die Option selbst in der DMS-Oberfläche gefunden und
   ausgeschaltet, mit Hinweis 1–2. Verständnisfrage «warum hilft Umschalten auf meo-work
   nicht?» (settings.json gehört DMS, pro Host, nicht im Repo) unbeantwortet.
+- 2026-11-10: Download-Ordner aufgeräumt (139 Einträge, 5.3 GB → 17 Einträge; Claude, User: «mach du»-artig
+  formuliert). Verschoben mit `mv -n`, gelöscht mit `gio trash` (Papierkorb statt `rm`). Neue Projektordner
+  Werkstatt_Auftragsplaner, Harmonograph, Private/Keyball44, Private/3D-Druck. **Mini-Aufgabe (Stufe 1):**
+  im Repo Staebe_in_Resonanz mit `git status` die neuen Dateien anschauen, den 38-MB-SharePoint-Ordner
+  `docs/10407.00_*` in `.gitignore` eintragen und den Rest committen. Übungsfrage: Warum gehört der
+  Ordner nicht ins Git, die Datenblätter aber schon? **Gemacht:** `.gitignore`-Eintrag selbst geschrieben
+  (exakter Ordnername mit Slash, Kommentarblock im Stil der Datei) und mit `git check-ignore -v` geprüft –
+  Hinweis 2–3 (Tabelle zu `*`/`**`/Slash erklärt, Zeile nicht vorgegeben). `git add` ohne Hilfe. Beim Commit
+  zwei Stolperer: `-m` vergessen und typografisches `„` statt `"` → zsh-Fortsetzungsprompt `∙`; nach
+  Erklärung selbst korrigiert, Commit cb9f756 sauber. Neu gelernt: `git status --short`-Kürzel, `+`/`!`/`?`/`⇡`
+  im Prompt, `git check-ignore`. Übungsfrage noch unbeantwortet, `git push` noch offen.
+- 2026-11-10 (Trading-Bot, Perp-Prüfung): Claude hat alles gemacht (User gab vier Punkte als Auftrag vor):
+  Kraken-Historie nur lesend ausgewertet, Backtest `perp_lab/backtest.py` (reines Python) gebaut.
+  **Mini-Aufgabe (Stufe 1, offen):** im Repo `python3 perp_lab/backtest.py` selbst starten und in der
+  Ausgabe die Tor-Zeile finden. Übungsfrage: Warum zählt das Ergebnis im Out-of-Sample und nicht das im Training?
+- 2026-11-10 (abends, Markt-Labor): User abwesend («arbeite durch bis 22:00»), Claude allein: Kraken-Archiv
+  nach `/daten/kraken-archiv`, Labor `markt_lab/` mit eigener `flake.nix` (`nix develop path:markt_lab`),
+  rund 900 Tests, Bericht `logs/reports/2026-11-10-markt-labor.md`. **Mini-Aufgabe (Stufe 1–2, offen):**
+  `nix develop path:markt_lab -c python markt_lab/studie_tag.py` starten; Frage: Warum braucht es hier
+  `path:` vor dem Ordner (Stichwort: Flake in einem Git-Repo mit nicht eingecheckten Dateien)?
 - 2026-11-11: SolidCraft (tangency-labs, 3D-CAD) als eigenes Overlay `modules/meo/solidcraft.nix`, nur auf meo
   (Claude, User: «mach du, keine Zeit»), ohne Übung. Offene Übungsfrage: Warum merkt meo-work beim Bauen nichts
   von SolidCraft? (Overlay + Paket stehen nur in `hosts/meo/host-packages.nix`.)
+- 2026-11-12: SolidCraft auf meo-work. Claude: Commits von meo geholt, LERNPFAD-Konflikt aufgelöst, Probe-Build.
+  **User selbst (nvim):** Paketzeile in `hosts/meo-work/host-packages.nix` im ersten Anlauf richtig (Hinweis 1);
+  fürs Overlay drei Anläufe: zuerst vergessen (`undefined variable 'solidcraft'`), dann `artcraft.nix` statt
+  `solidcraft.nix` abgeschrieben und Block mitten in den khal-Kommentar gesetzt, am Schluss richtig nach Hinweis 4
+  (Zielblock gezeigt). «Vorerst nur meo» bei meo selbst entfernt. **Wackelt: Build-Fehler selbst deuten** (gleiche
+  Meldung, andere Zeilennummer = Ursache nicht getroffen) **und `git diff` vor `fr`.** Übungsfrage «warum merkte
+  meo-work nichts von SolidCraft?» damit praktisch beantwortet, nicht in Worten. Build scheiterte zusätzlich an voller
+  Platte (210 MB frei); `nix-store --gc` gab 58 GB frei (Claude).
+  Hauptbefund: **nvim bremst** (Markieren, Springen, Dateien wechseln; `:Tutor` zweimal gemacht, nichts geblieben).
+  User will im laufenden Betrieb lernen, keine «alten» Tasten. Claude hat `modules/meo/nvim-lernhilfe.nix` gebaut:
+  Spickzettel (`Leer ?`), precognition (`Leer u p`), hardtime im Hinweis-Modus (`Leer u h`). Nächstes Mal bei einer
+  nvim-Aufgabe genau eine Bewegung gezielt üben lassen (z. B. `V` + `Alt+k` für Block verschieben).

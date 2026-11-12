@@ -23,7 +23,7 @@
     # Pakete + Bump-Rezept in der Datei.
     (import ../../modules/meo/artcraft.nix)
     # ADDED 2026-11-11: SolidCraft (tangency-labs) — parametrisches 3D-CAD
-    # in Rust, AppImage. Vorerst nur auf meo.
+    # in Rust, AppImage
     (import ../../modules/meo/solidcraft.nix)
     # ADDED 2026-10-22: khal (DMS-Kalender) baut am Kanal-Kopf nicht ohne
     # diesen Fix (man-Output). Entfernen, sobald nixpkgs repariert ist.
@@ -117,7 +117,7 @@
     soundcraft # Pro-Tools-Pendant: Audio-Workstation (DAW)
     cadcraft # AutoCAD-Pendant: 2D-CAD / technisches Zeichnen
     craft-anything # Reverse-Engineering-Werkbank: Software analysieren + per Coding-Agent nachbauen
-    solidcraft # Parametrisches 3D-CAD (tangency-labs, modules/meo/solidcraft.nix), vorerst nur meo
+    solidcraft # Parametrisches 3D-CAD (tangency-labs, modules/meo/solidcraft.nix)
     vulkan-tools # Diagnose-Tools für die Vulkan-Grafik-Schnittstelle (z.B. vulkaninfo)
     # mesa-demos — in core/packages.nix (systemweit verfügbar)
     gamescope # Micro-Compositor von Valve für stabileres Gaming und Upscaling
