@@ -187,3 +187,9 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   User will im laufenden Betrieb lernen, keine «alten» Tasten. Claude hat `modules/meo/nvim-lernhilfe.nix` gebaut:
   Spickzettel (`Leer ?`), precognition (`Leer u p`), hardtime im Hinweis-Modus (`Leer u h`). Nächstes Mal bei einer
   nvim-Aufgabe genau eine Bewegung gezielt üben lassen (z. B. `V` + `Alt+k` für Block verschieben).
+- 2026-11-13: SolidCraft in die ArtCraft-Kette gehängt (User: «kannst du darauf achten, dass …», Claude allein):
+  Paket über `mkCraft` in `artcraft.nix` statt eigenem Overlay (die tags zuvor selbst gesetzte `import`-Zeile fiel
+  dadurch wieder weg, erklärt), Version in `artcraft-versions.json` mit Feld `owner`, Auto-Update über `fu`,
+  Control-Port 7983, MCP-Server auf beiden Hosts. User hat `fr` (12.11.) und `fu` (13.11.) selbst ausgeführt, beide
+  liefen. Offene Übungsfrage: Warum reichte es, SolidCraft in `artcraft.nix` einzutragen, ohne in
+  `host-packages.nix` ein neues Overlay zu laden?
