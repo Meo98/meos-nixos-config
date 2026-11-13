@@ -1,54 +1,54 @@
 {
   "photocraft": {
-    "version": "0.22.0",
-    "sha256": "cee934e6c38c0ff7f8cd7ee03694128be05be137fc4301180e2f716e7d2a1f9f"
+    "version": "0.23.1",
+    "sha256": "05747b3e527e1e0a0c1de39970361cf38c8fca7e8d3e3601ef2082fb0e6dd17f"
   },
   "vectorcraft": {
-    "version": "0.23.0",
-    "sha256": "8a130f448fa8dff0a279dcefca56229f5702cb341123263436d587c45be2a8e4"
+    "version": "0.24.1",
+    "sha256": "bdce7e82e981f9f4ed0bf25fa6f25e6fe4fab27e89641e6f948899e01b13a514"
   },
   "designcraft": {
-    "version": "0.19.0",
-    "sha256": "e8220d7e417790e1528dc84d4db5fb2293dd0327e62ee29f8ca03f092801e9a5"
+    "version": "0.20.1",
+    "sha256": "f9d6fd6bb1a421850243c0d4be44235713a9ec5b26f8bf1d5ba87afcf8f91534"
   },
   "lightcraft": {
-    "version": "0.20.0",
-    "sha256": "66be1e9185d56f60086e9a7c019064dd238d95531c13c0e1c83a527fceb73e10"
+    "version": "0.21.1",
+    "sha256": "c4212da22777a0000d9eb66c85b7865e9e9911f47a60207d7852b7c063ada8a9"
   },
   "filmcraft": {
-    "version": "0.19.0",
-    "sha256": "2f09cff6963b55bc2160158060af8de226b0ec8fc223a198b10145a58e238fe8"
+    "version": "0.20.1",
+    "sha256": "4a25aecb2e9481b65e7353528bca9e4a8c5388dd55f1486ffe64502e08bdfa02"
   },
   "effectcraft": {
-    "version": "0.23.1",
-    "sha256": "7905485d7e91999a0c19ecba447d0dfd11c13bddb132bdf9cca65cd8b60671fb"
+    "version": "0.24.1",
+    "sha256": "9f8a16cf74147c9e2ac3b65fa6f5be96a3e10ead92ddf08d544f5d3990ad64dc"
   },
   "pdfcraft": {
-    "version": "0.20.0",
-    "sha256": "027e62299b82353600373e6ca74c441213ef5406e70d27f7f1aef7e05a78878d"
+    "version": "0.21.1",
+    "sha256": "730276cda9addb3d48f26c602686d18fc5bc0ebe360a60a2f522d70cfd428d21"
   },
   "wordcraft": {
-    "version": "0.17.0",
-    "sha256": "606b3ae330c767cfa192803dba8eb7b9d29c66cdf29d0cabde083f17f06ad16b"
+    "version": "0.18.1",
+    "sha256": "bbc5c15b06d4403cfd5a59475bdf9264a49c2bcf1f92d123311b50a9dce3c888"
   },
   "gridcraft": {
-    "version": "0.18.0",
-    "sha256": "fde2f9982ac769026521cb6f710ec96b4d919b1634ad68b15b2b9bf62467020c"
+    "version": "0.19.1",
+    "sha256": "5b1ce10ad6c7a2d389249dfd259010014a85fce1aa42c627fc4cda571671e221"
   },
   "deckcraft": {
-    "version": "0.18.0",
-    "sha256": "27303555d559244f48a916d26deb28bc34b8b44f955ff88a00ca15c2345f0eac"
+    "version": "0.18.1",
+    "sha256": "68df9f040d3f6c4ce4a904aadec633961fa199248f0a1aa366fa64597ae09867"
   },
   "soundcraft": {
-    "version": "0.19.0",
-    "sha256": "aaded74e4f132c033acc1223c776a74e59a751dc908841b4c31572e38939198f"
+    "version": "0.20.1",
+    "sha256": "4dbb402a413ec2a53103b9fa77d6356e6feeb086d94975c95e635c74b434daf8"
   },
   "cadcraft": {
-    "version": "0.20.0",
-    "sha256": "f294382d16a83331f2090f9f09e86cfcd327cd371d4deffa6c57546a060b9b7c"
+    "version": "0.20.1",
+    "sha256": "e7a5d244500fe45ccabfa85c632c25ecda1fb03799c318d9ad541f65b150e78f"
   },
   "craft-anything": {
-    "version": "0.6.0",
-    "sha256": "9acc2befae0381dee9dcebd255bcdc7592b169f4ef4779c2e2d423f17cf6bf39"
+    "version": "0.6.1",
+    "sha256": "7eadde1d74ab42cc838862fe3f831e3cf3c9fa6ba5e2bf04e2824bbc47146134"
   }
 }
