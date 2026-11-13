@@ -268,7 +268,16 @@
   # hypridle: seit 2026-10-27 zentral abgeschaltet, siehe
   # services.hypridle.enable in modules/upstream/core/packages.nix.
 
-  # --- LOGIND: Zuklappen -> Suspend, IMMER ---
+  # --- LOGIND: Zuklappen -> Suspend nur im Akkubetrieb ---
+  # MODIFIED 2026-11-13: lidSwitchDocked + lidSwitchExternalPower "suspend" ->
+  # "lock". Grund: Syncthing ist Peer-to-Peer und synchronisiert nur, wenn
+  # beide Laptops gleichzeitig wach sind. Am 13.11. schliefen meo und meo-work
+  # nie gleichzeitig -> ein ganzer Arbeitstag in ~/Dokumente kam nicht rueber,
+  # obwohl meo-work am Strom hing. Jetzt: am Strom / am Dock nur sperren, die
+  # Maschine laeuft weiter (Syncthing, Tailscale, SSH erreichbar). Im
+  # Akkubetrieb weiterhin Suspend. Hinfaellig, sobald ein Homeserver als
+  # dritter, immer laufender Syncthing-Knoten existiert.
+  #
   # MODIFIED 2026-10-06: lidSwitchDocked "ignore" -> "suspend". Das revidiert
   # bewusst die Entscheidung vom 2026-07-01, die unten noch einmal steht.
   #
@@ -297,9 +306,9 @@
   # Default: modules/meo/scripts/clamshell-toggle.nix haengt den Lid-Handler
   # auf Zuruf per Inhibitor aus (Mod+Alt+D).
   services.logind = {
-    lidSwitch = "suspend";
-    lidSwitchDocked = "suspend";
-    lidSwitchExternalPower = "suspend";
+    lidSwitch = "suspend"; # Akku: schlafen
+    lidSwitchDocked = "lock"; # >1 Schirm: nur sperren, weiterlaufen
+    lidSwitchExternalPower = "lock"; # am Strom: nur sperren, weiterlaufen
   };
 
   # --- LOCK VOR SUSPEND ---

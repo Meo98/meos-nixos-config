@@ -117,7 +117,16 @@
     xorg.libXinerama
   ];
 
-  # --- LOGIND: Zuklappen -> Suspend, IMMER ---
+  # --- LOGIND: Zuklappen -> Suspend nur im Akkubetrieb ---
+  # MODIFIED 2026-11-13: lidSwitchDocked + lidSwitchExternalPower "suspend" ->
+  # "lock". Grund: Syncthing ist Peer-to-Peer und synchronisiert nur, wenn
+  # beide Laptops gleichzeitig wach sind. Am 13.11. schliefen meo und meo-work
+  # nie gleichzeitig -> ein ganzer Arbeitstag in ~/Dokumente kam nicht rueber,
+  # obwohl meo-work am Strom hing. Jetzt: am Strom / am Dock nur sperren, die
+  # Maschine laeuft weiter (Syncthing, Tailscale, SSH erreichbar). Im
+  # Akkubetrieb weiterhin Suspend. Hinfaellig, sobald ein Homeserver als
+  # dritter, immer laufender Syncthing-Knoten existiert.
+  #
   # ADDED 2026-10-06. Dieser Host hatte BISHER GAR KEINEN logind-Block, der
   # Wert kam also als systemd-Default — nicht aus dieser Konfiguration. Das ist
   # der Grund, warum die Suche nach "wo haben wir das verstellt" ins Leere
@@ -138,9 +147,9 @@
   # verloren, nur nicht mehr der Default: modules/meo/scripts/
   # clamshell-toggle.nix haengt den Lid-Handler auf Zuruf aus (Mod+Alt+D).
   services.logind = {
-    lidSwitch = "suspend";
-    lidSwitchDocked = "suspend";
-    lidSwitchExternalPower = "suspend";
+    lidSwitch = "suspend"; # Akku: schlafen
+    lidSwitchDocked = "lock"; # >1 Schirm: nur sperren, weiterlaufen
+    lidSwitchExternalPower = "lock"; # am Strom: nur sperren, weiterlaufen
   };
 
   # --- MONITOR LAYOUT NACH SUSPEND WIEDERHERSTELLEN ---
