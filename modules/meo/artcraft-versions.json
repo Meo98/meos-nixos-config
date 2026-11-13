@@ -50,5 +50,10 @@
   "craft-anything": {
     "version": "0.6.1",
     "sha256": "7eadde1d74ab42cc838862fe3f831e3cf3c9fa6ba5e2bf04e2824bbc47146134"
+  },
+  "solidcraft": {
+    "version": "0.41.0",
+    "sha256": "c45b390de4438874d9d37df172a12af8a556241ebe3ce19d80be5c201df5c6ce",
+    "owner": "tangency-labs"
   }
 }

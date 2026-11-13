@@ -23,18 +23,26 @@
 
   # `<app>-cli` ueber PATH (environment.systemPackages auf meo-work), nicht
   # als Store-Pfad: so bleibt dieses Modul auf meo ohne ArtCraft evaluierbar.
-  craftMcp = name: a:
+  craftMcp = name: a: let
+    # Flags fuer beide Betriebsarten (z.B. --allow-path bei solidcraft).
+    extra = a.mcpArgs or "";
+  in
     pkgs.writeShellScript "${name}-mcp" (
       lib.optionalString (a.connect != null) ''
         # GUI laeuft mit Control-Port ${toString a.port}? Dann anbinden.
         if ${pkgs.iproute2}/bin/ss -ltnH "sport = :${toString a.port}" 2>/dev/null | grep -q . ; then
-          exec ${name}-cli mcp ${a.connect}
+          exec ${name}-cli mcp ${a.connect} ${extra}
         fi
       ''
       + ''
-        exec ${name}-cli mcp
+        exec ${name}-cli mcp ${extra}
       ''
     );
+
+  # ADDED 2026-11-13: solidcraft ist auf beiden Hosts installiert und soll
+  # ueberall als MCP-Server da sein; die uebrigen Server bleiben wie bisher
+  # auf meo-work beschraenkt.
+  craftMcpApps = lib.filterAttrs (name: _: host == "meo-work" || name == "solidcraft") craftApps;
 in {
   # Claude Code: deklarative Teile der Konfiguration. ADDED 2026-10-12
   #
@@ -68,10 +76,11 @@ in {
         };
       }
       # ArtCraft Suite (siehe craftApps oben): dreizehn Server, nur auf meo-work.
-      // lib.optionalAttrs (host == "meo-work") (lib.mapAttrs (name: a: {
-          command = toString (craftMcp name a);
-        })
-        craftApps);
+      # Dazu solidcraft auf beiden Hosts (craftMcpApps).
+      // lib.mapAttrs (name: a: {
+        command = toString (craftMcp name a);
+      })
+      craftMcpApps;
 
     # Globales ~/.claude/CLAUDE.md -- gilt in JEDER Claude-Code-Session, egal in
     # welchem Verzeichnis. Inhalt: wo der Flake liegt, wie gebaut wird, dass

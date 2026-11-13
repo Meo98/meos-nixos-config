@@ -11,6 +11,8 @@
 #               Control-Port (Grund steht im Kommentar)
 #   connect     Flags, mit denen `<app>-cli mcp` sich an die GUI haengt;
 #               null = der MCP-Server kennt keinen Bridge-Modus
+#   mcpArgs     (optional) Flags, die `<app>-cli mcp` IMMER bekommt, verbunden
+#               wie headless. Shell-Text, $HOME wird beim Start aufgeloest.
 #
 # Die CLIs unterscheiden sich in der Flag-Syntax (--connect PORT,
 # --connect HOST:PORT, --bridge ...) und darin, was ohne laufende App
@@ -100,5 +102,20 @@ in {
     port = null;
     launchArgs = null;
     connect = null;
+  };
+  # ADDED 2026-11-13: solidcraft (tangency-labs, Paket in artcraft.nix).
+  # Verifiziert gegen 0.41.0 und docs/mcp.md des Releases:
+  #   - GUI `--control PORT`; jede Verbindung braucht den Token, den die App
+  #     pro Start neu schreibt. `solidcraft-cli mcp --connect` liest ihn selbst
+  #     aus der Token-Datei im Datenordner, hier ist nichts zu hinterlegen.
+  #   - Dateizugriff des MCP-Servers ist auf den Ordner des offenen Designs
+  #     beschraenkt. --allow-path gibt zusaetzlich ~/Dokumente frei (dort
+  #     liegen die Projektordner), sonst scheitert Speichern/Export an
+  #     "outside the folders this agent may use".
+  solidcraft = {
+    port = 7983;
+    launchArgs = "--control 7983";
+    connect = "--connect 127.0.0.1:7983";
+    mcpArgs = ''--allow-path "$HOME/Dokumente"'';
   };
 }

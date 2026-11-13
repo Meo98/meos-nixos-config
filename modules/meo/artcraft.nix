@@ -40,8 +40,12 @@ self: super: let
     version ? versions.${pname}.version,
     sha256 ? versions.${pname}.sha256,
     description,
+    # ADDED 2026-11-13: GitHub-Konto des Herstellers. Default storytold;
+    # solidcraft kommt von tangency-labs (siehe unten).
+    owner ? "storytold",
     repo ? pname,
     asset ? pname,
+    homepage ? "https://github.com/${owner}/${repo}",
     launchArgs ? control.${pname}.launchArgs or null,
     controlPort ? control.${pname}.port or null,
   }:
@@ -49,7 +53,7 @@ self: super: let
       inherit pname version;
 
       src = super.fetchurl {
-        url = "https://github.com/storytold/${repo}/releases/download/v${version}/${asset}-${version}-linux-x86_64.AppImage";
+        url = "https://github.com/${owner}/${repo}/releases/download/v${version}/${asset}-${version}-linux-x86_64.AppImage";
         inherit sha256;
       };
 
@@ -102,8 +106,7 @@ EOF
       '';
 
       meta = with super.lib; {
-        inherit description;
-        homepage = "https://github.com/storytold/${repo}";
+        inherit description homepage;
         license = licenses.asl20;
         platforms = ["x86_64-linux"];
         mainProgram = pname;
@@ -185,5 +188,25 @@ in {
   craft-anything = mkCraft {
     pname = "craft-anything";
     description = "Reverse-engineering workbench: study any software and rebuild it with a coding agent (Rust)";
+  };
+
+  # ADDED 2026-11-11, hierher verschoben 2026-11-13: SolidCraft
+  # (github.com/tangency-labs/solidcraft, Apache-2.0) — parametrisches 3D-CAD
+  # in Rust (SolidWorks/Fusion-Richtung). Anderer Hersteller als die Suite,
+  # aber gleiche Release-Struktur (AppImage + SHA256SUMS.txt, `<app>-cli` unter
+  # usr/bin, GUI mit `--control PORT`), daher derselbe mkCraft statt des
+  # frueheren eigenen Overlays (modules/meo/solidcraft.nix, geloescht).
+  # Damit laeuft es in derselben Kette wie die Suite:
+  #   - Version/Hash in artcraft-versions.json (Feld "owner": "tangency-labs"),
+  #     gepflegt von artcraft-update, also automatisch in `fu` und im Pre-warm.
+  #     Nur stabile Releases; Upstream markiert Release Candidates und
+  #     Nightlies als Pre-release, releases/latest liefert sie nicht.
+  #   - Starter mit Control-Port, MCP-Server fuer Claude Code
+  #     (artcraft-control.nix, claude-code.nix).
+  solidcraft = mkCraft {
+    pname = "solidcraft";
+    owner = "tangency-labs";
+    homepage = "https://solidcraft.io";
+    description = "Parametric 3D CAD in pure Rust (desktop, web, MCP automation)";
   };
 }

@@ -18,9 +18,6 @@
     # ADDED 2026-10-22: khal (DMS-Kalender) baut am Kanal-Kopf nicht ohne
     # diesen Fix (man-Output). Entfernen, sobald nixpkgs repariert ist.
     (import ../../modules/meo/khal-man-fix.nix)
-    # ADDED 2026-11-11: SolidCraft (tangency-labs) — parametrisches 3D-CAD
-    # in Rust, AppImage.
-    (import ../../modules/meo/solidcraft.nix)
     # ADDED 2026-10-22: insync baut am Kanal-Kopf nicht ohne diesen Fix
     # (.debug-Datei vs. autoPatchelf). Entfernen, sobald nixpkgs repariert ist.
     (import ../../modules/meo/insync-debug-fix.nix)
@@ -124,7 +121,7 @@
     gridcraft # Excel-Pendant: Tabellenkalkulation (XLSX)
     deckcraft # PowerPoint-Pendant: Praesentationen (PPTX)
     soundcraft # Pro-Tools-Pendant: Audio-Workstation (DAW)
-    solidcraft # Cad-Parameter-Tool
+    solidcraft # Parametrisches 3D-CAD (tangency-labs); Paket + Auto-Update in modules/meo/artcraft.nix
     cadcraft # AutoCAD-Pendant: 2D-CAD / technisches Zeichnen
     craft-anything # Reverse-Engineering-Werkbank: Software analysieren + per Coding-Agent nachbauen
     vulkan-tools # Diagnose-Tools für die Vulkan-Grafik-Schnittstelle (z.B. vulkaninfo)
