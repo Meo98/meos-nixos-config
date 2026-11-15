@@ -102,6 +102,18 @@ pkgs.writeShellScriptBin "setup-secrets" ''
     ERRORS="$ERRORS\n  - \"Syncthing Dokumente Handy\" (Password = Verschlüsselungspasswort fürs Handy)"
   fi
 
+  # --- Home Assistant: langlebiger Zugangstoken (REST-API, 192.168.68.59) ---
+  # Gelesen von Skripten/Claude über ~/.config/ha-token. Ohne Zeilenumbruch,
+  # damit "Authorization: Bearer $(cat …)" sauber bleibt.
+  HA_TOKEN=$(get_password "Home Assistant Token")
+  if [ -n "$HA_TOKEN" ]; then
+    HA_FILE="$HOME/.config/ha-token"
+    (umask 077; printf '%s' "$HA_TOKEN" > "$HA_FILE")
+    echo "  Home-Assistant-Token → $HA_FILE"
+  else
+    ERRORS="$ERRORS\n  - \"Home Assistant Token\" (Password = langlebiger Token aus HA → Profil → Sicherheit)"
+  fi
+
   # --- Write shell secrets file ---
   {
     echo "# Local secrets – managed by setup-secrets, do not commit"

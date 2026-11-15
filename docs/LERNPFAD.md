@@ -193,3 +193,13 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   Control-Port 7983, MCP-Server auf beiden Hosts. User hat `fr` (12.11.) und `fu` (13.11.) selbst ausgeführt, beide
   liefen. Offene Übungsfrage: Warum reichte es, SolidCraft in `artcraft.nix` einzutragen, ohne in
   `host-packages.nix` ein neues Overlay zu laden?
+- 2026-11-15: Syncthing-Lücke (meo und meo-work nie gleichzeitig wach → Freitagsarbeit nicht drüben). Claude
+  allein («mach du»): `lidSwitchDocked`/`ExternalPower` → `"lock"` auf beiden Hosts; Handy als verschlüsselter
+  Empfänger für `dokumente` (`encryptionPasswordFile`, Passwort über `setup-secrets` aus Bitwarden
+  «Syncthing Dokumente Handy»). Espace von 19 auf 3,7 GB aufgeräumt (User-Entscheid). **User selbst:**
+  `sudo systemctl kill -s HUP systemd-logind` richtig ausgeführt (logind liest Config nach `fr` nicht neu);
+  `fr`; Bitwarden-Eintrag; Freigabe am Handy. **Wackelt:** Zwischenablage-Reihenfolge (Befehl kopiert statt
+  Passwort, zweimal; dazu `!`-Befehl im eigenen Terminal statt im Claude-Prompt) und Rollen bei Syncthing-
+  Verschlüsselung (Passwort zuerst auch am Handy eingetragen → Verbindung brach sofort ab). Offene Übung
+  (Stufe 1): `services.logind.lidSwitch*` auf die neue Schreibweise `settings.Login.HandleLidSwitch*` umstellen
+  (Nix-Warnung beim Build). Verständnisfrage: Wer kennt bei «Receive Encrypted» das Passwort und warum?
