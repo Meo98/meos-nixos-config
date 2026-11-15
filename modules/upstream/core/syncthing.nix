@@ -81,9 +81,22 @@ in {
           devices = mitHandy;
           versioning = papierkorb;
         };
+        # Handy nur als verschlüsselter Briefkasten ("Receive Encrypted"): es
+        # speichert die Daten, kann sie aber nicht lesen, und reicht sie weiter,
+        # wenn die Laptops nie gleichzeitig wach sind (Anlass: 13.11.2026).
+        # Die Passwortdatei liegt NICHT im Repo (öffentlich!). Sie kommt aus
+        # Bitwarden ("Syncthing Dokumente Handy") per `setup-secrets` und muss
+        # auf BEIDEN Hosts existieren, sonst scheitert syncthing-init.
         dokumente = {
           path = "~/Dokumente";
-          devices = beide;
+          devices =
+            beide
+            ++ [
+              {
+                name = "meos-oneplus";
+                encryptionPasswordFile = "/home/${username}/.config/syncthing/handy-dokumente.passwort";
+              }
+            ];
           versioning = papierkorb;
           ignorePatterns = [
             "(?d).DS_Store"

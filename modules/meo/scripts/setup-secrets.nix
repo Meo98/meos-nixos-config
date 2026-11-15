@@ -88,6 +88,20 @@ pkgs.writeShellScriptBin "setup-secrets" ''
     ERRORS="$ERRORS\n  - \"Obsidian_Printbrigata\" (Username = Admin_Pb, Password = <your strong password>)"
   fi
 
+  # --- Syncthing: Verschlüsselungspasswort für "dokumente" ans Handy ---
+  # Gelesen von services.syncthing (modules/upstream/core/syncthing.nix).
+  # Muss auf beiden Hosts identisch sein; printf ohne Zeilenumbruch, weil
+  # Syncthing (jq --rawfile) sonst das \n als Teil des Passworts nimmt.
+  ST_PW=$(get_password "Syncthing Dokumente Handy")
+  if [ -n "$ST_PW" ]; then
+    ST_FILE="$HOME/.config/syncthing/handy-dokumente.passwort"
+    mkdir -p "$(dirname "$ST_FILE")"
+    (umask 077; printf '%s' "$ST_PW" > "$ST_FILE")
+    echo "  Syncthing-Passwort → $ST_FILE"
+  else
+    ERRORS="$ERRORS\n  - \"Syncthing Dokumente Handy\" (Password = Verschlüsselungspasswort fürs Handy)"
+  fi
+
   # --- Write shell secrets file ---
   {
     echo "# Local secrets – managed by setup-secrets, do not commit"
