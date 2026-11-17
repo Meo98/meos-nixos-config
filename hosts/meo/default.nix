@@ -9,6 +9,7 @@
     ../../modules/meo/backups.nix
     ../../modules/meo/lock-before-sleep.nix
     ../../modules/meo/tailscale.nix
+    ../../modules/meo/haertung.nix
     ../../modules/meo/grafik-fonts.nix
     ../../modules/meo/claude-werdegang-hook.nix # Werdegang nach Claude-Sitzungen (2026-10-29)
     # Matrix-Probelauf (2026-10-28), zieht später auf meo-server um
@@ -27,7 +28,7 @@
   # Hyprland ist auf beiden Hosts abgeschaltet (modules/upstream/core/packages.nix),
   # die SDDM-Session "Hyprland (Smart GPU)" haette nichts mehr zu starten.
 
-  programs.kdeconnect.enable = true;
+  # KDE Connect: siehe modules/meo/haertung.nix (nur über Tailscale).
 
   # Exit-Node (2026-10-27): meo bietet sich im Tailnet als Heim-VPN an.
   # Nur meo, nicht meo-work (sonst liefe privater Verkehr übers Firmennetz).
@@ -352,7 +353,10 @@
   boot.kernel.sysctl."vm.page-cluster" = 0;
 
   # --- BENUTZER & GRUPPEN ---
-  users.users."meo".extraGroups = [ "dialout" "input" "uinput" ];
+  # "input"/"uinput" entfernt (17.11.2026): damit konnte jedes Programm unter
+  # meo Tastatureingaben mitlesen und einschleusen. kanata braucht das nicht,
+  # der Dienst bringt die Gruppen selbst mit (SupplementaryGroups).
+  users.users."meo".extraGroups = [ "dialout" ];
 
   # --- STANDARD ANWENDUNGEN ---
   xdg.mime.defaultApplications = {

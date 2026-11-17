@@ -203,3 +203,19 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   Verschlüsselung (Passwort zuerst auch am Handy eingetragen → Verbindung brach sofort ab). Offene Übung
   (Stufe 1): `services.logind.lidSwitch*` auf die neue Schreibweise `settings.Login.HandleLidSwitch*` umstellen
   (Nix-Warnung beim Build). Verständnisfrage: Wer kennt bei «Receive Encrypted» das Passwort und warum?
+- 2026-11-16: Media-Widget wieder aufgenommen (`~/Dokumente/Private/media-widget`, Zweig `feat/v0.3`). Claude allein
+  (User: «mach das alles mal»): Anruf-Apps ausgefiltert, Speicher + Wiederstart, Englisch, README. User selbst:
+  USB-Debugging und Play-Protect-Nachfrage am Telefon bestätigt. **Mini-Aufgabe (Stufe 1, offen):** Testversion
+  «Media Widget Debug» am Telefon berechtigen, Widget platzieren, Wiederstart bei Spotify/Books ausprobieren und
+  berichten. Übungsfrage: Warum liess sich der neue Build nicht über die alte App installieren (Kennung + Signatur)?
+  Nachtrag gleicher Tag: v0.3.0 und v0.4.0 veröffentlicht (Claude). User hat am Telefon getestet und präzise
+  Rückmeldungen gegeben (schwarzes Aufblitzen, fehlender Weiter-Knopf, leere Fläche, «zu viele gleiche Bilder im
+  README») und selbst Bildschirmfotos gemacht; die Idee «alle Grössen nebeneinander ansehen» kam von ihm und wurde
+  zur Galerie-Seite. Mini-Aufgabe von oben (Berechtigen, Platzieren, Ausprobieren) erledigt. Übungsfrage zur
+  Signatur noch unbeantwortet.
+- 2026-11-17: Maus bewegte sich von selbst (meo-work) → Sicherheitsprüfung. Kein Einbruch gefunden; Verdacht
+  KDE-Connect-Ferneingabe vom Handy oder Charybdis-Trackball. Claude allein (User: «sperr …», «schalte … ein»):
+  `modules/meo/haertung.nix` (KDE Connect nur noch über tailscale0, fwupd an), `input`/`uinput` aus den Gruppen
+  von meo entfernt. **Mini-Aufgabe (Stufe 1, wackelt seit 12.11.):** vor `fr` mit `git diff HEAD` selbst
+  nachlesen, was mitgeht (auch die Obsidian-Zeile aus der zweiten Sitzung). Danach `fwupdmgr get-updates`.
+  Verständnisfrage: Warum läuft kanata weiter, obwohl meo nicht mehr in der Gruppe `input` ist?

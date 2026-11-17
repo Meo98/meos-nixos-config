@@ -81,6 +81,7 @@
     masterpdfeditor # PDF-Editor mit Annotationen, Formularen und Seitenbearbeitung (PDF-XChange-Alternative)
     kicad # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
     qelectrotech # Elektro-Schaltplan-/Stromlaufplan-Editor (Installations- und Steuerungstechnik, Symbolbibliothek nach IEC)
+    obsidian # Notes und weiteres
 
     # --- Remote-Zugriff (RealVNC Viewer) --- ADDED 2026-10-12
     # Nur Client-Seite: von meo-work auf andere Rechner verbinden.

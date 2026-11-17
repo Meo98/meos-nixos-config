@@ -6,6 +6,7 @@
     ../../modules/meo/kanata.nix
     ../../modules/meo/lock-before-sleep.nix
     ../../modules/meo/tailscale.nix
+    ../../modules/meo/haertung.nix
     ../../modules/meo/grafik-fonts.nix
     ../../modules/meo/claude-werdegang-hook.nix # Werdegang nach Claude-Sitzungen (2026-10-29)
   ];
@@ -32,7 +33,7 @@
   programs.niri.enable = true;
   services.displayManager.defaultSession = lib.mkForce "niri";
 
-  programs.kdeconnect.enable = true;
+  # KDE Connect: siehe modules/meo/haertung.nix (nur über Tailscale).
 
   # hypridle: seit 2026-10-27 zentral abgeschaltet, siehe
   # services.hypridle.enable in modules/upstream/core/packages.nix.
@@ -303,7 +304,10 @@
   };
 
   # --- BENUTZER & GRUPPEN ---
-  users.users."meo".extraGroups = [ "dialout" "input" "uinput" ];
+  # "input"/"uinput" entfernt (17.11.2026): damit konnte jedes Programm unter
+  # meo Tastatureingaben mitlesen und einschleusen. kanata braucht das nicht,
+  # der Dienst bringt die Gruppen selbst mit (SupplementaryGroups).
+  users.users."meo".extraGroups = [ "dialout" ];
 
   # --- STANDARD ANWENDUNGEN ---
   # MODIFIED: PDF-Default von onlyoffice auf zathura. Zathura startet in <100ms,
