@@ -114,6 +114,18 @@ pkgs.writeShellScriptBin "setup-secrets" ''
     ERRORS="$ERRORS\n  - \"Home Assistant Token\" (Password = langlebiger Token aus HA → Profil → Sicherheit)"
   fi
 
+  # --- FritzBox: eigener Benutzer für Claude (TR-064, 192.168.178.1) ---
+  # Format KEY=VALUE, damit Skripte es mit `source` laden können.
+  FB_USER=$(get_username "FritzBox Claude")
+  FB_PW=$(get_password "FritzBox Claude")
+  if [ -n "$FB_USER" ] && [ -n "$FB_PW" ]; then
+    FB_FILE="$HOME/.config/fritzbox-claude"
+    (umask 077; printf 'FRITZ_USER=%s\nFRITZ_PASSWORD=%s\n' "$FB_USER" "$FB_PW" > "$FB_FILE")
+    echo "  FritzBox-Zugang → $FB_FILE"
+  else
+    ERRORS="$ERRORS\n  - \"FritzBox Claude\" (Username + Password des FritzBox-Benutzers für Claude)"
+  fi
+
   # --- Write shell secrets file ---
   {
     echo "# Local secrets – managed by setup-secrets, do not commit"

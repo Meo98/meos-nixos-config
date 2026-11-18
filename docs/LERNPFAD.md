@@ -203,6 +203,7 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   Verschlüsselung (Passwort zuerst auch am Handy eingetragen → Verbindung brach sofort ab). Offene Übung
   (Stufe 1): `services.logind.lidSwitch*` auf die neue Schreibweise `settings.Login.HandleLidSwitch*` umstellen
   (Nix-Warnung beim Build). Verständnisfrage: Wer kennt bei «Receive Encrypted» das Passwort und warum?
+<<<<<<< Updated upstream
 - 2026-11-16: Media-Widget wieder aufgenommen (`~/Dokumente/Private/media-widget`, Zweig `feat/v0.3`). Claude allein
   (User: «mach das alles mal»): Anruf-Apps ausgefiltert, Speicher + Wiederstart, Englisch, README. User selbst:
   USB-Debugging und Play-Protect-Nachfrage am Telefon bestätigt. **Mini-Aufgabe (Stufe 1, offen):** Testversion
@@ -219,3 +220,18 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   von meo entfernt. **Mini-Aufgabe (Stufe 1, wackelt seit 12.11.):** vor `fr` mit `git diff HEAD` selbst
   nachlesen, was mitgeht (auch die Obsidian-Zeile aus der zweiten Sitzung). Danach `fwupdmgr get-updates`.
   Verständnisfrage: Warum läuft kanata weiter, obwohl meo nicht mehr in der Gruppe `input` ist?
+||||||| Stash base
+=======
+- 2026-11-15: KeiBuess (SBB-Check-in-App, `~/Dokumente/Private/KeiBuess`). User selbst: USB-Debugging an + Rechner freigegeben, Berechtigungs-Checkliste am Handy fast komplett allein (Bedienungshilfe blockte Android 17 → Claude per adb). Claude: Recherche, Code, Tests. Nächste Übung: Feldtest im Zug + App-Log selber lesen und deuten (Beacon-Zeilen, AUSLÖSUNG).
+- 2026-11-15: PicoStack v3 (User: "mach alles genau so, wie du das fuer richtig haeltst" nach
+  einer Bewertung des Projekts). Claude hat komplett gebaut: neuer Vertrag, Dimmer1/3/4 verlegt,
+  Fab-Daten, MicroPython-Lib, Doku; Zweig `v3`, nicht gepusht. Keine Uebung in dieser Session.
+  **Offene Uebungen (Stufe 1-2):** `git log --oneline main..v3` im Repo lesen und in einem Satz
+  sagen, was v3 gegenueber v2 streicht; dann `python3 tests/run_all.py` selbst laufen lassen und
+  EINE Suite absichtlich rot machen (z. B. in `tools/stack_spec.py` STAPEL_ABSTAND auf 11 setzen)
+  -- welche Pruefung meldet sich, und warum? Hinweis 1 sollte reichen.
+- 2026-11-16: Chromecast-Debloat (CleanYourTV, Cast-Liste + NextDNS als privates DNS). User selbst:
+  Entwickleroptionen + USB-Debugging an, Rechner-Freigabe am TV (brauchte Hinweis: Freigabe-Dialog ist
+  getrennt vom Schalter). NextDNS-Übung (`settings put global private_dns_*`, `adb -s` bei zwei
+  Transporten) abgelehnt ("mach du"). Später nochmals anbieten: `adb -s` / mehrere Geräte.
+>>>>>>> Stashed changes
