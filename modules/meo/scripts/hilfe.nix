@@ -41,6 +41,8 @@ pkgs.writeShellScriptBin "hilfe" ''
   row "Strg+Shift+T"    "neuer Tab      ·  Strg+Tab = wechseln"
   row "Strg+Shift+E/O"  "Fenster teilen (rechts / unten)"
   row "Strg+Shift+W"    "Tab/Split schließen"
+  row "Strg+Shift+P"    "Befehlspalette: alle Aktionen suchen, zeigt die Taste dazu"
+  row "Strg+Shift+↑/↓"  "zur vorherigen / nächsten Eingabezeile springen"
   row "Strg+R"          "Verlauf durchsuchen (atuin)"
   row "Tab-Taste"       "Vervollständigen — mit durchsuchbarem Menü + Vorschau"
 

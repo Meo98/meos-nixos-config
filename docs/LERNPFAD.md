@@ -249,3 +249,7 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   Nachtrag: Plugins toggle-pane/restore/what-size + Info-Gruppe `i` (Claude). Die vier Konfliktmarker
   von der Mini-Aufgabe (18.11.) hat Claude auf Wunsch entfernt («kannst du den beheben?») →
   **wackelt weiter: Konfliktmarker erkennen**, beim nächsten echten Konflikt nochmals geben.
+- 2026-11-19 (abends, meo): Ghostty aufgebessert (Claude): Befehlspalette, Suche, Prompt-Sprünge,
+  Fertig-Meldung, ssh-env. **Offene Übung (Stufe 1):** in `modules/meo/scripts/hilfe.nix` selber eine
+  `row`-Zeile für die Suche ergänzen (`Strg+Shift+F`), `fr`, mit `hilfe` prüfen. Verständnisfrage:
+  Warum fehlten Suche und Palette vorher, obwohl Ghostty sie von Haus aus hat (`clearDefaultKeybinds`)?

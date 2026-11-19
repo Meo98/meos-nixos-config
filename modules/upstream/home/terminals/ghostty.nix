@@ -79,7 +79,24 @@ in {
       gtk-single-instance = "true";
       unfocused-split-opacity = "0.5";
       quick-terminal-position = "center";
-      shell-integration-features = "cursor,sudo";
+      # MODIFIED 2026-11-19: + title (Fenstertitel folgt dem laufenden Befehl)
+      # und ssh-env (TERM wird bei ssh auf xterm-256color gesetzt, damit die
+      # Raspis nicht "unknown terminal type" melden).
+      shell-integration-features = "cursor,sudo,title,ssh-env";
+      # ADDED 2026-11-19: Übersicht + Lernhilfen.
+      # Ordner des aktiven Terminals als Untertitel in der Fensterleiste.
+      window-subtitle = "working-directory";
+      # Desktop-Meldung, wenn ein Befehl länger als 10 s lief und das Fenster
+      # gerade nicht im Fokus ist (z. B. `fr` im Hintergrund).
+      notify-on-command-finish = "unfocused";
+      notify-on-command-finish-action = "no-bell,notify";
+      notify-on-command-finish-after = "10s";
+      # Eigene Einträge in der Befehlspalette (Strg+Shift+P). Sie kommen zu
+      # den eingebauten Einträgen dazu.
+      command-palette-entry = [
+        ''title:"Spickzettel anzeigen",description:"Die wichtigsten Befehle und Tasten dieses Systems (hilfe).",action:"text:hilfe\n"''
+        ''title:"Dateimanager (yazi) hier öffnen",description:"yazi im aktuellen Ordner starten, q beendet.",action:"text:yy\n"''
+      ];
       bold-is-bright = "false";
       focus-follows-mouse = "true";
       # never show the size popups
@@ -109,6 +126,27 @@ in {
         "ctrl+shift+w=close_surface"
         "ctrl+shift+e=new_split:right"
         "ctrl+shift+o=new_split:down"
+
+        # ADDED 2026-11-19: Standard-Kürzel von Ghostty, die durch
+        # clearDefaultKeybinds fehlten. Die Befehlspalette listet alle
+        # Aktionen samt Taste auf und ist darum die beste Lernhilfe.
+        "ctrl+shift+p=toggle_command_palette"
+        "ctrl+shift+f=start_search"
+        "performable:escape=end_search"
+        "ctrl+shift+a=select_all"
+        "shift+page_up=scroll_page_up"
+        "shift+page_down=scroll_page_down"
+        "shift+home=scroll_to_top"
+        "shift+end=scroll_to_bottom"
+        # Von Eingabezeile zu Eingabezeile springen (statt lange scrollen).
+        "ctrl+shift+arrow_up=jump_to_prompt:-1"
+        "ctrl+shift+arrow_down=jump_to_prompt:1"
+        "ctrl+shift+enter=toggle_split_zoom"
+        "alt+s>o=toggle_tab_overview"
+        "alt+s>arrow_left=resize_split:left,40"
+        "alt+s>arrow_right=resize_split:right,40"
+        "alt+s>arrow_up=resize_split:up,40"
+        "alt+s>arrow_down=resize_split:down,40"
 
         "alt+s>r=reload_config"
         "alt+s>x=close_surface"
