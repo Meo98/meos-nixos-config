@@ -235,3 +235,13 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   getrennt vom Schalter). NextDNS-Übung (`settings put global private_dns_*`, `adb -s` bei zwei
   Transporten) abgelehnt ("mach du"). Später nochmals anbieten: `adb -s` / mehrere Geräte.
 >>>>>>> Stashed changes
+- 2026-11-19: Projekt `display-test` (Waveshare RP2350-Touch-LCD-3.49, MicroPython) von Claude angelegt
+  und geschrieben. Gute Hardware-Frage des Users (Encoder auf GPIO 19/20 → 20 ist Display-Takt,
+  wurde 19/18). **Offene Übung (Python):** `schritte_zu_wert()` in `firmware/utils/skala.py`
+  (teilen, begrenzen oder umlaufen), dann selber `scripts/upload.sh` laufen lassen.
+- 2026-11-19: Standardschrift Noto Sans → Lexend (`modules/upstream/core/stylix.nix`, Claude; User: «kannst du …
+  einstellen»). Die Zip aus dem Download-Ordner brauchte es nicht, Lexend war über `grafik-fonts.nix` schon da.
+  Beide Hosts zur Probe gebaut. **Mini-Aufgabe (Stufe 1, wackelt seit 03.11. und 12.11.):** in dieser Datei
+  stehen seit dem 18.11. vier eingecheckte Konfliktmarker-Zeilen (`<<<<<<<`, `|||||||`, `=======`, `>>>>>>>`);
+  beide Seiten sind nur Log-Einträge und bleiben, also nur die vier Zeilen löschen. Danach `git diff HEAD`
+  lesen und `fr`. Verständnisfrage: Woran sieht man, dass hier keine Seite weg darf?

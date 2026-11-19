@@ -54,8 +54,14 @@ in {
       # installiert, ist nur nicht mehr UI-Standard.
       # THEME_PICKER_SANS_BEGIN  (Zeile via `theme-picker` austauschbar; nur
       # metrik-sichere Fonts anbieten — breite Fonts sprengen Dialoge, s.o.)
-      sansSerif = { package = pkgs.noto-fonts; name = "Noto Sans"; };
+      sansSerif = { package = pkgs.google-fonts.override { fonts = [ "Lexend" ]; }; name = "Lexend"; };
       # THEME_PICKER_SANS_END
+      # MODIFIED 2026-11-19: Noto Sans -> Lexend (User-Wunsch). Gleiche Quelle
+      # wie in modules/meo/grafik-fonts.nix (google-fonts), damit nicht zwei
+      # verschiedene Lexend-Versionen im System liegen. Gemessen an einem
+      # Mustertext ist Lexend rund 2 % breiter als Noto Sans (Montserrat: 7 %).
+      # Laufen trotzdem Dialoge rechts aus dem Bild (siehe oben), die Zeile
+      # zurueck auf `pkgs.noto-fonts` / "Noto Sans" stellen.
       serif = {
         package = pkgs.noto-fonts;
         name = "Noto Serif";
