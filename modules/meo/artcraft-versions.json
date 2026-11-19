@@ -52,8 +52,8 @@
     "sha256": "7eadde1d74ab42cc838862fe3f831e3cf3c9fa6ba5e2bf04e2824bbc47146134"
   },
   "solidcraft": {
-    "version": "0.43.0",
-    "sha256": "b37d01cc885ea116c8a9d9243aa08cb21e616f3b50e1d6656e6a7be92ff49896",
+    "version": "0.44.1",
+    "sha256": "6e472bd7f557a3c0564e4548c460b1b84d906237c68af327e57d946b13e51cf4",
     "owner": "tangency-labs"
   }
 }
