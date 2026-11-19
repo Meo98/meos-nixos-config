@@ -297,32 +297,32 @@
         desc = "Jump to a file/directory via fzf";
       }
       {
-        on = ["m" "s"];
+        on = ["i" "s"];
         run = "linemode size";
         desc = "Linemode: size";
       }
       {
-        on = ["m" "p"];
+        on = ["i" "p"];
         run = "linemode permissions";
         desc = "Linemode: permissions";
       }
       {
-        on = ["m" "b"];
+        on = ["i" "b"];
         run = "linemode btime_ch";
         desc = "Linemode: btime (CH-Format)";
       }
       {
-        on = ["m" "m"];
+        on = ["i" "m"];
         run = "linemode mtime_ch";
         desc = "Linemode: mtime (CH-Format)";
       }
       {
-        on = ["m" "o"];
+        on = ["i" "o"];
         run = "linemode owner";
         desc = "Linemode: owner";
       }
       {
-        on = ["m" "n"];
+        on = ["i" "n"];
         run = "linemode none";
         desc = "Linemode: none";
       }
@@ -373,12 +373,12 @@
       }
       {
         on = ["," "m"];
-        run = ["sort mtime --reverse=no" "linemode mtime_ch"];
+        run = "sort mtime --reverse=no";
         desc = "Sort by modified time";
       }
       {
         on = ["," "M"];
-        run = ["sort mtime --reverse" "linemode mtime_ch"];
+        run = "sort mtime --reverse";
         desc = "Sort by modified time (reverse)";
       }
       {
@@ -423,12 +423,12 @@
       }
       {
         on = ["," "s"];
-        run = ["sort size --reverse=no" "linemode size"];
+        run = "sort size --reverse=no";
         desc = "Sort by size";
       }
       {
         on = ["," "S"];
-        run = ["sort size --reverse" "linemode size"];
+        run = "sort size --reverse";
         desc = "Sort by size (reverse)";
       }
       {
@@ -548,6 +548,35 @@
       }
     ];
     prepend_keymap = [
+      # ADDED 2026-11-19: Info-Gruppe auf `i`. Die Spalten-Umschalter (Linemode)
+      # lagen auf `m …` und waren unerreichbar, weil `m` allein schon "Bookmark
+      # setzen" ist. `i` drücken zeigt alle Möglichkeiten als Popup.
+      {
+        on = ["i" "i"];
+        run = "linemode groesse_datum";
+        desc = "Spalte: Grösse + Änderungsdatum (Standard)";
+      }
+      {
+        on = ["i" "g"];
+        run = "plugin what-size";
+        desc = "Grösse von Auswahl/Ordner ausrechnen (what-size)";
+      }
+      # ADDED 2026-11-19: toggle-pane + restore.
+      {
+        on = "T";
+        run = "plugin toggle-pane max-preview";
+        desc = "Vorschau gross/normal (toggle-pane)";
+      }
+      {
+        on = "u";
+        run = "plugin restore";
+        desc = "Zuletzt Gelöschtes aus dem Papierkorb zurückholen";
+      }
+      {
+        on = "U";
+        run = "plugin restore -- --interactive";
+        desc = "Aus dem Papierkorb auswählen und zurückholen";
+      }
       # ADDED 2026-08-20: Keybinds für die neuen Plugins. `f` wird bewusst von
       # einfachem Filter auf smart-filter (live) hochgezogen.
       {

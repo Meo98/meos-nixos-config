@@ -1,418 +1,72 @@
+# yazi.toml – nur die Abweichungen von den yazi-Standardwerten.
+#
+# MODIFIED 2026-11-19: Diese Datei war früher eine vollständige Kopie der
+# Standardwerte, eingepackt in `{ settings = { … }; }`. Dadurch landete alles
+# unter `[settings.*]` in der yazi.toml und yazi hat die ganze Datei ignoriert
+# (keine Datumsspalte, kein git-Status, keine Archiv-Vorschau). Jetzt stehen
+# die Abschnitte direkt auf oberster Ebene, mit den Namen von yazi 26.x
+# (`mgr` statt `manager`, `url` statt `name`). Alles, was hier nicht steht,
+# kommt aus den eingebauten Standardwerten von yazi.
 {
-  settings = {
-    manager = {
-      ratio = [1 4 3];
-      sort_by = "alphabetical";
-      sort_sensitive = false;
-      sort_reverse = false;
-      sort_dir_first = true;
-      sort_translit = false;
-      linemode = "mtime-ch";
-      show_hidden = false;
-      show_symlink = true;
-      scrolloff = 5;
-      mouse_events = ["click" "scroll"];
-      title_format = "Yazi: {cwd}";
-    };
-    preview = {
-      wrap = "no";
-      tab_size = 2;
-      max_width = 600;
-      max_height = 900;
-      cache_dir = "";
-      image_delay = 30;
-      image_filter = "triangle";
-      image_quality = 75;
-      sixel_fraction = 15;
-      ueberzug_scale = 1;
-      ueberzug_offset = [0 0 0 0];
-    };
-    opener = {
-      markdown = [
-        {
-          run = ''glow -p "$1"'';
-          block = true;
-          desc = "Preview with glow";
-          for = "unix";
-        }
-      ];
-      edit = [
-        {
-          # MODIFIED: Nix-Antiquotation-Bug gefixt. Original war
-          #   run = ''${"EDITOR:-vi"} "$@"'';
-          # Das setzt den Nix-Literal "EDITOR:-vi" ohne ${...} Wrapper ein
-          # -> shell sucht einen Befehl namens "EDITOR:-vi" -> fail.
-          # ''${...} escaped das Dollar, damit shell-Substitution erhalten bleibt.
-          run = ''''${EDITOR:-vi} "$@"'';
-          desc = "$EDITOR";
-          block = true;
-          for = "unix";
-        }
-        {
-          run = "code %*";
-          orphan = true;
-          desc = "code";
-          for = "windows";
-        }
-        {
-          run = "code -w %*";
-          block = true;
-          desc = "code (block)";
-          for = "windows";
-        }
-      ];
-      open = [
-        {
-          run = ''xdg-open "$1"'';
-          desc = "Open";
-          for = "linux";
-        }
-        {
-          run = ''open "$@"'';
-          desc = "Open";
-          for = "macos";
-        }
-        {
-          run = ''start "" "%1"'';
-          orphan = true;
-          desc = "Open";
-          for = "windows";
-        }
-        {
-          run = ''termux-open "$1"'';
-          desc = "Open";
-          for = "android";
-        }
-      ];
-      reveal = [
-        {
-          run = ''xdg-open "$(dirname "$1")"'';
-          desc = "Reveal";
-          for = "linux";
-        }
-        {
-          run = ''open -R "$1"'';
-          desc = "Reveal";
-          for = "macos";
-        }
-        {
-          run = ''explorer /select,"%1"'';
-          orphan = true;
-          desc = "Reveal";
-          for = "windows";
-        }
-        {
-          run = ''termux-open "$(dirname "$1")"'';
-          desc = "Reveal";
-          for = "android";
-        }
-        {
-          run = ''exiftool "$1"; echo "Press enter to exit"; read _'';
-          block = true;
-          desc = "Show EXIF";
-          for = "unix";
-        }
-      ];
-      extract = [
-        {
-          run = ''ya pub extract --list "$@"'';
-          desc = "Extract here";
-          for = "unix";
-        }
-        {
-          run = "ya pub extract --list %*";
-          desc = "Extract here";
-          for = "windows";
-        }
-      ];
-      play = [
-        {
-          run = ''mpv --force-window "$@"'';
-          orphan = true;
-          for = "unix";
-        }
-        {
-          run = "mpv --force-window %*";
-          orphan = true;
-          for = "windows";
-        }
-        {
-          run = ''mediainfo "$1"; echo "Press enter to exit"; read _'';
-          block = true;
-          desc = "Show media info";
-          for = "unix";
-        }
-      ];
-    };
-    open = {
-      rules = [
-        {
-          name = "*/";
-          use = ["edit" "open" "reveal"];
-        }
-        # MODIFIED: edit zuerst (-> nvim mit render-markdown), markdown (glow)
-        # als 2. Option fuer reinen Read-Only Preview. Siehe
-        # modules/meo/nvim-yazi-tweaks.nix
-        {
-          name = "*.{md,markdown}";
-          use = ["edit" "markdown" "reveal"];
-        }
-        {
-          mime = "text/*";
-          use = ["edit" "reveal"];
-        }
-        {
-          mime = "image/*";
-          use = ["open" "reveal"];
-        }
-        {
-          mime = "{audio,video}/*";
-          use = ["play" "reveal"];
-        }
-        {
-          mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}";
-          use = ["extract" "reveal"];
-        }
-        {
-          mime = "application/{json,ndjson}";
-          use = ["edit" "reveal"];
-        }
-        {
-          mime = "*/javascript";
-          use = ["edit" "reveal"];
-        }
-        {
-          mime = "inode/empty";
-          use = ["edit" "reveal"];
-        }
-        {
-          name = "*";
-          use = ["open" "reveal"];
-        }
-      ];
-    };
-    tasks = {
-      micro_workers = 10;
-      macro_workers = 10;
-      bizarre_retry = 3;
-      image_alloc = 536870912;
-      image_bound = [0 0];
-      suppress_preload = false;
-    };
-    plugin = {
-      fetchers = [
-        {
-          id = "mime";
-          name = "*";
-          run = "mime";
-          prio = "high";
-        }
-      ];
-      spotters = [
-        {
-          name = "*/";
-          run = "folder";
-        }
-        {
-          mime = "text/*";
-          run = "code";
-        }
-        {
-          mime = "application/{mbox,javascript,wine-extension-ini}";
-          run = "code";
-        }
-        {
-          mime = "image/{avif,hei?,jxl,svg+xml}";
-          run = "magick";
-        }
-        {
-          mime = "image/*";
-          run = "image";
-        }
-        {
-          mime = "video/*";
-          run = "video";
-        }
-        {
-          name = "*";
-          run = "file";
-        }
-      ];
-      preloaders = [
-        {
-          mime = "image/{avif,hei?,jxl,svg+xml}";
-          run = "magick";
-        }
-        {
-          mime = "image/*";
-          run = "image";
-        }
-        {
-          mime = "video/*";
-          run = "video";
-        }
-        {
-          mime = "application/pdf";
-          run = "pdf";
-        }
-        {
-          mime = "font/*";
-          run = "font";
-        }
-        {
-          mime = "application/ms-opentype";
-          run = "font";
-        }
-      ];
-      previewers = [
-        {
-          name = "*/";
-          run = "folder";
-          sync = true;
-        }
-        {
-          mime = "text/*";
-          run = "code";
-        }
-        {
-          mime = "application/{mbox,javascript,wine-extension-ini}";
-          run = "code";
-        }
-        {
-          mime = "application/{json,ndjson}";
-          run = "json";
-        }
-        {
-          mime = "image/{avif,hei?,jxl,svg+xml}";
-          run = "magick";
-        }
-        {
-          mime = "image/*";
-          run = "image";
-        }
-        {
-          mime = "video/*";
-          run = "video";
-        }
-        {
-          mime = "application/pdf";
-          run = "pdf";
-        }
-        {
-          mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}";
-          run = "archive";
-        }
-        {
-          mime = "application/{debian*-package,redhat-package-manager,rpm,android.package-archive}";
-          run = "archive";
-        }
-        {
-          name = "*.{AppImage,appimage}";
-          run = "archive";
-        }
-        {
-          mime = "application/{iso9660-image,qemu-disk,ms-wim,apple-diskimage}";
-          run = "archive";
-        }
-        {
-          mime = "application/virtualbox-{vhd,vhdx}";
-          run = "archive";
-        }
-        {
-          name = "*.{img,fat,ext,ext2,ext3,ext4,squashfs,ntfs,hfs,hfsx}";
-          run = "archive";
-        }
-        {
-          mime = "font/*";
-          run = "font";
-        }
-        {
-          mime = "application/ms-opentype";
-          run = "font";
-        }
-        {
-          mime = "inode/empty";
-          run = "empty";
-        }
-        {
-          name = "*";
-          run = "file";
-        }
-      ];
-      prepend_previewers = [
-        {
-          name = "*.{md,markdown}";
-          run = "glow";
-        }
-        # ADDED 2026-08-20: Archiv-Inhalt als Preview (ouch-Plugin).
-        {
-          mime = "application/{*zip,tar,bzip2,7z*,rar,xz,zstd,java-archive}";
-          run = "ouch";
-        }
-      ];
-      prepend_fetchers = [
-        {
-          id = "git";
-          name = "*";
-          run = "git";
-        }
-        {
-          id = "git";
-          name = "*/";
-          run = "git";
-        }
-      ];
-    };
-    input = {
-      cursor_blink = false;
-      cd_title = "Change directory:";
-      cd_origin = "top-center";
-      cd_offset = [0 2 50 3];
-      create_title = ["Create:" "Create (dir):"];
-      create_origin = "top-center";
-      create_offset = [0 2 50 3];
-      rename_title = "Rename:";
-      rename_origin = "hovered";
-      rename_offset = [0 1 50 3];
-      filter_title = "Filter:";
-      filter_origin = "top-center";
-      filter_offset = [0 2 50 3];
-      find_title = ["Find next:" "Find previous:"];
-      find_origin = "top-center";
-      find_offset = [0 2 50 3];
-      search_title = "Search via {n}:";
-      search_origin = "top-center";
-      search_offset = [0 2 50 3];
-      shell_title = ["Shell:" "Shell (block):"];
-      shell_origin = "top-center";
-      shell_offset = [0 2 50 3];
-    };
-    confirm = {
-      trash_title = "Trash {n} selected file{s}?";
-      trash_origin = "center";
-      trash_offset = [0 0 70 20];
-      delete_title = "Permanently delete {n} selected file{s}?";
-      delete_origin = "center";
-      delete_offset = [0 0 70 20];
-      overwrite_title = "Overwrite file?";
-      overwrite_content = "Will overwrite the following file:";
-      overwrite_origin = "center";
-      overwrite_offset = [0 0 50 15];
-      quit_title = "Quit?";
-      quit_content = "The following tasks are still running, are you sure you want to quit?";
-      quit_origin = "center";
-      quit_offset = [0 0 50 15];
-    };
-    pick = {
-      open_title = "Open with:";
-      open_origin = "hovered";
-      open_offset = [0 1 50 7];
-    };
-    which = {
-      sort_by = "none";
-      sort_sensitive = false;
-      sort_reverse = false;
-      sort_translit = false;
-    };
+  mgr = {
+    ratio = [1 4 3];
+    sort_by = "natural"; # «Datei 2» vor «Datei 10», wie im Windows-Explorer
+    sort_sensitive = false;
+    sort_dir_first = true;
+    # Spalte rechts neben dem Dateinamen: Grösse + Änderungsdatum.
+    # Die Funktion dazu steht in default.nix (initLua, Linemode:groesse_datum).
+    linemode = "groesse_datum";
+    show_hidden = false;
+    show_symlink = true;
+    scrolloff = 5;
+  };
+
+  opener = {
+    markdown = [
+      {
+        run = "glow -p %s1";
+        block = true;
+        desc = "Preview with glow";
+        for = "unix";
+      }
+    ];
+  };
+
+  open = {
+    # edit zuerst (-> nvim mit render-markdown), markdown (glow) als 2. Option
+    # für die reine Lese-Ansicht. Siehe modules/meo/nvim-yazi-tweaks.nix
+    prepend_rules = [
+      {
+        url = "*.{md,markdown}";
+        use = ["edit" "markdown" "reveal"];
+      }
+    ];
+  };
+
+  plugin = {
+    prepend_previewers = [
+      {
+        url = "*.{md,markdown}";
+        run = "glow";
+      }
+      # Archiv-Inhalt als Vorschau (ouch-Plugin).
+      {
+        mime = "application/{*zip,tar,bzip2,7z*,rar,xz,zstd,java-archive}";
+        run = "ouch";
+      }
+    ];
+    # git-Status (geändert/neu/ignoriert) als Zeichen neben dem Dateinamen.
+    prepend_fetchers = [
+      {
+        url = "*";
+        run = "git";
+        group = "git";
+      }
+      {
+        url = "*/";
+        run = "git";
+        group = "git";
+      }
+    ];
   };
 }

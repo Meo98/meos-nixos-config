@@ -203,7 +203,6 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   Verschlüsselung (Passwort zuerst auch am Handy eingetragen → Verbindung brach sofort ab). Offene Übung
   (Stufe 1): `services.logind.lidSwitch*` auf die neue Schreibweise `settings.Login.HandleLidSwitch*` umstellen
   (Nix-Warnung beim Build). Verständnisfrage: Wer kennt bei «Receive Encrypted» das Passwort und warum?
-<<<<<<< Updated upstream
 - 2026-11-16: Media-Widget wieder aufgenommen (`~/Dokumente/Private/media-widget`, Zweig `feat/v0.3`). Claude allein
   (User: «mach das alles mal»): Anruf-Apps ausgefiltert, Speicher + Wiederstart, Englisch, README. User selbst:
   USB-Debugging und Play-Protect-Nachfrage am Telefon bestätigt. **Mini-Aufgabe (Stufe 1, offen):** Testversion
@@ -220,8 +219,6 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   von meo entfernt. **Mini-Aufgabe (Stufe 1, wackelt seit 12.11.):** vor `fr` mit `git diff HEAD` selbst
   nachlesen, was mitgeht (auch die Obsidian-Zeile aus der zweiten Sitzung). Danach `fwupdmgr get-updates`.
   Verständnisfrage: Warum läuft kanata weiter, obwohl meo nicht mehr in der Gruppe `input` ist?
-||||||| Stash base
-=======
 - 2026-11-15: KeiBuess (SBB-Check-in-App, `~/Dokumente/Private/KeiBuess`). User selbst: USB-Debugging an + Rechner freigegeben, Berechtigungs-Checkliste am Handy fast komplett allein (Bedienungshilfe blockte Android 17 → Claude per adb). Claude: Recherche, Code, Tests. Nächste Übung: Feldtest im Zug + App-Log selber lesen und deuten (Beacon-Zeilen, AUSLÖSUNG).
 - 2026-11-15: PicoStack v3 (User: "mach alles genau so, wie du das fuer richtig haeltst" nach
   einer Bewertung des Projekts). Claude hat komplett gebaut: neuer Vertrag, Dimmer1/3/4 verlegt,
@@ -234,7 +231,6 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   Entwickleroptionen + USB-Debugging an, Rechner-Freigabe am TV (brauchte Hinweis: Freigabe-Dialog ist
   getrennt vom Schalter). NextDNS-Übung (`settings put global private_dns_*`, `adb -s` bei zwei
   Transporten) abgelehnt ("mach du"). Später nochmals anbieten: `adb -s` / mehrere Geräte.
->>>>>>> Stashed changes
 - 2026-11-19: Projekt `display-test` (Waveshare RP2350-Touch-LCD-3.49, MicroPython) von Claude angelegt
   und geschrieben. Gute Hardware-Frage des Users (Encoder auf GPIO 19/20 → 20 ist Display-Takt,
   wurde 19/18). **Offene Übung (Python):** `schritte_zu_wert()` in `firmware/utils/skala.py`
@@ -245,3 +241,11 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   stehen seit dem 18.11. vier eingecheckte Konfliktmarker-Zeilen (`<<<<<<<`, `|||||||`, `=======`, `>>>>>>>`);
   beide Seiten sind nur Log-Einträge und bleiben, also nur die vier Zeilen löschen. Danach `git diff HEAD`
   lesen und `fr`. Verständnisfrage: Woran sieht man, dass hier keine Seite weg darf?
+- 2026-11-19: yazi übersichtlicher (Claude gebaut): `yazi.nix` war doppelt verpackt
+  (`{ settings = … }`) und wurde von yazi komplett ignoriert; jetzt Spalte Grösse + Datum,
+  git-Status, Spickzettel in der Kopfzeile. **Offene Übung (Stufe 1–2):** Liste `spickzettel`
+  in `modules/upstream/home/yazi/default.nix` selber anpassen (Eintrag ersetzen, `fr`, in yazi
+  prüfen). Übungsfrage: Warum stand in der alten `yazi.toml` überall `[settings.…]`?
+  Nachtrag: Plugins toggle-pane/restore/what-size + Info-Gruppe `i` (Claude). Die vier Konfliktmarker
+  von der Mini-Aufgabe (18.11.) hat Claude auf Wunsch entfernt («kannst du den beheben?») →
+  **wackelt weiter: Konfliktmarker erkennen**, beim nächsten echten Konflikt nochmals geben.
