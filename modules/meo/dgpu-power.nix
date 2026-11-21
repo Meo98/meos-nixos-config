@@ -142,7 +142,9 @@ let
   nvidiaEntries = map nvidiaEntry [
     { name = "blender";      desktopName = "Blender";      exec = "blender %f";                   icon = "blender";           categories = [ "Graphics" "3DGraphics" ];              wmClass = "Blender"; }
     { name = "bambu-studio"; desktopName = "BambuStudio";  exec = "bambu-studio %U";              icon = "BambuStudio";       categories = [ "Graphics" "3DGraphics" "Engineering" ]; wmClass = "bambu-studio"; }
-    { name = "orca-slicer";  desktopName = "OrcaSlicer";   exec = "orca-slicer %U";               icon = "OrcaSlicer";        categories = [ "Graphics" "3DGraphics" "Engineering" ]; wmClass = "orca-slicer"; }
+    # orca-slicer bewusst ohne "(NVIDIA)"-Eintrag: die PRIME-Variablen von on-nvidia
+    # lassen Orca leer/abstuerzen; gedockt laeuft es ueber GDK_BACKEND=x11 ohnehin auf
+    # der RTX (modules/meo/orca.nix). Entfernt 2026-11-22.
     { name = "freecad";      desktopName = "FreeCAD";      exec = "FreeCAD - --single-instance %F"; icon = "org.freecad.FreeCAD"; categories = [ "Graphics" "Engineering" ];          wmClass = "FreeCAD"; }
     { name = "kicad";        desktopName = "KiCad";        exec = "kicad %f";                     icon = "kicad";             categories = [ "Science" "Electronics" ];               wmClass = "kicad"; }
     { name = "plasticity";   desktopName = "Plasticity";   exec = "Plasticity %U";                icon = "Plasticity";        categories = [ "Graphics" ]; }

@@ -26,6 +26,15 @@ self: super: {
       # wie im nixpkgs-Paket: WebKit-Ansichten (Startseite, Plugin-Browser)
       # bleiben sonst unter Wayland/NVIDIA leer
       export WEBKIT_DISABLE_COMPOSITING_MODE=1
+      # ADDED 2026-11-22: leere 3D-Ansicht auf meo (gedockt, RTX 4080).
+      # Das AppRun der AppImage zwingt unter Wayland + NVIDIA-Treiber > 555
+      # Mesa/zink (__GLX_VENDOR_LIBRARY_NAME=mesa, MESA_LOADER_DRIVER_OVERRIDE=
+      # zink) -> "cannot make the GL context current", Ansicht bleibt grau.
+      # Gleicher Weg wie frueher bei OrcaStudio: zink aus, X11 erzwingen; unter
+      # Xwayland ist NVIDIA hier direkt der GLX-Provider.
+      # NIE die __NV_PRIME_*-Variablen setzen (siehe Memory/Kommentar dgpu-power.nix).
+      export ZINK_DISABLE_OVERRIDE=1
+      export GDK_BACKEND=x11
     '';
 
     extraPkgs = pkgs: with pkgs; [
