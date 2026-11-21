@@ -20,7 +20,7 @@
 #   2. on-nvidia <cmd...>: startet eine App auf der RTX, aber NUR, wenn niri
 #      gerade auf der iGPU rendert (mobil). Gedockt rendert ohnehin alles auf
 #      der RTX, und genau dort haben die __NV_PRIME_*-Variablen Orca/
-#      OrcaStudio geblankt (siehe modules/meo/orcastudio.nix) -> dann No-op.
+#      OrcaStudio geblankt (Befund 2026-09-02; OrcaStudio seit 2026-11-22 entfernt) -> dann No-op.
 #      Vulkan-Apps sehen die RTX sowieso als Geraet 0 (ICD-Reihenfolge); die
 #      Variablen braucht es fuer GLX/EGL-Apps (Blender, Bambu, Orca, FreeCAD,
 #      KiCad).
@@ -143,7 +143,6 @@ let
     { name = "blender";      desktopName = "Blender";      exec = "blender %f";                   icon = "blender";           categories = [ "Graphics" "3DGraphics" ];              wmClass = "Blender"; }
     { name = "bambu-studio"; desktopName = "BambuStudio";  exec = "bambu-studio %U";              icon = "BambuStudio";       categories = [ "Graphics" "3DGraphics" "Engineering" ]; wmClass = "bambu-studio"; }
     { name = "orca-slicer";  desktopName = "OrcaSlicer";   exec = "orca-slicer %U";               icon = "OrcaSlicer";        categories = [ "Graphics" "3DGraphics" "Engineering" ]; wmClass = "orca-slicer"; }
-    { name = "orca-studio";  desktopName = "OrcaStudio";   exec = "orca-studio %F";               icon = "OrcaStudio";        categories = [ "Utility" ];                             wmClass = "BambuStudio_OrcaSlicer"; }
     { name = "freecad";      desktopName = "FreeCAD";      exec = "FreeCAD - --single-instance %F"; icon = "org.freecad.FreeCAD"; categories = [ "Graphics" "Engineering" ];          wmClass = "FreeCAD"; }
     { name = "kicad";        desktopName = "KiCad";        exec = "kicad %f";                     icon = "kicad";             categories = [ "Science" "Electronics" ];               wmClass = "kicad"; }
     { name = "plasticity";   desktopName = "Plasticity";   exec = "Plasticity %U";                icon = "Plasticity";        categories = [ "Graphics" ]; }

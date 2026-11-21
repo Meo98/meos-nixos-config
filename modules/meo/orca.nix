@@ -36,7 +36,7 @@ self: super: {
       gst_all_1.gst-plugins-base
       gst_all_1.gst-plugins-good
       webkitgtk_4_1
-      libsoup_3 # Binary linkt libsoup-3.0.so.0 direkt (siehe orcastudio.nix)
+      libsoup_3 # Binary linkt libsoup-3.0.so.0 direkt; wrapType2 nimmt nur gelistete Pakete in den LD-Pfad
     ];
 
     # Desktop-Datei + Icon stecken im AppImage-Root (wrapType2 installiert nur

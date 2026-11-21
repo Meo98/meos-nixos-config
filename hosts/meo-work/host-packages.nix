@@ -5,13 +5,6 @@
 }: {
   nixpkgs.overlays = [
     (import ../../modules/meo/bambu.nix)
-    # ADDED 2026-10-06: orcastudio.nix war bisher nur auf Host meo (daheim)
-    # registriert. Fuer orca-studio (OrcaStudio-Fork mit Bambu-Cloud-Anbindung)
-    # auch hier noetig. Siehe Paketliste unten + modules/meo/orcastudio.nix.
-    # HINWEIS: Das Overlay forciert GDK_BACKEND=x11 (fuer das NVIDIA/Intel-Arc-
-    # Dual-GPU-Setup auf meo); auf meo-work mit reiner Intel-iGPU laeuft es damit
-    # unter Xwayland auf der iGPU — harmlos, nur ggf. nicht noetig.
-    (import ../../modules/meo/orcastudio.nix)
     # ADDED 2026-11-21: OrcaSlicer 2.5.2 (AppImage) statt nixpkgs 2.4.2, wegen
     # der Python-Plugins. Ersetzt `orca-slicer` in der Paketliste unten.
     (import ../../modules/meo/orca.nix)
@@ -65,9 +58,8 @@
     vlc # Universeller Medienplayer, spielt fast jedes Videoformat ab
     tidal-hifi # Desktop-Client für den High-Fidelity Musik-Streamingdienst Tidal
     morgen # All-in-one Calendars, Tasks and Scheduler
-    orca-slicer # Open-Source Slicer (Bambu-Studio-Fork), native from-source
+    orca-slicer # OrcaSlicer 2.5 (AppImage via modules/meo/orca.nix overlay), Bambu-Cloud per Plugin
     bambu-studio # Offizieller BambuLab-Slicer (AppImage via modules/meo/bambu.nix overlay)
-    orca-studio # Community-Fork: Bambu Studio + Orca-Features + Cloud-Senden (AppImage via modules/meo/orcastudio.nix overlay)
 
     # --- Webbrowser ---
     # VA-API-Videodecoding auf der Intel Iris Xe Media-Engine aktivieren (iHD-Treiber via intel-drivers.nix).

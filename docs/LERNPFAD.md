@@ -257,8 +257,12 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   auf meo-work eingehängt und zur Probe gebaut). **Mini-Aufgabe (Stufe 1–2, Wiederholung vom 12.11.):**
   dieselbe `import`-Zeile selbst in `hosts/meo/host-packages.nix` setzen, `git diff HEAD` lesen,
   `nh os build --hostname meo`, dann `fr`. Verständnisfrage: Warum muss die Paketzeile `orca-slicer`
-  weiter unten nicht geändert werden? Ausgang offen.
+  weiter unten nicht geändert werden? → Zeile fehlte nach dem ersten `fr` (meo blieb 2.4.2); am 22.11. hat Claude
+  sie auf Wunsch («lösch den rest») gesetzt und OrcaStudio entfernt. **Wackelt weiter: Overlay auf beiden Hosts einhängen.**
+  Verständnisfrage bleibt offen.
 - 2026-11-21: Monobloc-Lampenschirm (SolidCraft, `~/Dokumente/Private/3D-Druck/Monobloc-Lampenschirm`). Claude hat
   gebaut (User: «du kannst loslegen»): Stuhl parametrisch nachgebaut, 4 Lagen × 10 Säulen, Sockelkegel für E27.
   **Mini-Aufgabe (ohne Risiko, offen):** Datei in SolidCraft öffnen, Parameter `slot_w` oder `sock_d` ändern und
   schauen, was mitwandert. Übungsfrage: Warum bricht das Modell bei `layers = 3`, bei `H = 64` aber nicht?
+- 2026-11-22: Monobloc-Stuhl identisch in SolidCraft (Mesh in Blender auf 45k Dreiecke vereinfacht, dann umgewandelt;
+  Claude allein, User: «mach weiter»). Keine neue Übung; die Mini-Aufgabe vom 21.11. bleibt offen.

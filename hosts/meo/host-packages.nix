@@ -5,7 +5,9 @@
 }: {
   nixpkgs.overlays = [
     (import ../../modules/meo/bambu.nix)
-    (import ../../modules/meo/orcastudio.nix)
+    # ADDED 2026-11-22: OrcaSlicer 2.5.2 (AppImage) statt nixpkgs 2.4.2, wegen
+    # der Python-Plugins (Bambu-Cloud ueber Open Bamboo). Ersetzt OrcaStudio.
+    (import ../../modules/meo/orca.nix)
     # WIEDER AKTIV 2026-08-31, jetzt mit der eigentlichen Ursache drin:
     # Ghostty klemmt Hi-Res-Scroll-Ticks auf einen ganzen Wheel-Klick hoch
     # (@max(yoff, 1) in scrollCallback(), laut Kommentar dort ein macOS-Workaround).
@@ -59,10 +61,9 @@
     vlc # Universeller Medienplayer, spielt fast jedes Videoformat ab
     tidal-hifi # Desktop-Client für den High-Fidelity Musik-Streamingdienst Tidal
     morgen # All-in-one Calendars, Tasks and Scheduler
-    orca-slicer # Open-Source Slicer (Bambu-Studio-Fork), native from-source
+    orca-slicer # OrcaSlicer 2.5 (AppImage via modules/meo/orca.nix overlay), Bambu-Cloud per Plugin
     bambu-studio # Offizieller BambuLab-Slicer (AppImage via modules/meo/bambu.nix overlay)
     bambu-studio-offline # Bambu im leeren Netz-Namespace: Workaround gegen den Slicing-Crash bei verbundenem Drucker (15.10.2026)
-    orca-studio # Community-Fork: Bambu Studio + Orca-Features + Cloud-Senden (AppImage via modules/meo/orcastudio.nix overlay)
     jlcone # JLCPCB-Desktop-Client für Bestellungen mit App-Rabatt (.deb via modules/meo/jlcone.nix overlay)
 
     # --- Webbrowser ---
