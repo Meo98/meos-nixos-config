@@ -16,7 +16,7 @@
 #   Internet Archive. Das Overlay nimmt das nixpkgs-Rezept (linux.nix) und
 #   tauscht nur version + src.
 #
-# requireFile: Datei einmalig von Hand in den Store legen:
+# Handweg, falls der automatische Download (fetchurl, siehe unten) scheitert:
 #     1) curl -L -o VNC-Viewer-7.13.1-Linux-x64.rpm \
 #          'https://web.archive.org/web/20250817145326id_/https://downloads.realvnc.com/download/file/viewer.files/VNC-Viewer-7.13.1-Linux-x64.rpm'
 #     2) nix-store --add-fixed sha256 VNC-Viewer-7.13.1-Linux-x64.rpm
@@ -31,20 +31,16 @@ in
   realvnc-vnc-viewer = prev.realvnc-vnc-viewer.overrideAttrs (old: {
     inherit version;
 
-    src = prev.requireFile {
+    # MODIFIED 2026-11-19: fetchurl statt requireFile. Die Datei wird beim
+    # Bauen selbst aus dem Internet Archive geholt, damit meo-work auch auf
+    # einem Rechner baut, der das RPM noch nie im Store hatte (z. B. auf meo).
+    # Name und Hash sind gleich geblieben, der Store-Pfad also auch: wo die
+    # Datei schon liegt, wird nichts neu geladen. Faellt das Archiv einmal
+    # aus, hilft der Handweg aus dem Kopfkommentar (curl + nix-store --add-fixed).
+    src = prev.fetchurl {
       name = "VNC-Viewer-${version}-Linux-x64.rpm";
       hash = "sha256-chLYGJPyewHe+b0sGs7Oa6J8E474eLl70ErkdnJ7+jI=";
       url = "https://web.archive.org/web/20250817145326id_/https://downloads.realvnc.com/download/file/viewer.files/VNC-Viewer-${version}-Linux-x64.rpm";
-      message = ''
-        RealVNC Viewer ${version} ist upstream geloescht. Einmalig aus dem
-        Internet Archive holen und in den Store legen:
-
-          curl -L -o VNC-Viewer-${version}-Linux-x64.rpm \
-            'https://web.archive.org/web/20250817145326id_/https://downloads.realvnc.com/download/file/viewer.files/VNC-Viewer-${version}-Linux-x64.rpm'
-          nix-store --add-fixed sha256 VNC-Viewer-${version}-Linux-x64.rpm
-
-        Danach erneut bauen.
-      '';
     };
   });
 }

@@ -12,6 +12,9 @@
     # Dual-GPU-Setup auf meo); auf meo-work mit reiner Intel-iGPU laeuft es damit
     # unter Xwayland auf der iGPU — harmlos, nur ggf. nicht noetig.
     (import ../../modules/meo/orcastudio.nix)
+    # ADDED 2026-11-21: OrcaSlicer 2.5.2 (AppImage) statt nixpkgs 2.4.2, wegen
+    # der Python-Plugins. Ersetzt `orca-slicer` in der Paketliste unten.
+    (import ../../modules/meo/orca.nix)
     # ADDED 2026-10-08: ArtCraft Suite (storytold) — native Rust-Apps als
     # Affinity-Ersatz ohne Wine. Alle 7 Pakete + Bump-Rezept in der Datei.
     (import ../../modules/meo/artcraft.nix)

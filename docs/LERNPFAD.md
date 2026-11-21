@@ -253,3 +253,12 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   Fertig-Meldung, ssh-env. **Offene Übung (Stufe 1):** in `modules/meo/scripts/hilfe.nix` selber eine
   `row`-Zeile für die Suche ergänzen (`Strg+Shift+F`), `fr`, mit `hilfe` prüfen. Verständnisfrage:
   Warum fehlten Suche und Palette vorher, obwohl Ghostty sie von Haus aus hat (`clearDefaultKeybinds`)?
+- 2026-11-21: OrcaSlicer 2.5.2 (Python-Plugins) als AppImage-Overlay `modules/meo/orca.nix` (Claude gebaut,
+  auf meo-work eingehängt und zur Probe gebaut). **Mini-Aufgabe (Stufe 1–2, Wiederholung vom 12.11.):**
+  dieselbe `import`-Zeile selbst in `hosts/meo/host-packages.nix` setzen, `git diff HEAD` lesen,
+  `nh os build --hostname meo`, dann `fr`. Verständnisfrage: Warum muss die Paketzeile `orca-slicer`
+  weiter unten nicht geändert werden? Ausgang offen.
+- 2026-11-21: Monobloc-Lampenschirm (SolidCraft, `~/Dokumente/Private/3D-Druck/Monobloc-Lampenschirm`). Claude hat
+  gebaut (User: «du kannst loslegen»): Stuhl parametrisch nachgebaut, 4 Lagen × 10 Säulen, Sockelkegel für E27.
+  **Mini-Aufgabe (ohne Risiko, offen):** Datei in SolidCraft öffnen, Parameter `slot_w` oder `sock_d` ändern und
+  schauen, was mitwandert. Übungsfrage: Warum bricht das Modell bei `layers = 3`, bei `H = 64` aber nicht?
