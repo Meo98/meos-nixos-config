@@ -34,6 +34,11 @@ in {
           id = "6HJYIY3-FRWKYG5-Q4FAG2C-WP5AKM6-J7W4ISS-M64I7X5-PWB4NAF-CPTKGQY";
           addresses = ["tcp://meos-oneplus:22000"];
         };
+        # Home Assistant Green: immer an, verschlüsselter Briefkasten für ~/Dokumente
+        ha-green = {
+          id = "P5WTHQ7-Q23FEOF-JAKWAPJ-3A4WR3V-CJDVG46-Z3QUUVA-MWBNYZP-HJ67UQG";
+          addresses = ["tcp://homeassistant:22000"];
+        };
       };
 
       # Nur übers Tailnet verbinden: keine Discovery-/Relay-Server, kein NAT-Mapping
@@ -81,22 +86,25 @@ in {
           devices = mitHandy;
           versioning = papierkorb;
         };
-        # Handy nur als verschlüsselter Briefkasten ("Receive Encrypted"): es
-        # speichert die Daten, kann sie aber nicht lesen, und reicht sie weiter,
-        # wenn die Laptops nie gleichzeitig wach sind (Anlass: 13.11.2026).
+        # HA Green (und übergangsweise das Handy) nur als verschlüsselter
+        # Briefkasten ("Receive Encrypted"): speichert die Daten, kann sie aber
+        # nicht lesen, und reicht sie weiter, wenn die Laptops nie gleichzeitig
+        # wach sind (Anlass: 13.11.2026).
+        # Das Handy fliegt raus, sobald der HA synchron ist: 14k Dateien im
+        # geteilten Speicher + Konfliktsuche der Syncthing-Fork-App hielten den
+        # Android-Medienspeicher dauernd auf 100 % CPU (Akku, 2026-11-22).
         # Die Passwortdatei liegt NICHT im Repo (öffentlich!). Sie kommt aus
         # Bitwarden ("Syncthing Dokumente Handy") per `setup-secrets` und muss
-        # auf BEIDEN Hosts existieren, sonst scheitert syncthing-init.
+        # auf BEIDEN Hosts existieren, sonst scheitert syncthing-init. Der HA
+        # nutzt dasselbe Passwort (Dateiname ist historisch).
         dokumente = {
           path = "~/Dokumente";
           devices =
             beide
-            ++ [
-              {
-                name = "meos-oneplus";
-                encryptionPasswordFile = "/home/${username}/.config/syncthing/handy-dokumente.passwort";
-              }
-            ];
+            ++ map (name: {
+              inherit name;
+              encryptionPasswordFile = "/home/${username}/.config/syncthing/handy-dokumente.passwort";
+            }) ["meos-oneplus" "ha-green"];
           versioning = papierkorb;
           ignorePatterns = [
             "(?d).DS_Store"
