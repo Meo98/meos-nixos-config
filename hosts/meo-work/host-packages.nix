@@ -8,6 +8,8 @@
     # ADDED 2026-11-21: OrcaSlicer 2.5.2 (AppImage) statt nixpkgs 2.4.2, wegen
     # der Python-Plugins. Ersetzt `orca-slicer` in der Paketliste unten.
     (import ../../modules/meo/orca.nix)
+    # ADDED 2026-11-23: JLCONE-Overlay, definiert das Paket `jlcone` in der Liste unten.
+    (import ../../modules/meo/jlcone.nix)
     # ADDED 2026-10-08: ArtCraft Suite (storytold) — native Rust-Apps als
     # Affinity-Ersatz ohne Wine. Alle 7 Pakete + Bump-Rezept in der Datei.
     (import ../../modules/meo/artcraft.nix)
@@ -77,7 +79,7 @@
     kicad # Professionelles Werkzeug für Elektronik-Design und Platinen-Layout (EDA)
     qelectrotech # Elektro-Schaltplan-/Stromlaufplan-Editor (Installations- und Steuerungstechnik, Symbolbibliothek nach IEC)
     obsidian # Notes und weiteres
-
+    jlcone # JLCPCB-Desktop-Client für Bestellungen mit App-Rabatt (.deb via modules/meo/jlcone.nix overlay)
     # --- Remote-Zugriff (RealVNC Viewer) --- ADDED 2026-10-12
     # Nur Client-Seite: von meo-work auf andere Rechner verbinden.
     #

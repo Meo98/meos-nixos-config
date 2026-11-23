@@ -253,7 +253,6 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   Fertig-Meldung, ssh-env. **Offene Übung (Stufe 1):** in `modules/meo/scripts/hilfe.nix` selber eine
   `row`-Zeile für die Suche ergänzen (`Strg+Shift+F`), `fr`, mit `hilfe` prüfen. Verständnisfrage:
   Warum fehlten Suche und Palette vorher, obwohl Ghostty sie von Haus aus hat (`clearDefaultKeybinds`)?
-<<<<<<< Updated upstream
 - 2026-11-21: OrcaSlicer 2.5.2 (Python-Plugins) als AppImage-Overlay `modules/meo/orca.nix` (Claude gebaut,
   auf meo-work eingehängt und zur Probe gebaut). **Mini-Aufgabe (Stufe 1–2, Wiederholung vom 12.11.):**
   dieselbe `import`-Zeile selbst in `hosts/meo/host-packages.nix` setzen, `git diff HEAD` lesen,
@@ -267,12 +266,12 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   schauen, was mitwandert. Übungsfrage: Warum bricht das Modell bei `layers = 3`, bei `H = 64` aber nicht?
 - 2026-11-22: Monobloc-Stuhl identisch in SolidCraft (Mesh in Blender auf 45k Dreiecke vereinfacht, dann umgewandelt;
   Claude allein, User: «mach weiter»). Keine neue Übung; die Mini-Aufgabe vom 21.11. bleibt offen.
-||||||| Stash base
-=======
 - 2026-11-23: Prewarm meldete "Update-Build fehlgeschlagen" (home-manager entfernte
   `programs.wayprompt`, Stylix setzte es noch). Claude: Stylix-Target bedingt abgeschaltet,
   `update-prewarm` haelt kaputte Inputs einzeln zurueck, `fu` uebernimmt die gepruefte Lock.
   Aufgabe an User: mit `fr` aktivieren, danach `cat ~/.cache/nixos-config-prewarm/held-back`
   deuten. Verstaendnisfrage offen: warum bricht ein Update, obwohl die eigene Config
   unveraendert ist?
->>>>>>> Stashed changes
+- 2026-11-23: nvim-Rückfrage «Some flake inputs are not available» = nil-LSP; `autoArchive = true` hat Claude gesetzt
+  (User: "mach du das"). User hat selbst `jlcone` aus meo nach meo-work kopiert, aber nur die Paketzeile, nicht
+  den Overlay-Import → `undefined variable`. Übung später: Fehler von unten lesen, und «Paket aus Overlay = zwei Zeilen».

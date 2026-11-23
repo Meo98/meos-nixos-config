@@ -165,6 +165,8 @@
         enable = true;
         servers = {
           nil_ls.enable = true;
+          # MODIFIED: fehlende Flake-Inputs still nachladen statt bei jedem Start fragen
+          nil_ls.settings.nix.flake.autoArchive = true;
           lua_ls.enable = true;
           pyright.enable = true;
           ts_ls.enable = true;
