@@ -24,8 +24,8 @@
     "sha256": "9f8a16cf74147c9e2ac3b65fa6f5be96a3e10ead92ddf08d544f5d3990ad64dc"
   },
   "pdfcraft": {
-    "version": "0.21.1",
-    "sha256": "730276cda9addb3d48f26c602686d18fc5bc0ebe360a60a2f522d70cfd428d21"
+    "version": "0.22.0",
+    "sha256": "771f61b07aaf8cc17e73cb1f93fbe88526f27b0aa82ff32d0710e2c375f49248"
   },
   "wordcraft": {
     "version": "0.18.1",
@@ -52,8 +52,8 @@
     "sha256": "7eadde1d74ab42cc838862fe3f831e3cf3c9fa6ba5e2bf04e2824bbc47146134"
   },
   "solidcraft": {
-    "version": "0.45.0",
-    "sha256": "ac453385ffd45ed59c6104bcc30aa01cb853bcfe338bdeaa7e42c24cc6cd1c2f",
+    "version": "0.47.0",
+    "sha256": "21bb4015a341abe9ccc9eaf66dc85647c45494b94c5767de695e4d7d04f84b55",
     "owner": "tangency-labs"
   }
 }

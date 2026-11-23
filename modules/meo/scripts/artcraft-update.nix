@@ -19,11 +19,6 @@ pkgs.writeShellApplication {
     json="$repo/modules/meo/artcraft-versions.json"
     [ -f "$json" ] || { echo "✗ $json fehlt" >&2; exit 1; }
 
-    # Optionales Token gegen das GitHub-Rate-Limit (60 Anfragen/h ohne Token
-    # reichen fuer 12 Apps, aber nicht fuer viele Laeufe hintereinander).
-    auth=()
-    [ -n "''${GITHUB_TOKEN:-}" ] && auth=(-H "Authorization: Bearer $GITHUB_TOKEN")
-
     tmp="$(mktemp)"
     trap 'rm -f "$tmp" "$tmp.new"' EXIT
     cp "$json" "$tmp"
@@ -35,11 +30,17 @@ pkgs.writeShellApplication {
       # storytold), damit auch Apps anderer Hersteller mitlaufen, z.B.
       # solidcraft von tangency-labs (Paket in modules/meo/artcraft.nix).
       owner="$(jq -r --arg a "$app" '.[$a].owner // "storytold"' "$json")"
-      tag="$(curl -fsSL "''${auth[@]}" \
-        "https://api.github.com/repos/$owner/$app/releases/latest" \
-        | jq -r '.tag_name // empty' || true)"
+      # MODIFIED 2026-11-23: Tag ueber die Weiterleitung der normalen
+      # Release-Seite holen (…/releases/latest -> …/releases/tag/vX.Y.Z)
+      # statt ueber api.github.com. Die API erlaubt ohne Token nur 60
+      # Anfragen/h; nach zwei, drei Laeufen (prewarm + fu) kam 403 und alle
+      # Apps meldeten faelschlich "kein Release gefunden".
+      url="$(curl -fsS -o /dev/null -w '%{redirect_url}' \
+        "https://github.com/$owner/$app/releases/latest" || true)"
+      tag=""
+      case "$url" in */releases/tag/*) tag="''${url##*/}" ;; esac
       if [ -z "$tag" ]; then
-        echo "⚠ $app: kein Release gefunden, bleibt auf $cur" >&2
+        echo "⚠ $app: neuestes Release nicht abfragbar (Netz/GitHub?), bleibt auf $cur" >&2
         continue
       fi
       ver="''${tag#v}"
