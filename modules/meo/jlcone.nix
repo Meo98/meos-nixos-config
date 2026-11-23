@@ -12,11 +12,11 @@ self: super: {
   # Der CDN lehnt curls Standard-User-Agent ab, daher curlOptsList.
   jlcone = super.stdenv.mkDerivation rec {
     pname = "jlcone";
-    version = "1.0.69";
+    version = "1.0.73"; # 2026-11-23 von 1.0.69: Update-Hinweis versteckte das Login-Fenster
 
     src = super.fetchurl {
       url = "https://rs.jlcone.com/static/APP/app_version/jlcone-${version}.deb";
-      sha256 = "01c5778da3ead64bfb3058895ed13168b910d51755b18e645d5f3898edc4575a";
+      hash = "sha256-Nf4nim48jegVERfsVFLMLB3NR0DlK/IsujPPSPrmVF4=";
       curlOptsList = [ "--user-agent" "Mozilla/5.0" ];
     };
 

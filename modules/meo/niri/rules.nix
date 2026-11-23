@@ -48,6 +48,16 @@
       ];
     }
 
+    # JLCONE (Electron) zeichnet das Login-Formular nur in seiner Wunschgroesse
+    # (1744x1020). Gekachelt auf eine schmalere Spalte bleibt die rechte Haelfte
+    # leer. Nachgewiesen 2026-11-23 auf meo-work: schwebend + Wunschgroesse = ok.
+    {
+      window-rule._children = [
+        {match._props.app-id = "^jlcone$";}
+        {open-floating = true;}
+      ];
+    }
+
     # Picture-in-Picture unten rechts, schwebend.
     {
       window-rule._children = [
