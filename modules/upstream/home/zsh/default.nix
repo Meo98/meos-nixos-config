@@ -148,8 +148,21 @@
         _zincoming || return 1
         echo "→ Pulling nixos-config..."
         git -C ~/nixos-config pull --rebase --autostash || { echo "✗ Git pull failed"; return 1; }
-        echo "→ nix flake update..."
-        (cd ~/nixos-config && nix flake update) || return 1
+        # MODIFIED 2026-11-23: Hat der naechtliche update-prewarm eine geprueft
+        # baubare Lock hinterlegt (kaputte Upstream-Inputs zurueckgehalten),
+        # diese uebernehmen statt blind alles zu aktualisieren. Nur wenn die
+        # Repo-Lock seit dem Prewarm unveraendert ist (sonst waere es ein
+        # Downgrade, z.B. weil der andere Laptop inzwischen aktualisiert hat).
+        local pw=~/.cache/nixos-config-prewarm
+        if [[ -f $pw/flake.lock.ok && -f $pw/flake.lock.base ]] \
+           && [[ "$(sha256sum ~/nixos-config/flake.lock | cut -d' ' -f1)" == "$(<$pw/flake.lock.base)" ]]; then
+          echo "→ Uebernehme vorgepruefte flake.lock aus update-prewarm ($(date -r $pw/flake.lock.ok '+%d.%m. %H:%M'))"
+          [[ -s $pw/held-back ]] && echo "  ⚠ zurueckgehalten (upstream kaputt): $(tr '\n' ' ' <$pw/held-back)"
+          cp $pw/flake.lock.ok ~/nixos-config/flake.lock
+        else
+          echo "→ nix flake update..."
+          (cd ~/nixos-config && nix flake update) || return 1
+        fi
         # MODIFIED 2026-10-22: ArtCraft-Apps auf neuestes GitHub-Release heben
         # (artcraft-versions.json). Zweistufig: scheitert der Build mit neuem
         # nixpkgs, wird nur flake.lock zurueckgerollt und ArtCraft allein auf
