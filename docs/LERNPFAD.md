@@ -275,6 +275,13 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 - 2026-11-23: nvim-Rückfrage «Some flake inputs are not available» = nil-LSP; `autoArchive = true` hat Claude gesetzt
   (User: "mach du das"). User hat selbst `jlcone` aus meo nach meo-work kopiert, aber nur die Paketzeile, nicht
   den Overlay-Import → `undefined variable`. Übung später: Fehler von unten lesen, und «Paket aus Overlay = zwei Zeilen».
+- 2026-11-24: Kisten-Trenner EWS (SolidCraft, `~/Dokumente/Technorama_Projekte/kisten-trenner-ews`), Claude hat das
+  parametrische Modell gebaut. **Mini-Aufgabe (ohne Risiko, offen):** Datei öffnen, in der Parametertabelle die vier
+  `n_…`-Zahlen für eine echte Schublade setzen, `felder_frei` prüfen, Skizze «Laser» als DXF speichern.
+  Übungsfrage: Warum verschwindet ein Kistentyp bei `n = 0`, obwohl sein Schnitt-Feature weiter existiert?
+  Nachtrag: HTML-Werkzeug für Kollegen gebaut (Claude). yazi-Regel «HTML im `O`-Menü im Browser öffnen» als
+  Aufgabe angeboten (Muster stand in `yazi.nix`), User: «kannst du das nicht auch in yazi einfügen» → Claude.
+  Später nochmals geben: eine `prepend_rules`-Regel nach Muster selbst ergänzen.
 - 2026-11-23: JLCONE auf meo-work zeigte kein Login-Formular. Claude: Ursache per Wegwerf-Profil eingegrenzt (Netz ok,
   gekachelt zu schmal → Formular fehlt), niri-Regel `open-floating` in `niri/rules.nix`, Bump 1.0.69 → 1.0.73.
   Keine Übung (User: "mach du das").

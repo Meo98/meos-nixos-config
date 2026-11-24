@@ -40,6 +40,12 @@
         url = "*.{md,markdown}";
         use = ["edit" "markdown" "reveal"];
       }
+      # MODIFIED 2026-11-24: HTML im O-Menü auch im Browser öffnen ("open" =
+      # eingebauter Öffner, xdg-open). Enter bleibt beim Editor.
+      {
+        url = "*.{html,htm}";
+        use = ["edit" "open" "reveal"];
+      }
     ];
   };
 
