@@ -266,6 +266,7 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   schauen, was mitwandert. Übungsfrage: Warum bricht das Modell bei `layers = 3`, bei `H = 64` aber nicht?
 - 2026-11-22: Monobloc-Stuhl identisch in SolidCraft (Mesh in Blender auf 45k Dreiecke vereinfacht, dann umgewandelt;
   Claude allein, User: «mach weiter»). Keine neue Übung; die Mini-Aufgabe vom 21.11. bleibt offen.
+<<<<<<< Updated upstream
 - 2026-11-23: Prewarm meldete "Update-Build fehlgeschlagen" (home-manager entfernte
   `programs.wayprompt`, Stylix setzte es noch). Claude: Stylix-Target bedingt abgeschaltet,
   `update-prewarm` haelt kaputte Inputs einzeln zurueck, `fu` uebernimmt die gepruefte Lock.
@@ -285,3 +286,24 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 - 2026-11-23: JLCONE auf meo-work zeigte kein Login-Formular. Claude: Ursache per Wegwerf-Profil eingegrenzt (Netz ok,
   gekachelt zu schmal → Formular fehlt), niri-Regel `open-floating` in `niri/rules.nix`, Bump 1.0.69 → 1.0.73.
   Keine Übung (User: "mach du das").
+||||||| Stash base
+=======
+- 2026-11-22: Syncthing-Gerät `ha-green` selbst in `syncthing.nix` eingetragen (Hinweis 3: Gerüst).
+  ID/Adresse richtig, aber eine Ebene zu tief (in `meos-oneplus` statt daneben) → Claude korrigiert
+  ("mach du"). Üben: verschachtelte Attribut-Sets / welche `};` schliesst was. Sichtbar machen mit
+  `nix eval … --apply builtins.attrNames`. HA-Add-on selbst installiert und eingerichtet.
+- 2026-11-22: Vivaldi/niri-Fokusklau durch AliExpress-Tab. User hat selbst eingegrenzt: Website-Rechte gesetzt,
+  DevTools-Konsole benutzt (Scriptlet-Prüfung, Spion-Snippet), Gegenprobe im privaten Fenster, dann **alle
+  Erweiterungen aus und einzeln wieder an** → Bitwarden (Passkey-Abfang fokussiert nach jeder Anfrage). Fix in
+  Bitwarden selbst gefunden. Bisektion (halbieren/einzeln zuschalten) sitzt ansatzweise; nächstes Mal ohne Hinweis
+  geben. Offen: Verständnisfrage, warum niri mitsprang (xdg-activation).
+- 2026-11-22: Projekt «Storren Motoren» (ESPHome-Storensteuerung, `~/Dokumente/Private/Storren-Motoren`). Claude hat
+  alles gebaut (Schaltplan, Platine, JLC-Daten, ESPHome-YAML) nach genauer Vorgabe des Users; User hat vier
+  Design-Fragen entschieden (PWM ausfallsicher, INA226, 60-V-Wandler, USB-Speisung). Keine Übung gegeben.
+  **Angebotene Mini-Aufgabe (optional, Stufe 1):** Projekt in KiCad öffnen, 3D-Ansicht (Alt+3) anschauen und
+  `git log --oneline` im Projektordner lesen.
+- 2026-11-22: Orca-Absturz beim Slicen untersucht: Ursache Speicher (Orca 44 GB RAM+Swap, kein NVIDIA-/niri-Fehler).
+  **Offene Mini-Aufgabe (Stufe 1):** nach einem Slice `journalctl --user -g Consumed | grep -i orca` selbst lesen
+  und den Speicherpeak nennen. Monobloc-v6 (gepresster Haufen, eigene MPM-Simulation auf der GPU, Gitter-G-Code):
+  Claude allein (User: «mach du einfach»), User hat Design-Entscheide getroffen (Variante 1c/2i, PETG, kein Klumpen).
+>>>>>>> Stashed changes
