@@ -49,6 +49,13 @@
             "Charybdis BT Mouse"
             "Charybdis BT Consumer Control"
             "Charybdis BT System Control"
+            ;; Keyball44 (holykeebs-QMK mit VIA): eigene Home-Row-Mods in der
+            ;; Firmware; unter kanata kamen WASD/Leertaste beim Gamen verzoegert
+            ;; bzw. als Alt/Shift an (2026-11-25).
+            "Yowkees Keyball44"
+            "Yowkees Keyball44 Mouse"
+            "Yowkees Keyball44 System Control"
+            "Yowkees Keyball44 Consumer Control"
           )
         '';
 
