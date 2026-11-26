@@ -8,8 +8,8 @@
     "sha256": "bdce7e82e981f9f4ed0bf25fa6f25e6fe4fab27e89641e6f948899e01b13a514"
   },
   "designcraft": {
-    "version": "0.20.1",
-    "sha256": "f9d6fd6bb1a421850243c0d4be44235713a9ec5b26f8bf1d5ba87afcf8f91534"
+    "version": "0.21.1",
+    "sha256": "bb08f639ca036da0d271aca1f1f4c9bd711415c4f7e085bc1bf42d7b1f6e0c03"
   },
   "lightcraft": {
     "version": "0.21.1",
@@ -20,24 +20,24 @@
     "sha256": "4a25aecb2e9481b65e7353528bca9e4a8c5388dd55f1486ffe64502e08bdfa02"
   },
   "effectcraft": {
-    "version": "0.24.1",
-    "sha256": "9f8a16cf74147c9e2ac3b65fa6f5be96a3e10ead92ddf08d544f5d3990ad64dc"
+    "version": "0.25.1",
+    "sha256": "7da14f5ca82027e2cb709dc91806c70ce41ff432adf27d2d0a37889d21b7a1ba"
   },
   "pdfcraft": {
     "version": "0.22.0",
     "sha256": "771f61b07aaf8cc17e73cb1f93fbe88526f27b0aa82ff32d0710e2c375f49248"
   },
   "wordcraft": {
-    "version": "0.18.1",
-    "sha256": "bbc5c15b06d4403cfd5a59475bdf9264a49c2bcf1f92d123311b50a9dce3c888"
+    "version": "0.19.1",
+    "sha256": "10176ffa8b8b4e0d298516c656b201959bb8280444f059d7b8838b6a691590de"
   },
   "gridcraft": {
     "version": "0.19.1",
     "sha256": "5b1ce10ad6c7a2d389249dfd259010014a85fce1aa42c627fc4cda571671e221"
   },
   "deckcraft": {
-    "version": "0.18.1",
-    "sha256": "68df9f040d3f6c4ce4a904aadec633961fa199248f0a1aa366fa64597ae09867"
+    "version": "0.19.1",
+    "sha256": "8295d0fb795bbd0c7ab8ae97cdf0993e1e6cf14d90aac35aab78b816dcdaa2fe"
   },
   "soundcraft": {
     "version": "0.20.1",
@@ -52,8 +52,8 @@
     "sha256": "7eadde1d74ab42cc838862fe3f831e3cf3c9fa6ba5e2bf04e2824bbc47146134"
   },
   "solidcraft": {
-    "version": "0.47.0",
-    "sha256": "21bb4015a341abe9ccc9eaf66dc85647c45494b94c5767de695e4d7d04f84b55",
+    "version": "0.50.0",
+    "sha256": "f3afd0df54df5cfba281fe0d2b0476f87f154606464bd21b0094226063505d88",
     "owner": "tangency-labs"
   }
 }
