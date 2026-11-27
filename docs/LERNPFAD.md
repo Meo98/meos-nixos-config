@@ -315,3 +315,7 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   nochmals geben (`claude plugin --help` lesen, `marketplace update`, `update <plugin>`). Offen für den User:
   SSH-Regel in der Tailscale-Policy von `check` auf `accept` bzw. längere `checkPeriod` stellen.
   Aufgeräumt: eingecheckte Konfliktmarker in dieser Datei entfernt (beide Seiten behalten).
+- 2026-11-27: `fu` scheiterte an «stylix.targets.wayprompt.enable … no longer has any effect» (Stylix hat das Target
+  entfernt, Platzhalter bleibt). User hat die Fehlerausgabe selbst geholt und eingefügt; Claude hat die Schutzabfrage
+  in `home/stylix.nix` um `visible` ergänzt. Verständnisfrage gestellt: Welche Datei und welche Option nennt die
+  Fehlermeldung, und was verlangt sie wörtlich?

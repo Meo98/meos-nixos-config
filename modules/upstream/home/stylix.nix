@@ -23,7 +23,14 @@
     # Nur abschalten, solange Stylix das Target noch kennt; sobald Stylix
     # es ebenfalls loescht, faellt diese Zeile von selbst weg (kein neuer
     # "option does not exist"-Fehler).
-    // lib.optionalAttrs (options.stylix.targets ? wayprompt) {
+    # MODIFIED 2026-11-27: Stylix hat das Target entfernt, laesst aber einen
+    # unsichtbaren Platzhalter stehen (mkRemovedOptionModule, visible = false),
+    # der bei jeder Definition "no longer has any effect" wirft. `? wayprompt`
+    # allein reicht darum nicht, zusaetzlich auf `visible` pruefen.
+    // lib.optionalAttrs (
+      (options.stylix.targets ? wayprompt)
+      && (options.stylix.targets.wayprompt.enable.visible or true) != false
+    ) {
       wayprompt.enable = false;
     };
 }
