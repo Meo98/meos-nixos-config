@@ -286,6 +286,7 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 - 2026-11-23: JLCONE auf meo-work zeigte kein Login-Formular. Claude: Ursache per Wegwerf-Profil eingegrenzt (Netz ok,
   gekachelt zu schmal → Formular fehlt), niri-Regel `open-floating` in `niri/rules.nix`, Bump 1.0.69 → 1.0.73.
   Keine Übung (User: "mach du das").
+<<<<<<< Updated upstream
 ||||||| Stash base
 =======
 - 2026-11-22: Syncthing-Gerät `ha-green` selbst in `syncthing.nix` eingetragen (Hinweis 3: Gerüst).
@@ -306,4 +307,13 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   **Offene Mini-Aufgabe (Stufe 1):** nach einem Slice `journalctl --user -g Consumed | grep -i orca` selbst lesen
   und den Speicherpeak nennen. Monobloc-v6 (gepresster Haufen, eigene MPM-Simulation auf der GPU, Gitter-G-Code):
   Claude allein (User: «mach du einfach»), User hat Design-Entscheide getroffen (Variante 1c/2i, PETG, kein Klumpen).
+>>>>>>> Stashed changes
+||||||| Stash base
+=======
+- 2026-11-26: Charybdis übernimmt nach USB-Abziehen nicht per Funk (meo-work). Claude: Ursache gelesen
+  (`bluetoothctl info` → `Paired: no`, `Bonded: no`, bluetoothd-Log «HID Information read failed» alle 30 s,
+  kein «Charybdis BT»-Eingabegerät). **Mini-Aufgabe (Stufe 1, Hinweis 2):** Gerät in `bluetoothctl` entfernen
+  und neu koppeln, danach in `bluetoothctl info` die Zeile `Bonded` prüfen. **Selbst gelöst mit Hinweis 2** (nur Ziel + `help`), innert weniger Minuten:
+  `Bonded: yes`, `Trusted: yes`, «Charybdis BT Keyboard/Mouse» als Eingabegeräte da. Zweites Mal ohne
+  Hinweis → «sitzt». Offen: Akkuanzeige meldet 0 %.
 >>>>>>> Stashed changes
