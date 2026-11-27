@@ -136,6 +136,8 @@ in {
       playerctl # Allows Changing Media Volume Through Scripts
       rhythmbox # audio player
       ripgrep # Improved Grep
+      headroom # MODIFIED: Kontext-Kompression für Claude Code (Plugin headroom@headroom-marketplace ruft `headroom init hook ensure`; Proxy bleibt bewusst aus)
+      rtk # MODIFIED: Rust Token Killer, kürzt Befehlsausgaben für Claude Code (Plugin rtk@pleaseai ruft die Binary blank auf)
       socat # Needed For Screenshots
       unrar # Tool For Handling .rar Files
       unzip # Tool For Handling .zip Files

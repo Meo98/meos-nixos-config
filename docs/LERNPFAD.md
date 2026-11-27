@@ -266,7 +266,6 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   schauen, was mitwandert. Übungsfrage: Warum bricht das Modell bei `layers = 3`, bei `H = 64` aber nicht?
 - 2026-11-22: Monobloc-Stuhl identisch in SolidCraft (Mesh in Blender auf 45k Dreiecke vereinfacht, dann umgewandelt;
   Claude allein, User: «mach weiter»). Keine neue Übung; die Mini-Aufgabe vom 21.11. bleibt offen.
-<<<<<<< Updated upstream
 - 2026-11-23: Prewarm meldete "Update-Build fehlgeschlagen" (home-manager entfernte
   `programs.wayprompt`, Stylix setzte es noch). Claude: Stylix-Target bedingt abgeschaltet,
   `update-prewarm` haelt kaputte Inputs einzeln zurueck, `fu` uebernimmt die gepruefte Lock.
@@ -286,9 +285,6 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
 - 2026-11-23: JLCONE auf meo-work zeigte kein Login-Formular. Claude: Ursache per Wegwerf-Profil eingegrenzt (Netz ok,
   gekachelt zu schmal → Formular fehlt), niri-Regel `open-floating` in `niri/rules.nix`, Bump 1.0.69 → 1.0.73.
   Keine Übung (User: "mach du das").
-<<<<<<< Updated upstream
-||||||| Stash base
-=======
 - 2026-11-22: Syncthing-Gerät `ha-green` selbst in `syncthing.nix` eingetragen (Hinweis 3: Gerüst).
   ID/Adresse richtig, aber eine Ebene zu tief (in `meos-oneplus` statt daneben) → Claude korrigiert
   ("mach du"). Üben: verschachtelte Attribut-Sets / welche `};` schliesst was. Sichtbar machen mit
@@ -307,13 +303,15 @@ Claude liest das zu Beginn und trägt nach Sessions nach. Selber editieren erlau
   **Offene Mini-Aufgabe (Stufe 1):** nach einem Slice `journalctl --user -g Consumed | grep -i orca` selbst lesen
   und den Speicherpeak nennen. Monobloc-v6 (gepresster Haufen, eigene MPM-Simulation auf der GPU, Gitter-G-Code):
   Claude allein (User: «mach du einfach»), User hat Design-Entscheide getroffen (Variante 1c/2i, PETG, kein Klumpen).
->>>>>>> Stashed changes
-||||||| Stash base
-=======
 - 2026-11-26: Charybdis übernimmt nach USB-Abziehen nicht per Funk (meo-work). Claude: Ursache gelesen
   (`bluetoothctl info` → `Paired: no`, `Bonded: no`, bluetoothd-Log «HID Information read failed» alle 30 s,
   kein «Charybdis BT»-Eingabegerät). **Mini-Aufgabe (Stufe 1, Hinweis 2):** Gerät in `bluetoothctl` entfernen
   und neu koppeln, danach in `bluetoothctl info` die Zeile `Bonded` prüfen. **Selbst gelöst mit Hinweis 2** (nur Ziel + `help`), innert weniger Minuten:
   `Bonded: yes`, `Trusted: yes`, «Charybdis BT Keyboard/Mouse» als Eingabegeräte da. Zweites Mal ohne
   Hinweis → «sitzt». Offen: Akkuanzeige meldet 0 %.
->>>>>>> Stashed changes
+- 2026-11-27: Claude-Plugins auf beiden Hosts abgeglichen (Claude, User: «kannst du mal alles hinzufügen»).
+  `rtk` und `headroom` kommen neu aus nixpkgs (`core/packages.nix`) statt per cargo/uv. User selbst: Tailscale-SSH-Check
+  im Browser bestätigt. Angebotene Aufgabe «Marketplaces + Plugins selbst aktualisieren» nicht gemacht → später
+  nochmals geben (`claude plugin --help` lesen, `marketplace update`, `update <plugin>`). Offen für den User:
+  SSH-Regel in der Tailscale-Policy von `check` auf `accept` bzw. längere `checkPeriod` stellen.
+  Aufgeräumt: eingecheckte Konfliktmarker in dieser Datei entfernt (beide Seiten behalten).
